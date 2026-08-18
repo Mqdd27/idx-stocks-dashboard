@@ -3,6 +3,8 @@
 RSS items are treated as UNTRUSTED external content everywhere downstream.
 """
 import asyncio
+import html
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -21,6 +23,15 @@ logger = get_logger("news")
 RSS_URL = "https://news.google.com/rss/search?q={query}&hl=id&gl=ID&ceid=ID:id"
 _MAX_ITEMS_PER_SYMBOL = 5
 _NS = {"dc": "http://purl.org/dc/elements/1.1/", "media": "http://search.yahoo.com/mrss/"}
+
+
+def clean_description(desc: str) -> str:
+    """Strip HTML tags/entities from Google News RSS summary."""
+    if not desc:
+        return ""
+    text = re.sub(r"<[^>]+>", "", desc)
+    text = html.unescape(text)
+    return " ".join(text.split()).strip()
 
 
 async def fetch_news_rss(client: httpx.AsyncClient, query: str) -> list[dict]:
@@ -48,7 +59,7 @@ async def fetch_news_rss(client: httpx.AsyncClient, query: str) -> list[dict]:
                     "url": link,
                     "source": source,
                     "published_at": published,
-                    "summary": description,
+                    "summary": clean_description(description),
                 }
             )
             if len(items) >= _MAX_ITEMS_PER_SYMBOL:
