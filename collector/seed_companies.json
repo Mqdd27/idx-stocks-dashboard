@@ -1,0 +1,5896 @@
+[
+  {
+    "symbol": "AADI",
+    "company_name": "Adaro Andalan Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AADI.JK"
+  },
+  {
+    "symbol": "AALI",
+    "company_name": "PT Astra Agro Lestari Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Plantation",
+    "yahoo_symbol": "AALI.JK"
+  },
+  {
+    "symbol": "ABDA",
+    "company_name": "Asuransi Bina Dana Arta Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ABDA.JK"
+  },
+  {
+    "symbol": "ABMM",
+    "company_name": "ABM Investama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ABMM.JK"
+  },
+  {
+    "symbol": "ACES",
+    "company_name": "PT Ace Hardware Indonesia Tbk",
+    "sector": "Consumer Cyclical",
+    "subsector": "Retail",
+    "yahoo_symbol": "ACES.JK"
+  },
+  {
+    "symbol": "ACRO",
+    "company_name": "Samcro Hyosung Adilestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ACRO.JK"
+  },
+  {
+    "symbol": "ACST",
+    "company_name": "Acset Indonusa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ACST.JK"
+  },
+  {
+    "symbol": "ADES",
+    "company_name": "Akasha Wira International Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ADES.JK"
+  },
+  {
+    "symbol": "ADHI",
+    "company_name": "PT Adhi Karya (Persero) Tbk",
+    "sector": "Industrials",
+    "subsector": "Construction",
+    "yahoo_symbol": "ADHI.JK"
+  },
+  {
+    "symbol": "ADMF",
+    "company_name": "Adira Dinamika Multi Finance Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ADMF.JK"
+  },
+  {
+    "symbol": "ADMG",
+    "company_name": "Polychem Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ADMG.JK"
+  },
+  {
+    "symbol": "ADMR",
+    "company_name": "Alamtri Minerals Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ADMR.JK"
+  },
+  {
+    "symbol": "ADRO",
+    "company_name": "PT Adaro Energy Indonesia Tbk",
+    "sector": "Energy",
+    "subsector": "Coal Mining",
+    "yahoo_symbol": "ADRO.JK"
+  },
+  {
+    "symbol": "AEGS",
+    "company_name": "Anugerah Spareparts Sejahtera T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AEGS.JK"
+  },
+  {
+    "symbol": "AGAR",
+    "company_name": "Asia Sejahtera Mina Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AGAR.JK"
+  },
+  {
+    "symbol": "AGII",
+    "company_name": "Samator Indo Gas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AGII.JK"
+  },
+  {
+    "symbol": "AGRO",
+    "company_name": "Bank Raya Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AGRO.JK"
+  },
+  {
+    "symbol": "AGRS",
+    "company_name": "Bank IBK Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AGRS.JK"
+  },
+  {
+    "symbol": "AHAP",
+    "company_name": "Asuransi Harta Aman Pratama Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AHAP.JK"
+  },
+  {
+    "symbol": "AIMS",
+    "company_name": "Artha Mahiya Investama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AIMS.JK"
+  },
+  {
+    "symbol": "AISA",
+    "company_name": "FKS Food Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AISA.JK"
+  },
+  {
+    "symbol": "AKPI",
+    "company_name": "Argha Karya Prima Industry Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AKPI.JK"
+  },
+  {
+    "symbol": "AKRA",
+    "company_name": "PT AKR Corporindo Tbk",
+    "sector": "Energy",
+    "subsector": "Fuel Distribution",
+    "yahoo_symbol": "AKRA.JK"
+  },
+  {
+    "symbol": "AKSI",
+    "company_name": "Mineral Sumberdaya Mandiri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AKSI.JK"
+  },
+  {
+    "symbol": "ALDO",
+    "company_name": "Alkindo Naratama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ALDO.JK"
+  },
+  {
+    "symbol": "ALII",
+    "company_name": "Ancara Logistics Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ALII.JK"
+  },
+  {
+    "symbol": "ALKA",
+    "company_name": "Alakasa Industrindo Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ALKA.JK"
+  },
+  {
+    "symbol": "AMAG",
+    "company_name": "Asuransi Multi Artha Guna Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AMAG.JK"
+  },
+  {
+    "symbol": "AMAN",
+    "company_name": "Makmur Berkah Amanda Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AMAN.JK"
+  },
+  {
+    "symbol": "AMAR",
+    "company_name": "Bank Amar Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AMAR.JK"
+  },
+  {
+    "symbol": "AMFG",
+    "company_name": "Asahimas Flat Glass Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AMFG.JK"
+  },
+  {
+    "symbol": "AMIN",
+    "company_name": "Ateliers Mecaniques D Indonesie",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AMIN.JK"
+  },
+  {
+    "symbol": "AMMN",
+    "company_name": "PT Amman Mineral Internasional Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Gold & Copper",
+    "yahoo_symbol": "AMMN.JK"
+  },
+  {
+    "symbol": "AMMS",
+    "company_name": "Agung Menjangan Mas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AMMS.JK"
+  },
+  {
+    "symbol": "AMOR",
+    "company_name": "Ashmore Asset Management Indone",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AMOR.JK"
+  },
+  {
+    "symbol": "AMRT",
+    "company_name": "PT Sumber Alfaria Trijaya Tbk",
+    "sector": "Consumer Cyclical",
+    "subsector": "Retail",
+    "yahoo_symbol": "AMRT.JK"
+  },
+  {
+    "symbol": "ANDI",
+    "company_name": "Andira Agro Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ANDI.JK"
+  },
+  {
+    "symbol": "ANJT",
+    "company_name": "Austindo Nusantara Jaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ANJT.JK"
+  },
+  {
+    "symbol": "ANTM",
+    "company_name": "PT Aneka Tambang Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Mining",
+    "yahoo_symbol": "ANTM.JK"
+  },
+  {
+    "symbol": "APEX",
+    "company_name": "Apexindo Pratama Duta Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "APEX.JK"
+  },
+  {
+    "symbol": "APIC",
+    "company_name": "Pacific Strategic Financial Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "APIC.JK"
+  },
+  {
+    "symbol": "APII",
+    "company_name": "Arita Prima Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "APII.JK"
+  },
+  {
+    "symbol": "APLI",
+    "company_name": "Asiaplast Industries Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "APLI.JK"
+  },
+  {
+    "symbol": "APLN",
+    "company_name": "Agung Podomoro Land Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "APLN.JK"
+  },
+  {
+    "symbol": "ARCI",
+    "company_name": "PT Archi Indonesia Tbk",
+    "sector": "Materials",
+    "subsector": "Metals & Mining",
+    "yahoo_symbol": "ARCI.JK"
+  },
+  {
+    "symbol": "AREA",
+    "company_name": "Dunia Virtual Online Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AREA.JK"
+  },
+  {
+    "symbol": "ARGO",
+    "company_name": "Argo Pantes Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ARGO.JK"
+  },
+  {
+    "symbol": "ARII",
+    "company_name": "Atlas Resources Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ARII.JK"
+  },
+  {
+    "symbol": "ARKO",
+    "company_name": "Arkora Hydro Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ARKO.JK"
+  },
+  {
+    "symbol": "ARNA",
+    "company_name": "Arwana Citramulia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ARNA.JK"
+  },
+  {
+    "symbol": "ARTA",
+    "company_name": "Arthavest Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ARTA.JK"
+  },
+  {
+    "symbol": "ARTO",
+    "company_name": "PT Bank Jago Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "ARTO.JK"
+  },
+  {
+    "symbol": "ASBI",
+    "company_name": "Asuransi Bintang Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASBI.JK"
+  },
+  {
+    "symbol": "ASDM",
+    "company_name": "Asuransi Dayin MitraTbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASDM.JK"
+  },
+  {
+    "symbol": "ASGR",
+    "company_name": "Astra Graphia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASGR.JK"
+  },
+  {
+    "symbol": "ASHA",
+    "company_name": "Cilacap Samudera Fishing Indust",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASHA.JK"
+  },
+  {
+    "symbol": "ASII",
+    "company_name": "PT Astra International Tbk",
+    "sector": "Consumer Cyclical",
+    "subsector": "Automotive",
+    "yahoo_symbol": "ASII.JK"
+  },
+  {
+    "symbol": "ASJT",
+    "company_name": "Asuransi Jasa Tania Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASJT.JK"
+  },
+  {
+    "symbol": "ASLC",
+    "company_name": "Autopedia Sukses Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASLC.JK"
+  },
+  {
+    "symbol": "ASLI",
+    "company_name": "Asri Karya Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASLI.JK"
+  },
+  {
+    "symbol": "ASMI",
+    "company_name": "Asuransi Maximus Graha Persada ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASMI.JK"
+  },
+  {
+    "symbol": "ASPI",
+    "company_name": "Andalan Sakti Primaindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASPI.JK"
+  },
+  {
+    "symbol": "ASPR",
+    "company_name": "Asia Pramulia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASPR.JK"
+  },
+  {
+    "symbol": "ASRI",
+    "company_name": "Alam Sutera Realty Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASRI.JK"
+  },
+  {
+    "symbol": "ASRM",
+    "company_name": "Asuransi Ramayana Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASRM.JK"
+  },
+  {
+    "symbol": "ASSA",
+    "company_name": "Adi Sarana Armada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ASSA.JK"
+  },
+  {
+    "symbol": "ATAP",
+    "company_name": "Trimitra Prawara Goldland Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ATAP.JK"
+  },
+  {
+    "symbol": "ATIC",
+    "company_name": "Anabatic Technologies Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ATIC.JK"
+  },
+  {
+    "symbol": "ATLA",
+    "company_name": "Atlantis Subsea Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ATLA.JK"
+  },
+  {
+    "symbol": "AUTO",
+    "company_name": "Astra Otoparts Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AUTO.JK"
+  },
+  {
+    "symbol": "AVIA",
+    "company_name": "Avia Avian Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AVIA.JK"
+  },
+  {
+    "symbol": "AWAN",
+    "company_name": "Era Digital Media Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AWAN.JK"
+  },
+  {
+    "symbol": "AXIO",
+    "company_name": "Tera Data Indonusa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AXIO.JK"
+  },
+  {
+    "symbol": "AYAM",
+    "company_name": "Janu Putra Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AYAM.JK"
+  },
+  {
+    "symbol": "AYLS",
+    "company_name": "Arkayana Lestari Grup Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "AYLS.JK"
+  },
+  {
+    "symbol": "BABP",
+    "company_name": "Bank MNC Internasional Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BABP.JK"
+  },
+  {
+    "symbol": "BABY",
+    "company_name": "Multitrend Indo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BABY.JK"
+  },
+  {
+    "symbol": "BACA",
+    "company_name": "Bank Capital Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BACA.JK"
+  },
+  {
+    "symbol": "BACH",
+    "company_name": "Bach Multi Global Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BACH.JK"
+  },
+  {
+    "symbol": "BAIK",
+    "company_name": "Bersama Mencapai Puncak Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BAIK.JK"
+  },
+  {
+    "symbol": "BALI",
+    "company_name": "Bali Towerindo Sentra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BALI.JK"
+  },
+  {
+    "symbol": "BANK",
+    "company_name": "Bank Aladin Syariah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BANK.JK"
+  },
+  {
+    "symbol": "BAPA",
+    "company_name": "Bekasi Asri Pemula Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BAPA.JK"
+  },
+  {
+    "symbol": "BAPI",
+    "company_name": "Bhakti Agung Propertindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BAPI.JK"
+  },
+  {
+    "symbol": "BATR",
+    "company_name": "Benteng Api Technic Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BATR.JK"
+  },
+  {
+    "symbol": "BAUT",
+    "company_name": "Mitra Angkasa Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BAUT.JK"
+  },
+  {
+    "symbol": "BAYU",
+    "company_name": "Bayu Buana Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BAYU.JK"
+  },
+  {
+    "symbol": "BBCA",
+    "company_name": "PT Bank Central Asia Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BBCA.JK"
+  },
+  {
+    "symbol": "BBHI",
+    "company_name": "Allo Bank Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBHI.JK"
+  },
+  {
+    "symbol": "BBKP",
+    "company_name": "Bank KB Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBKP.JK"
+  },
+  {
+    "symbol": "BBLD",
+    "company_name": "Buana Finance Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBLD.JK"
+  },
+  {
+    "symbol": "BBMD",
+    "company_name": "Bank Mestika Dharma Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBMD.JK"
+  },
+  {
+    "symbol": "BBNI",
+    "company_name": "PT Bank Negara Indonesia Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BBNI.JK"
+  },
+  {
+    "symbol": "BBRI",
+    "company_name": "PT Bank Rakyat Indonesia Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BBRI.JK"
+  },
+  {
+    "symbol": "BBRM",
+    "company_name": "Pelayaran Nasional Bina Buana R",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBRM.JK"
+  },
+  {
+    "symbol": "BBSI",
+    "company_name": "Krom Bank Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBSI.JK"
+  },
+  {
+    "symbol": "BBSS",
+    "company_name": "Bumi Benowo Sukses Sejahtera Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBSS.JK"
+  },
+  {
+    "symbol": "BBTN",
+    "company_name": "Bank Tabungan Negara (Persero) ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BBTN.JK"
+  },
+  {
+    "symbol": "BBYB",
+    "company_name": "PT Bank Neo Commerce Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BBYB.JK"
+  },
+  {
+    "symbol": "BCAP",
+    "company_name": "MNC Kapital Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BCAP.JK"
+  },
+  {
+    "symbol": "BCIC",
+    "company_name": "Bank JTrust Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BCIC.JK"
+  },
+  {
+    "symbol": "BCIP",
+    "company_name": "Bumi Citra Permai Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BCIP.JK"
+  },
+  {
+    "symbol": "BDKR",
+    "company_name": "Berdikari Pondasi Perkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BDKR.JK"
+  },
+  {
+    "symbol": "BDMN",
+    "company_name": "Bank Danamon Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BDMN.JK"
+  },
+  {
+    "symbol": "BEEF",
+    "company_name": "Estika Tata Tiara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BEEF.JK"
+  },
+  {
+    "symbol": "BEER",
+    "company_name": "Jobubu Jarum Minahasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BEER.JK"
+  },
+  {
+    "symbol": "BEKS",
+    "company_name": "Bank Pembangunan Daerah Banten ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BEKS.JK"
+  },
+  {
+    "symbol": "BELI",
+    "company_name": "Global Digital Niaga Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BELI.JK"
+  },
+  {
+    "symbol": "BELL",
+    "company_name": "Trisula Textile Industries Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BELL.JK"
+  },
+  {
+    "symbol": "BESS",
+    "company_name": "Batulicin Nusantara Maritim Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BESS.JK"
+  },
+  {
+    "symbol": "BEST",
+    "company_name": "Bekasi Fajar Industrial Estate ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BEST.JK"
+  },
+  {
+    "symbol": "BFIN",
+    "company_name": "BFI Finance  Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BFIN.JK"
+  },
+  {
+    "symbol": "BGTG",
+    "company_name": "Bank Ganesha Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BGTG.JK"
+  },
+  {
+    "symbol": "BHIT",
+    "company_name": "MNC Asia Holding Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BHIT.JK"
+  },
+  {
+    "symbol": "BINA",
+    "company_name": "Bank Ina Perdana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BINA.JK"
+  },
+  {
+    "symbol": "BINO",
+    "company_name": "Perma Plasindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BINO.JK"
+  },
+  {
+    "symbol": "BIPI",
+    "company_name": "Astrindo Nusantara Infrastruktu",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BIPI.JK"
+  },
+  {
+    "symbol": "BIPP",
+    "company_name": "Bhuwanatala Indah Permai Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BIPP.JK"
+  },
+  {
+    "symbol": "BIRD",
+    "company_name": "Blue Bird Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BIRD.JK"
+  },
+  {
+    "symbol": "BISI",
+    "company_name": "BISI International Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BISI.JK"
+  },
+  {
+    "symbol": "BJBR",
+    "company_name": "PT Bank Pembangunan Daerah Jawa Barat dan Banten Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BJBR.JK"
+  },
+  {
+    "symbol": "BJTM",
+    "company_name": "PT Bank Pembangunan Daerah Jawa Timur Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BJTM.JK"
+  },
+  {
+    "symbol": "BKSL",
+    "company_name": "Sentul City Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BKSL.JK"
+  },
+  {
+    "symbol": "BKSW",
+    "company_name": "Bank QNB Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BKSW.JK"
+  },
+  {
+    "symbol": "BLES",
+    "company_name": "Superior Prima Sukses Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BLES.JK"
+  },
+  {
+    "symbol": "BLOG",
+    "company_name": "Trimitra Trans Persada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BLOG.JK"
+  },
+  {
+    "symbol": "BLTA",
+    "company_name": "Berlian Laju Tanker Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BLTA.JK"
+  },
+  {
+    "symbol": "BLTZ",
+    "company_name": "Graha Layar Prima Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BLTZ.JK"
+  },
+  {
+    "symbol": "BLUE",
+    "company_name": "Berkah Prima Perkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BLUE.JK"
+  },
+  {
+    "symbol": "BMAS",
+    "company_name": "Bank Kasikorn Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BMAS.JK"
+  },
+  {
+    "symbol": "BMBL",
+    "company_name": "Lavender Bina Cendikia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BMBL.JK"
+  },
+  {
+    "symbol": "BMHS",
+    "company_name": "Bundamedik Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BMHS.JK"
+  },
+  {
+    "symbol": "BMRI",
+    "company_name": "PT Bank Mandiri Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BMRI.JK"
+  },
+  {
+    "symbol": "BMSR",
+    "company_name": "Bintang Mitra Semestaraya Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BMSR.JK"
+  },
+  {
+    "symbol": "BMTR",
+    "company_name": "Global Mediacom Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BMTR.JK"
+  },
+  {
+    "symbol": "BNBA",
+    "company_name": "Bank Bumi Arta Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BNBA.JK"
+  },
+  {
+    "symbol": "BNBR",
+    "company_name": "PT Bakrie & Brothers Tbk",
+    "sector": "Industrials",
+    "subsector": "Diversified Industrials",
+    "yahoo_symbol": "BNBR.JK"
+  },
+  {
+    "symbol": "BNGA",
+    "company_name": "PT Bank CIMB Niaga Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BNGA.JK"
+  },
+  {
+    "symbol": "BNII",
+    "company_name": "PT Bank Maybank Indonesia Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BNII.JK"
+  },
+  {
+    "symbol": "BNLI",
+    "company_name": "Bank Permata Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BNLI.JK"
+  },
+  {
+    "symbol": "BOAT",
+    "company_name": "Newport Marine Services Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BOAT.JK"
+  },
+  {
+    "symbol": "BOBA",
+    "company_name": "Formosa Ingredient Factory Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BOBA.JK"
+  },
+  {
+    "symbol": "BOGA",
+    "company_name": "Apollo Global Interactive Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BOGA.JK"
+  },
+  {
+    "symbol": "BOLA",
+    "company_name": "Bali Bintang Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BOLA.JK"
+  },
+  {
+    "symbol": "BOLT",
+    "company_name": "Garuda Metalindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BOLT.JK"
+  },
+  {
+    "symbol": "BPFI",
+    "company_name": "Woori Finance Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BPFI.JK"
+  },
+  {
+    "symbol": "BPII",
+    "company_name": "Batavia Prosperindo Internasion",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BPII.JK"
+  },
+  {
+    "symbol": "BPTR",
+    "company_name": "Batavia Prosperindo Trans Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BPTR.JK"
+  },
+  {
+    "symbol": "BRAM",
+    "company_name": "Indo Kordsa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BRAM.JK"
+  },
+  {
+    "symbol": "BREN",
+    "company_name": "PT Barito Renewables Energy Tbk",
+    "sector": "Energy",
+    "subsector": "Renewable Energy",
+    "yahoo_symbol": "BREN.JK"
+  },
+  {
+    "symbol": "BRIS",
+    "company_name": "PT Bank Syariah Indonesia Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BRIS.JK"
+  },
+  {
+    "symbol": "BRMS",
+    "company_name": "Bumi Resources Minerals Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BRMS.JK"
+  },
+  {
+    "symbol": "BRNA",
+    "company_name": "Berlina Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BRNA.JK"
+  },
+  {
+    "symbol": "BRPT",
+    "company_name": "PT Barito Pacific Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Petrochemical",
+    "yahoo_symbol": "BRPT.JK"
+  },
+  {
+    "symbol": "BRRC",
+    "company_name": "Raja Roti Cemerlang Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BRRC.JK"
+  },
+  {
+    "symbol": "BSBK",
+    "company_name": "Wulandari Bangun Laksana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BSBK.JK"
+  },
+  {
+    "symbol": "BSDE",
+    "company_name": "PT Bumi Serpong Damai Tbk",
+    "sector": "Real Estate",
+    "subsector": "Property",
+    "yahoo_symbol": "BSDE.JK"
+  },
+  {
+    "symbol": "BSIM",
+    "company_name": "Bank Sinarmas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BSIM.JK"
+  },
+  {
+    "symbol": "BSML",
+    "company_name": "Bintang Samudera Mandiri Lines ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BSML.JK"
+  },
+  {
+    "symbol": "BSSR",
+    "company_name": "Baramulti Suksessarana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BSSR.JK"
+  },
+  {
+    "symbol": "BSWD",
+    "company_name": "Bank Of India Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BSWD.JK"
+  },
+  {
+    "symbol": "BTEK",
+    "company_name": "Bumi Teknokultura Unggul Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BTEK.JK"
+  },
+  {
+    "symbol": "BTON",
+    "company_name": "Betonjaya Manunggal Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BTON.JK"
+  },
+  {
+    "symbol": "BTPN",
+    "company_name": "PT Bank BTPN Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "BTPN.JK"
+  },
+  {
+    "symbol": "BTPS",
+    "company_name": "Bank BTPN Syariah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BTPS.JK"
+  },
+  {
+    "symbol": "BUAH",
+    "company_name": "Segar Kumala Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BUAH.JK"
+  },
+  {
+    "symbol": "BUDI",
+    "company_name": "Budi Starch & Sweetener Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BUDI.JK"
+  },
+  {
+    "symbol": "BUKA",
+    "company_name": "PT Bukalapak.com Tbk",
+    "sector": "Technology",
+    "subsector": "Internet Platform",
+    "yahoo_symbol": "BUKA.JK"
+  },
+  {
+    "symbol": "BUKK",
+    "company_name": "Bukaka Teknik Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BUKK.JK"
+  },
+  {
+    "symbol": "BULL",
+    "company_name": "Buana Lintas Lautan Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BULL.JK"
+  },
+  {
+    "symbol": "BUMI",
+    "company_name": "PT Bumi Resources Tbk",
+    "sector": "Energy",
+    "subsector": "Coal Mining",
+    "yahoo_symbol": "BUMI.JK"
+  },
+  {
+    "symbol": "BUVA",
+    "company_name": "Bukit Uluwatu Villa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BUVA.JK"
+  },
+  {
+    "symbol": "BVIC",
+    "company_name": "Bank Victoria International Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BVIC.JK"
+  },
+  {
+    "symbol": "BWPT",
+    "company_name": "Eagle High Plantations Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "BWPT.JK"
+  },
+  {
+    "symbol": "BYAN",
+    "company_name": "PT Bayan Resources Tbk",
+    "sector": "Energy",
+    "subsector": "Coal Mining",
+    "yahoo_symbol": "BYAN.JK"
+  },
+  {
+    "symbol": "CAKK",
+    "company_name": "Cahayaputra Asa Keramik Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CAKK.JK"
+  },
+  {
+    "symbol": "CAMP",
+    "company_name": "Campina Ice Cream Industry Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CAMP.JK"
+  },
+  {
+    "symbol": "CARE",
+    "company_name": "Metro Healthcare Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CARE.JK"
+  },
+  {
+    "symbol": "CARS",
+    "company_name": "Industri dan Perdagangan Bintra",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CARS.JK"
+  },
+  {
+    "symbol": "CASA",
+    "company_name": "Capital Financial Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CASA.JK"
+  },
+  {
+    "symbol": "CASH",
+    "company_name": "Cashlez Worldwide Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CASH.JK"
+  },
+  {
+    "symbol": "CASS",
+    "company_name": "Cahaya Aero Services Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CASS.JK"
+  },
+  {
+    "symbol": "CBDK",
+    "company_name": "Bangun Kosambi Sukses Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CBDK.JK"
+  },
+  {
+    "symbol": "CBPE",
+    "company_name": "Citra Buana Prasida Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CBPE.JK"
+  },
+  {
+    "symbol": "CBRE",
+    "company_name": "Cakra Buana Resources Energi Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CBRE.JK"
+  },
+  {
+    "symbol": "CBUT",
+    "company_name": "Citra Borneo Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CBUT.JK"
+  },
+  {
+    "symbol": "CCSI",
+    "company_name": "Communication Cable Systems Ind",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CCSI.JK"
+  },
+  {
+    "symbol": "CDIA",
+    "company_name": "Chandra Daya Investasi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CDIA.JK"
+  },
+  {
+    "symbol": "CEKA",
+    "company_name": "Wilmar Cahaya Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CEKA.JK"
+  },
+  {
+    "symbol": "CENT",
+    "company_name": "Centratama Telekomunikasi Indon",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CENT.JK"
+  },
+  {
+    "symbol": "CFIN",
+    "company_name": "Clipan Finance Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CFIN.JK"
+  },
+  {
+    "symbol": "CGAS",
+    "company_name": "Citra Nusantara Gemilang Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CGAS.JK"
+  },
+  {
+    "symbol": "CHEK",
+    "company_name": "Diastika Biotekindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CHEK.JK"
+  },
+  {
+    "symbol": "CHEM",
+    "company_name": "Chemstar Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CHEM.JK"
+  },
+  {
+    "symbol": "CHIP",
+    "company_name": "Pelita Teknologi Global Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CHIP.JK"
+  },
+  {
+    "symbol": "CINT",
+    "company_name": "Chitose Internasional Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CINT.JK"
+  },
+  {
+    "symbol": "CITA",
+    "company_name": "Cita Mineral Investindo Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CITA.JK"
+  },
+  {
+    "symbol": "CITY",
+    "company_name": "Natura City Developments Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CITY.JK"
+  },
+  {
+    "symbol": "CLAY",
+    "company_name": "Citra Putra Realty Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CLAY.JK"
+  },
+  {
+    "symbol": "CLEO",
+    "company_name": "Sariguna Primatirta Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CLEO.JK"
+  },
+  {
+    "symbol": "CLPI",
+    "company_name": "Colorpak Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CLPI.JK"
+  },
+  {
+    "symbol": "CMNP",
+    "company_name": "Citra Marga Nusaphala Persada T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CMNP.JK"
+  },
+  {
+    "symbol": "CMNT",
+    "company_name": "Cemindo Gemilang Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CMNT.JK"
+  },
+  {
+    "symbol": "CMRY",
+    "company_name": "Cisarua Mountain Dairy Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CMRY.JK"
+  },
+  {
+    "symbol": "CNMA",
+    "company_name": "Nusantara Sejahtera Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CNMA.JK"
+  },
+  {
+    "symbol": "COAL",
+    "company_name": "Black Diamond Resources Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "COAL.JK"
+  },
+  {
+    "symbol": "COCO",
+    "company_name": "Wahana Interfood Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "COCO.JK"
+  },
+  {
+    "symbol": "COIN",
+    "company_name": "Indokripto Koin Semesta Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "COIN.JK"
+  },
+  {
+    "symbol": "CPIN",
+    "company_name": "PT Charoen Pokphand Indonesia Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Poultry",
+    "yahoo_symbol": "CPIN.JK"
+  },
+  {
+    "symbol": "CPRO",
+    "company_name": "Central Proteina Prima Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CPRO.JK"
+  },
+  {
+    "symbol": "CRSN",
+    "company_name": "Carsurin Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CRSN.JK"
+  },
+  {
+    "symbol": "CSAP",
+    "company_name": "Catur Sentosa Adiprana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CSAP.JK"
+  },
+  {
+    "symbol": "CSIS",
+    "company_name": "Cahayasakti Investindo Sukses T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CSIS.JK"
+  },
+  {
+    "symbol": "CSMI",
+    "company_name": "Cipta Selera Murni Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CSMI.JK"
+  },
+  {
+    "symbol": "CSRA",
+    "company_name": "Cisadane Sawit Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CSRA.JK"
+  },
+  {
+    "symbol": "CTBN",
+    "company_name": "Citra Tubindo Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CTBN.JK"
+  },
+  {
+    "symbol": "CTRA",
+    "company_name": "PT Ciputra Development Tbk",
+    "sector": "Real Estate",
+    "subsector": "Property",
+    "yahoo_symbol": "CTRA.JK"
+  },
+  {
+    "symbol": "CTTH",
+    "company_name": "Citatah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CTTH.JK"
+  },
+  {
+    "symbol": "CUAN",
+    "company_name": "Petrindo Jaya Kreasi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CUAN.JK"
+  },
+  {
+    "symbol": "CYBR",
+    "company_name": "ITSEC Asia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "CYBR.JK"
+  },
+  {
+    "symbol": "DAAZ",
+    "company_name": "Daaz Bara Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DAAZ.JK"
+  },
+  {
+    "symbol": "DADA",
+    "company_name": "Diamond Citra Propertindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DADA.JK"
+  },
+  {
+    "symbol": "DART",
+    "company_name": "Duta Anggada Realty Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DART.JK"
+  },
+  {
+    "symbol": "DATA",
+    "company_name": "Remala Abadi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DATA.JK"
+  },
+  {
+    "symbol": "DAYA",
+    "company_name": "Duta Intidaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DAYA.JK"
+  },
+  {
+    "symbol": "DCII",
+    "company_name": "DCI Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DCII.JK"
+  },
+  {
+    "symbol": "DEFI",
+    "company_name": "Danasupra Erapacific Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DEFI.JK"
+  },
+  {
+    "symbol": "DEPO",
+    "company_name": "Caturkarda Depo Bangunan Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DEPO.JK"
+  },
+  {
+    "symbol": "DEWA",
+    "company_name": "Darma Henwa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DEWA.JK"
+  },
+  {
+    "symbol": "DEWI",
+    "company_name": "Dewi Shri Farmindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DEWI.JK"
+  },
+  {
+    "symbol": "DFAM",
+    "company_name": "Dafam Property Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DFAM.JK"
+  },
+  {
+    "symbol": "DGIK",
+    "company_name": "Nusa Konstruksi Enjiniring Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DGIK.JK"
+  },
+  {
+    "symbol": "DGNS",
+    "company_name": "Diagnos Laboratorium Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DGNS.JK"
+  },
+  {
+    "symbol": "DGWG",
+    "company_name": "Delta Giri Wacana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DGWG.JK"
+  },
+  {
+    "symbol": "DILD",
+    "company_name": "Intiland Development Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DILD.JK"
+  },
+  {
+    "symbol": "DIVA",
+    "company_name": "Distribusi Voucher Nusantara Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DIVA.JK"
+  },
+  {
+    "symbol": "DKFT",
+    "company_name": "Central Omega Resources Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DKFT.JK"
+  },
+  {
+    "symbol": "DKHH",
+    "company_name": "Cipta Sarana Medika Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DKHH.JK"
+  },
+  {
+    "symbol": "DLTA",
+    "company_name": "Delta Djakarta Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DLTA.JK"
+  },
+  {
+    "symbol": "DMAS",
+    "company_name": "Puradelta Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DMAS.JK"
+  },
+  {
+    "symbol": "DMMX",
+    "company_name": "Digital Mediatama Maxima Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DMMX.JK"
+  },
+  {
+    "symbol": "DMND",
+    "company_name": "Diamond Food Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DMND.JK"
+  },
+  {
+    "symbol": "DNAR",
+    "company_name": "Bank Oke Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DNAR.JK"
+  },
+  {
+    "symbol": "DNET",
+    "company_name": "Indoritel Makmur Internasional ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DNET.JK"
+  },
+  {
+    "symbol": "DOID",
+    "company_name": "BUMA Internasional Grup Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DOID.JK"
+  },
+  {
+    "symbol": "DOOH",
+    "company_name": "Era Media Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DOOH.JK"
+  },
+  {
+    "symbol": "DOSS",
+    "company_name": "Global Sukses Digital Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DOSS.JK"
+  },
+  {
+    "symbol": "DPUM",
+    "company_name": "Dua Putra Utama Makmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DPUM.JK"
+  },
+  {
+    "symbol": "DRMA",
+    "company_name": "Dharma Polimetal Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DRMA.JK"
+  },
+  {
+    "symbol": "DSFI",
+    "company_name": "Dharma Samudera Fishing Industr",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DSFI.JK"
+  },
+  {
+    "symbol": "DSNG",
+    "company_name": "PT Dharma Satya Nusantara Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Plantation",
+    "yahoo_symbol": "DSNG.JK"
+  },
+  {
+    "symbol": "DSSA",
+    "company_name": "Dian Swastatika Sentosa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DSSA.JK"
+  },
+  {
+    "symbol": "DUTI",
+    "company_name": "Duta Pertiwi Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DUTI.JK"
+  },
+  {
+    "symbol": "DVLA",
+    "company_name": "Darya-Varia Laboratoria Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DVLA.JK"
+  },
+  {
+    "symbol": "DWGL",
+    "company_name": "Dwi Guna Laksana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DWGL.JK"
+  },
+  {
+    "symbol": "DYAN",
+    "company_name": "Dyandra Media International Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "DYAN.JK"
+  },
+  {
+    "symbol": "EAST",
+    "company_name": "Eastparc Hotel Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EAST.JK"
+  },
+  {
+    "symbol": "ECII",
+    "company_name": "Electronic City Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ECII.JK"
+  },
+  {
+    "symbol": "EKAD",
+    "company_name": "Ekadharma International Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EKAD.JK"
+  },
+  {
+    "symbol": "ELIT",
+    "company_name": "Data Sinergitama Jaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ELIT.JK"
+  },
+  {
+    "symbol": "ELPI",
+    "company_name": "Pelayaran Nasional Ekalya Purna",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ELPI.JK"
+  },
+  {
+    "symbol": "ELSA",
+    "company_name": "PT Elnusa Tbk",
+    "sector": "Energy",
+    "subsector": "Oil & Gas Services",
+    "yahoo_symbol": "ELSA.JK"
+  },
+  {
+    "symbol": "ELTY",
+    "company_name": "Bakrieland Development Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ELTY.JK"
+  },
+  {
+    "symbol": "EMAS",
+    "company_name": "Merdeka Gold Resources Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EMAS.JK"
+  },
+  {
+    "symbol": "EMDE",
+    "company_name": "Megapolitan Developments Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EMDE.JK"
+  },
+  {
+    "symbol": "EMMI",
+    "company_name": "Esa Medika Mandiri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EMMI.JK"
+  },
+  {
+    "symbol": "EMTK",
+    "company_name": "PT Elang Mahkota Teknologi Tbk",
+    "sector": "Technology",
+    "subsector": "Digital Media",
+    "yahoo_symbol": "EMTK.JK"
+  },
+  {
+    "symbol": "ENAK",
+    "company_name": "Champ Resto Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ENAK.JK"
+  },
+  {
+    "symbol": "ENRG",
+    "company_name": "Energi Mega Persada Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ENRG.JK"
+  },
+  {
+    "symbol": "ENZO",
+    "company_name": "Morenzo Abadi Perkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ENZO.JK"
+  },
+  {
+    "symbol": "EPAC",
+    "company_name": "Megalestari Epack Sentosaraya T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EPAC.JK"
+  },
+  {
+    "symbol": "EPMT",
+    "company_name": "Enseval Putera Megatrading Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EPMT.JK"
+  },
+  {
+    "symbol": "ERAA",
+    "company_name": "PT Erajaya Swasembada Tbk",
+    "sector": "Consumer Cyclical",
+    "subsector": "Retail",
+    "yahoo_symbol": "ERAA.JK"
+  },
+  {
+    "symbol": "ERAL",
+    "company_name": "Sinar Eka Selaras Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ERAL.JK"
+  },
+  {
+    "symbol": "ERTX",
+    "company_name": "Eratex Djaja Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ERTX.JK"
+  },
+  {
+    "symbol": "ESIP",
+    "company_name": "Sinergi Inti Plastindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ESIP.JK"
+  },
+  {
+    "symbol": "ESSA",
+    "company_name": "PT Surya Esa Perkasa Tbk",
+    "sector": "Energy",
+    "subsector": "Gas",
+    "yahoo_symbol": "ESSA.JK"
+  },
+  {
+    "symbol": "ESTA",
+    "company_name": "Esta Multi Usaha Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ESTA.JK"
+  },
+  {
+    "symbol": "ESTI",
+    "company_name": "Ever Shine Tex Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ESTI.JK"
+  },
+  {
+    "symbol": "EURO",
+    "company_name": "Estee Gold Feet Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "EURO.JK"
+  },
+  {
+    "symbol": "EXCL",
+    "company_name": "PT XL Axiata Tbk",
+    "sector": "Telecommunications",
+    "subsector": "Telecom",
+    "yahoo_symbol": "EXCL.JK"
+  },
+  {
+    "symbol": "FAPA",
+    "company_name": "FAP Agri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FAPA.JK"
+  },
+  {
+    "symbol": "FAST",
+    "company_name": "Fast Food Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FAST.JK"
+  },
+  {
+    "symbol": "FILM",
+    "company_name": "PT MD Pictures Tbk",
+    "sector": "Communication Services",
+    "subsector": "Media",
+    "yahoo_symbol": "FILM.JK"
+  },
+  {
+    "symbol": "FIRE",
+    "company_name": "Alfa Energi Investama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FIRE.JK"
+  },
+  {
+    "symbol": "FISH",
+    "company_name": "FKS Multi Agro Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FISH.JK"
+  },
+  {
+    "symbol": "FITT",
+    "company_name": "Hotel Fitra International Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FITT.JK"
+  },
+  {
+    "symbol": "FLMC",
+    "company_name": "Falmaco Nonwoven Industri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FLMC.JK"
+  },
+  {
+    "symbol": "FMII",
+    "company_name": "Fortune Mate Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FMII.JK"
+  },
+  {
+    "symbol": "FOLK",
+    "company_name": "Multi Garam Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FOLK.JK"
+  },
+  {
+    "symbol": "FORE",
+    "company_name": "Fore Kopi Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FORE.JK"
+  },
+  {
+    "symbol": "FORU",
+    "company_name": "Fortune Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FORU.JK"
+  },
+  {
+    "symbol": "FPNI",
+    "company_name": "Lotte Chemical Titan Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FPNI.JK"
+  },
+  {
+    "symbol": "FUJI",
+    "company_name": "Fuji Finance Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FUJI.JK"
+  },
+  {
+    "symbol": "FUTR",
+    "company_name": "Futura Energi Global Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FUTR.JK"
+  },
+  {
+    "symbol": "FWCT",
+    "company_name": "Wijaya Cahaya Timber Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "FWCT.JK"
+  },
+  {
+    "symbol": "GDST",
+    "company_name": "Gunawan Dianjaya Steel Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GDST.JK"
+  },
+  {
+    "symbol": "GDYR",
+    "company_name": "Goodyear Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GDYR.JK"
+  },
+  {
+    "symbol": "GEMA",
+    "company_name": "Gema Grahasarana Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GEMA.JK"
+  },
+  {
+    "symbol": "GEMS",
+    "company_name": "Golden Energy Mines Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GEMS.JK"
+  },
+  {
+    "symbol": "GGRM",
+    "company_name": "PT Gudang Garam Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Tobacco",
+    "yahoo_symbol": "GGRM.JK"
+  },
+  {
+    "symbol": "GGRP",
+    "company_name": "Gunung Raja Paksi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GGRP.JK"
+  },
+  {
+    "symbol": "GHON",
+    "company_name": "Gihon Telekomunikasi Indonesia ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GHON.JK"
+  },
+  {
+    "symbol": "GIAA",
+    "company_name": "Garuda Indonesia (Persero) Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GIAA.JK"
+  },
+  {
+    "symbol": "GJTL",
+    "company_name": "Gajah Tunggal Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GJTL.JK"
+  },
+  {
+    "symbol": "GLVA",
+    "company_name": "Galva Technologies Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GLVA.JK"
+  },
+  {
+    "symbol": "GMFI",
+    "company_name": "Garuda Maintenance Facility Aer",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GMFI.JK"
+  },
+  {
+    "symbol": "GMTD",
+    "company_name": "Gowa Makassar Tourism Developme",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GMTD.JK"
+  },
+  {
+    "symbol": "GOLD",
+    "company_name": "Visi Telekomunikasi Infrastrukt",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GOLD.JK"
+  },
+  {
+    "symbol": "GOLF",
+    "company_name": "Intra Golflink Resorts Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GOLF.JK"
+  },
+  {
+    "symbol": "GOOD",
+    "company_name": "Garudafood Putra Putri Jaya Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GOOD.JK"
+  },
+  {
+    "symbol": "GOTO",
+    "company_name": "PT GoTo Gojek Tokopedia Tbk",
+    "sector": "Technology",
+    "subsector": "Internet Platform",
+    "yahoo_symbol": "GOTO.JK"
+  },
+  {
+    "symbol": "GPRA",
+    "company_name": "Perdana Gapuraprima Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GPRA.JK"
+  },
+  {
+    "symbol": "GPSO",
+    "company_name": "Geoprima Solusi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GPSO.JK"
+  },
+  {
+    "symbol": "GRIA",
+    "company_name": "Ingria Pratama Capitalindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GRIA.JK"
+  },
+  {
+    "symbol": "GRPH",
+    "company_name": "Griptha Putra Persada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GRPH.JK"
+  },
+  {
+    "symbol": "GRPM",
+    "company_name": "Graha Prima Mentari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GRPM.JK"
+  },
+  {
+    "symbol": "GSMF",
+    "company_name": "Equity Development Investment T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GSMF.JK"
+  },
+  {
+    "symbol": "GTRA",
+    "company_name": "Grahaprima Suksesmandiri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GTRA.JK"
+  },
+  {
+    "symbol": "GTSI",
+    "company_name": "GTS Internasional Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GTSI.JK"
+  },
+  {
+    "symbol": "GULA",
+    "company_name": "Aman Agrindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GULA.JK"
+  },
+  {
+    "symbol": "GUNA",
+    "company_name": "Gunanusa Eramandiri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GUNA.JK"
+  },
+  {
+    "symbol": "GWSA",
+    "company_name": "Greenwood Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GWSA.JK"
+  },
+  {
+    "symbol": "GZCO",
+    "company_name": "Gozco Plantations Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "GZCO.JK"
+  },
+  {
+    "symbol": "HADE",
+    "company_name": "Himalaya Energi Perkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HADE.JK"
+  },
+  {
+    "symbol": "HAIS",
+    "company_name": "Hasnur Internasional Shipping T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HAIS.JK"
+  },
+  {
+    "symbol": "HAJJ",
+    "company_name": "Arsy Buana Travelindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HAJJ.JK"
+  },
+  {
+    "symbol": "HALO",
+    "company_name": "Haloni Jane Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HALO.JK"
+  },
+  {
+    "symbol": "HATM",
+    "company_name": "Habco Trans Maritima Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HATM.JK"
+  },
+  {
+    "symbol": "HBAT",
+    "company_name": "Minahasa Membangun Hebat Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HBAT.JK"
+  },
+  {
+    "symbol": "HDFA",
+    "company_name": "Radana Bhaskara Finance Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HDFA.JK"
+  },
+  {
+    "symbol": "HDIT",
+    "company_name": "Hensel Davest Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HDIT.JK"
+  },
+  {
+    "symbol": "HEAL",
+    "company_name": "Medikaloka Hermina Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HEAL.JK"
+  },
+  {
+    "symbol": "HELI",
+    "company_name": "Jaya Trishindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HELI.JK"
+  },
+  {
+    "symbol": "HERO",
+    "company_name": "DFI Retail Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HERO.JK"
+  },
+  {
+    "symbol": "HEXA",
+    "company_name": "Hexindo Adiperkasa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HEXA.JK"
+  },
+  {
+    "symbol": "HGII",
+    "company_name": "Hero Global Investment Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HGII.JK"
+  },
+  {
+    "symbol": "HMSP",
+    "company_name": "PT HM Sampoerna Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Tobacco",
+    "yahoo_symbol": "HMSP.JK"
+  },
+  {
+    "symbol": "HOKI",
+    "company_name": "Buyung Poetra Sembada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HOKI.JK"
+  },
+  {
+    "symbol": "HOMI",
+    "company_name": "Grand House Mulia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HOMI.JK"
+  },
+  {
+    "symbol": "HOPE",
+    "company_name": "Harapan Duta Pertiwi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HOPE.JK"
+  },
+  {
+    "symbol": "HRME",
+    "company_name": "Menteng Heritage Realty Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HRME.JK"
+  },
+  {
+    "symbol": "HRTA",
+    "company_name": "Hartadinata Abadi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HRTA.JK"
+  },
+  {
+    "symbol": "HRUM",
+    "company_name": "PT Harum Energy Tbk",
+    "sector": "Energy",
+    "subsector": "Coal Mining",
+    "yahoo_symbol": "HRUM.JK"
+  },
+  {
+    "symbol": "HUMI",
+    "company_name": "Humpuss Maritim Internasional T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HUMI.JK"
+  },
+  {
+    "symbol": "HYGN",
+    "company_name": "Ecocare Indo Pasifik Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "HYGN.JK"
+  },
+  {
+    "symbol": "IATA",
+    "company_name": "Karya Pacific Energy Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IATA.JK"
+  },
+  {
+    "symbol": "IBOS",
+    "company_name": "Indo Boga Sukses Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IBOS.JK"
+  },
+  {
+    "symbol": "ICBP",
+    "company_name": "PT Indofood CBP Sukses Makmur Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Food",
+    "yahoo_symbol": "ICBP.JK"
+  },
+  {
+    "symbol": "ICON",
+    "company_name": "Island Concepts Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ICON.JK"
+  },
+  {
+    "symbol": "IDEA",
+    "company_name": "Idea Indonesia Akademi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IDEA.JK"
+  },
+  {
+    "symbol": "IDPR",
+    "company_name": "Indonesia Pondasi Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IDPR.JK"
+  },
+  {
+    "symbol": "IFII",
+    "company_name": "Indonesia Fibreboard Industry T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IFII.JK"
+  },
+  {
+    "symbol": "IFSH",
+    "company_name": "Ifishdeco Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IFSH.JK"
+  },
+  {
+    "symbol": "IGAR",
+    "company_name": "Champion Pacific Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IGAR.JK"
+  },
+  {
+    "symbol": "IHSG",
+    "company_name": "Indeks Harga Saham Gabungan",
+    "sector": "Index",
+    "subsector": "Market Index",
+    "yahoo_symbol": "^JKSE"
+  },
+  {
+    "symbol": "IKAI",
+    "company_name": "Intikeramik Alamasri Industri T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IKAI.JK"
+  },
+  {
+    "symbol": "IKAN",
+    "company_name": "Era Mandiri Cemerlang Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IKAN.JK"
+  },
+  {
+    "symbol": "IKBI",
+    "company_name": "Sumi Indo Kabel Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IKBI.JK"
+  },
+  {
+    "symbol": "IKPM",
+    "company_name": "Ikapharmindo Putramas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IKPM.JK"
+  },
+  {
+    "symbol": "IMAS",
+    "company_name": "Indomobil Sukses Internasional ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IMAS.JK"
+  },
+  {
+    "symbol": "IMJS",
+    "company_name": "Indomobil Multi Jasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IMJS.JK"
+  },
+  {
+    "symbol": "IMPC",
+    "company_name": "Impack Pratama Industri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IMPC.JK"
+  },
+  {
+    "symbol": "INAI",
+    "company_name": "Indal Aluminium Industry Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INAI.JK"
+  },
+  {
+    "symbol": "INCI",
+    "company_name": "Intanwijaya Internasional Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INCI.JK"
+  },
+  {
+    "symbol": "INCO",
+    "company_name": "PT Vale Indonesia Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Nickel Mining",
+    "yahoo_symbol": "INCO.JK"
+  },
+  {
+    "symbol": "INDF",
+    "company_name": "PT Indofood Sukses Makmur Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Food",
+    "yahoo_symbol": "INDF.JK"
+  },
+  {
+    "symbol": "INDO",
+    "company_name": "Royalindo Investa Wijaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INDO.JK"
+  },
+  {
+    "symbol": "INDR",
+    "company_name": "Indo-Rama Synthetics Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INDR.JK"
+  },
+  {
+    "symbol": "INDS",
+    "company_name": "Indospring Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INDS.JK"
+  },
+  {
+    "symbol": "INDY",
+    "company_name": "PT Indika Energy Tbk",
+    "sector": "Energy",
+    "subsector": "Coal Mining",
+    "yahoo_symbol": "INDY.JK"
+  },
+  {
+    "symbol": "INET",
+    "company_name": "Sinergi Inti Andalan Prima Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INET.JK"
+  },
+  {
+    "symbol": "INKP",
+    "company_name": "PT Indah Kiat Pulp & Paper Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Pulp & Paper",
+    "yahoo_symbol": "INKP.JK"
+  },
+  {
+    "symbol": "INOV",
+    "company_name": "Inocycle Technology Group Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INOV.JK"
+  },
+  {
+    "symbol": "INPC",
+    "company_name": "Bank Artha Graha Internasional ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INPC.JK"
+  },
+  {
+    "symbol": "INPP",
+    "company_name": "Indonesian Paradise Property Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INPP.JK"
+  },
+  {
+    "symbol": "INPS",
+    "company_name": "Indah Prakasa Sentosa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INPS.JK"
+  },
+  {
+    "symbol": "INTD",
+    "company_name": "Inter Delta Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "INTD.JK"
+  },
+  {
+    "symbol": "INTP",
+    "company_name": "PT Indocement Tunggal Prakarsa Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Cement",
+    "yahoo_symbol": "INTP.JK"
+  },
+  {
+    "symbol": "IOTF",
+    "company_name": "Sumber Sinergi Makmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IOTF.JK"
+  },
+  {
+    "symbol": "IPAC",
+    "company_name": "Era Graharealty Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IPAC.JK"
+  },
+  {
+    "symbol": "IPCC",
+    "company_name": "Indonesia Kendaraan Terminal Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IPCC.JK"
+  },
+  {
+    "symbol": "IPCM",
+    "company_name": "Jasa Armada Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IPCM.JK"
+  },
+  {
+    "symbol": "IPOL",
+    "company_name": "Indopoly Swakarsa Industry Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IPOL.JK"
+  },
+  {
+    "symbol": "IPTV",
+    "company_name": "MNC Vision Networks Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IPTV.JK"
+  },
+  {
+    "symbol": "IRRA",
+    "company_name": "Itama Ranoraya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IRRA.JK"
+  },
+  {
+    "symbol": "IRSX",
+    "company_name": "Folago Global Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "IRSX.JK"
+  },
+  {
+    "symbol": "ISAP",
+    "company_name": "Isra Presisi Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ISAP.JK"
+  },
+  {
+    "symbol": "ISAT",
+    "company_name": "PT Indosat Ooredoo Hutchison Tbk",
+    "sector": "Telecommunications",
+    "subsector": "Telecom",
+    "yahoo_symbol": "ISAT.JK"
+  },
+  {
+    "symbol": "ISEA",
+    "company_name": "Indo American Seafoods Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ISEA.JK"
+  },
+  {
+    "symbol": "ISSP",
+    "company_name": "Steel Pipe Industry of Indonesi",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ISSP.JK"
+  },
+  {
+    "symbol": "ITIC",
+    "company_name": "Indonesian Tobacco Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ITIC.JK"
+  },
+  {
+    "symbol": "ITMA",
+    "company_name": "Sumber Energi Andalan Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ITMA.JK"
+  },
+  {
+    "symbol": "ITMG",
+    "company_name": "PT Indo Tambangraya Megah Tbk",
+    "sector": "Energy",
+    "subsector": "Coal Mining",
+    "yahoo_symbol": "ITMG.JK"
+  },
+  {
+    "symbol": "JARR",
+    "company_name": "Jhonlin Agro Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JARR.JK"
+  },
+  {
+    "symbol": "JAST",
+    "company_name": "Jasnita Telekomindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JAST.JK"
+  },
+  {
+    "symbol": "JATI",
+    "company_name": "Informasi Teknologi Indonesia T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JATI.JK"
+  },
+  {
+    "symbol": "JAWA",
+    "company_name": "Jaya Agra Wattie Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JAWA.JK"
+  },
+  {
+    "symbol": "JAYA",
+    "company_name": "Armada Berjaya Trans Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JAYA.JK"
+  },
+  {
+    "symbol": "JECC",
+    "company_name": "Jembo Cable Company Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JECC.JK"
+  },
+  {
+    "symbol": "JECX",
+    "company_name": "Nitrasanata Dharma Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JECX.JK"
+  },
+  {
+    "symbol": "JELI",
+    "company_name": "Niramas Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JELI.JK"
+  },
+  {
+    "symbol": "JGLE",
+    "company_name": "Graha Andrasentra Propertindo T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JGLE.JK"
+  },
+  {
+    "symbol": "JIHD",
+    "company_name": "Jakarta International  Hotels &",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JIHD.JK"
+  },
+  {
+    "symbol": "JKON",
+    "company_name": "Jaya Konstruksi Manggala Pratam",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JKON.JK"
+  },
+  {
+    "symbol": "JPFA",
+    "company_name": "PT Japfa Comfeed Indonesia Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Poultry",
+    "yahoo_symbol": "JPFA.JK"
+  },
+  {
+    "symbol": "JRPT",
+    "company_name": "Jaya Real Property Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JRPT.JK"
+  },
+  {
+    "symbol": "JSMR",
+    "company_name": "PT Jasa Marga (Persero) Tbk",
+    "sector": "Industrials",
+    "subsector": "Toll Roads",
+    "yahoo_symbol": "JSMR.JK"
+  },
+  {
+    "symbol": "JSPT",
+    "company_name": "Jakarta Setiabudi Internasional",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JSPT.JK"
+  },
+  {
+    "symbol": "JTPE",
+    "company_name": "Jasuindo Tiga Perkasa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "JTPE.JK"
+  },
+  {
+    "symbol": "KAEF",
+    "company_name": "Kimia Farma (Persero) Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KAEF.JK"
+  },
+  {
+    "symbol": "KAQI",
+    "company_name": "Jantra Grupo Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KAQI.JK"
+  },
+  {
+    "symbol": "KBAG",
+    "company_name": "Karya Bersama Anugerah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KBAG.JK"
+  },
+  {
+    "symbol": "KBLI",
+    "company_name": "KMI Wire & Cable Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KBLI.JK"
+  },
+  {
+    "symbol": "KBLM",
+    "company_name": "Kabelindo Murni Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KBLM.JK"
+  },
+  {
+    "symbol": "KBLV",
+    "company_name": "First Media Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KBLV.JK"
+  },
+  {
+    "symbol": "KDSI",
+    "company_name": "Kedawung Setia Industrial Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KDSI.JK"
+  },
+  {
+    "symbol": "KDTN",
+    "company_name": "Puri Sentul Permai Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KDTN.JK"
+  },
+  {
+    "symbol": "KEEN",
+    "company_name": "Kencana Energi Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KEEN.JK"
+  },
+  {
+    "symbol": "KEJU",
+    "company_name": "Mulia Boga Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KEJU.JK"
+  },
+  {
+    "symbol": "KETR",
+    "company_name": "Ketrosden Triasmitra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KETR.JK"
+  },
+  {
+    "symbol": "KICI",
+    "company_name": "Kedaung Indah Can Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KICI.JK"
+  },
+  {
+    "symbol": "KIJA",
+    "company_name": "Kawasan Industri Jababeka Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KIJA.JK"
+  },
+  {
+    "symbol": "KING",
+    "company_name": "Hoffmen Cleanindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KING.JK"
+  },
+  {
+    "symbol": "KINO",
+    "company_name": "Kino Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KINO.JK"
+  },
+  {
+    "symbol": "KIOS",
+    "company_name": "Kioson Komersial Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KIOS.JK"
+  },
+  {
+    "symbol": "KJEN",
+    "company_name": "Krida Jaringan Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KJEN.JK"
+  },
+  {
+    "symbol": "KKES",
+    "company_name": "Kusuma Kemindo Sentosa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KKES.JK"
+  },
+  {
+    "symbol": "KKGI",
+    "company_name": "Resource Alam Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KKGI.JK"
+  },
+  {
+    "symbol": "KLAS",
+    "company_name": "Pelayaran Kurnia Lautan Semesta",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KLAS.JK"
+  },
+  {
+    "symbol": "KLBF",
+    "company_name": "PT Kalbe Farma Tbk",
+    "sector": "Health Care",
+    "subsector": "Pharmaceutical",
+    "yahoo_symbol": "KLBF.JK"
+  },
+  {
+    "symbol": "KLIN",
+    "company_name": "Klinko Karya Imaji Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KLIN.JK"
+  },
+  {
+    "symbol": "KMDS",
+    "company_name": "Kurniamitra Duta Sentosa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KMDS.JK"
+  },
+  {
+    "symbol": "KMTR",
+    "company_name": "Kirana Megatara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KMTR.JK"
+  },
+  {
+    "symbol": "KOBX",
+    "company_name": "Kobexindo Tractors Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KOBX.JK"
+  },
+  {
+    "symbol": "KOCI",
+    "company_name": "Kokoh Exa Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KOCI.JK"
+  },
+  {
+    "symbol": "KOKA",
+    "company_name": "Koka Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KOKA.JK"
+  },
+  {
+    "symbol": "KONI",
+    "company_name": "Perdana Bangun Pusaka Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KONI.JK"
+  },
+  {
+    "symbol": "KOPI",
+    "company_name": "Mitra Energi Persada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KOPI.JK"
+  },
+  {
+    "symbol": "KOTA",
+    "company_name": "DMS Propertindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KOTA.JK"
+  },
+  {
+    "symbol": "KPIG",
+    "company_name": "MNC Tourism Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KPIG.JK"
+  },
+  {
+    "symbol": "KRAS",
+    "company_name": "Krakatau Steel (Persero) Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KRAS.JK"
+  },
+  {
+    "symbol": "KREN",
+    "company_name": "Quantum Clovera Investama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KREN.JK"
+  },
+  {
+    "symbol": "KRYA",
+    "company_name": "Bangun Karya Perkasa Jaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KRYA.JK"
+  },
+  {
+    "symbol": "KSIX",
+    "company_name": "Kentanix Supra International Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KSIX.JK"
+  },
+  {
+    "symbol": "KUAS",
+    "company_name": "Ace Oldfields Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "KUAS.JK"
+  },
+  {
+    "symbol": "LABA",
+    "company_name": "Green Power Group Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LABA.JK"
+  },
+  {
+    "symbol": "LABS",
+    "company_name": "UBC Medical Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LABS.JK"
+  },
+  {
+    "symbol": "LAJU",
+    "company_name": "Jasa Berdikari Logistics Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LAJU.JK"
+  },
+  {
+    "symbol": "LAND",
+    "company_name": "Trimitra Propertindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LAND.JK"
+  },
+  {
+    "symbol": "LAPD",
+    "company_name": "Leyand International Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LAPD.JK"
+  },
+  {
+    "symbol": "LEAD",
+    "company_name": "Logindo Samudramakmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LEAD.JK"
+  },
+  {
+    "symbol": "LFLO",
+    "company_name": "Imago Mulia Persada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LFLO.JK"
+  },
+  {
+    "symbol": "LIFE",
+    "company_name": "MSIG Life Insurance Indonesia T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LIFE.JK"
+  },
+  {
+    "symbol": "LINK",
+    "company_name": "Link Net Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LINK.JK"
+  },
+  {
+    "symbol": "LION",
+    "company_name": "Lion Metal Works Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LION.JK"
+  },
+  {
+    "symbol": "LIVE",
+    "company_name": "Homeco Victoria Makmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LIVE.JK"
+  },
+  {
+    "symbol": "LMAX",
+    "company_name": "Lupromax Pelumas Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LMAX.JK"
+  },
+  {
+    "symbol": "LMPI",
+    "company_name": "Langgeng Makmur Industri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LMPI.JK"
+  },
+  {
+    "symbol": "LOPI",
+    "company_name": "Logisticsplus International Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LOPI.JK"
+  },
+  {
+    "symbol": "LPCK",
+    "company_name": "Lippo Cikarang Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LPCK.JK"
+  },
+  {
+    "symbol": "LPGI",
+    "company_name": "Lippo General Insurance Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LPGI.JK"
+  },
+  {
+    "symbol": "LPIN",
+    "company_name": "Multi Prima Sejahtera Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LPIN.JK"
+  },
+  {
+    "symbol": "LPKR",
+    "company_name": "PT Lippo Karawaci Tbk",
+    "sector": "Real Estate",
+    "subsector": "Property",
+    "yahoo_symbol": "LPKR.JK"
+  },
+  {
+    "symbol": "LPLI",
+    "company_name": "Star Pacific Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LPLI.JK"
+  },
+  {
+    "symbol": "LPPF",
+    "company_name": "PT Matahari Department Store Tbk",
+    "sector": "Consumer Cyclical",
+    "subsector": "Retail",
+    "yahoo_symbol": "LPPF.JK"
+  },
+  {
+    "symbol": "LPPS",
+    "company_name": "Lenox Pasifik Investama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LPPS.JK"
+  },
+  {
+    "symbol": "LRNA",
+    "company_name": "Eka Sari Lorena Transport Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LRNA.JK"
+  },
+  {
+    "symbol": "LSIP",
+    "company_name": "PT PP London Sumatra Indonesia Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Plantation",
+    "yahoo_symbol": "LSIP.JK"
+  },
+  {
+    "symbol": "LTLS",
+    "company_name": "Lautan Luas Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LTLS.JK"
+  },
+  {
+    "symbol": "LUCK",
+    "company_name": "Sentral Mitra Informatika Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LUCK.JK"
+  },
+  {
+    "symbol": "LUCY",
+    "company_name": "Lima Dua Lima Tiga Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "LUCY.JK"
+  },
+  {
+    "symbol": "MAHA",
+    "company_name": "Mandiri Herindo Adiperkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MAHA.JK"
+  },
+  {
+    "symbol": "MAIN",
+    "company_name": "Malindo Feedmill Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MAIN.JK"
+  },
+  {
+    "symbol": "MANG",
+    "company_name": "Manggung Polahraya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MANG.JK"
+  },
+  {
+    "symbol": "MAPA",
+    "company_name": "Map Aktif Adiperkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MAPA.JK"
+  },
+  {
+    "symbol": "MAPB",
+    "company_name": "MAP Boga Adiperkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MAPB.JK"
+  },
+  {
+    "symbol": "MAPI",
+    "company_name": "PT Mitra Adiperkasa Tbk",
+    "sector": "Consumer Cyclical",
+    "subsector": "Retail",
+    "yahoo_symbol": "MAPI.JK"
+  },
+  {
+    "symbol": "MARK",
+    "company_name": "Mark Dynamics Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MARK.JK"
+  },
+  {
+    "symbol": "MASB",
+    "company_name": "Bank Multiarta Sentosa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MASB.JK"
+  },
+  {
+    "symbol": "MAXI",
+    "company_name": "Maxindo Karya Anugerah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MAXI.JK"
+  },
+  {
+    "symbol": "MAYA",
+    "company_name": "Bank Mayapada Internasional Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MAYA.JK"
+  },
+  {
+    "symbol": "MBAP",
+    "company_name": "Mitrabara Adiperdana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MBAP.JK"
+  },
+  {
+    "symbol": "MBMA",
+    "company_name": "Merdeka Battery Materials Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MBMA.JK"
+  },
+  {
+    "symbol": "MBSS",
+    "company_name": "Mitrabahtera Segara Sejati Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MBSS.JK"
+  },
+  {
+    "symbol": "MBTO",
+    "company_name": "Martina Berto Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MBTO.JK"
+  },
+  {
+    "symbol": "MCAS",
+    "company_name": "M Cash Integrasi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MCAS.JK"
+  },
+  {
+    "symbol": "MCOL",
+    "company_name": "Prima Andalan Mandiri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MCOL.JK"
+  },
+  {
+    "symbol": "MCOR",
+    "company_name": "Bank China Construction Bank In",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MCOR.JK"
+  },
+  {
+    "symbol": "MDIA",
+    "company_name": "Intermedia Capital Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MDIA.JK"
+  },
+  {
+    "symbol": "MDIY",
+    "company_name": "Daya Intiguna Yasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MDIY.JK"
+  },
+  {
+    "symbol": "MDKA",
+    "company_name": "PT Merdeka Copper Gold Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Gold & Copper",
+    "yahoo_symbol": "MDKA.JK"
+  },
+  {
+    "symbol": "MDKI",
+    "company_name": "Emdeki Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MDKI.JK"
+  },
+  {
+    "symbol": "MDLA",
+    "company_name": "Medela Potentia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MDLA.JK"
+  },
+  {
+    "symbol": "MDLN",
+    "company_name": "Modernland Realty Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MDLN.JK"
+  },
+  {
+    "symbol": "MEDC",
+    "company_name": "PT Medco Energi Internasional Tbk",
+    "sector": "Energy",
+    "subsector": "Oil & Gas",
+    "yahoo_symbol": "MEDC.JK"
+  },
+  {
+    "symbol": "MEDS",
+    "company_name": "Hetzer Medical Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MEDS.JK"
+  },
+  {
+    "symbol": "MEGA",
+    "company_name": "PT Bank Mega Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "MEGA.JK"
+  },
+  {
+    "symbol": "MEJA",
+    "company_name": "Harta Djaya Karya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MEJA.JK"
+  },
+  {
+    "symbol": "MERI",
+    "company_name": "Merry Riana Edukasi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MERI.JK"
+  },
+  {
+    "symbol": "MERK",
+    "company_name": "Merck Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MERK.JK"
+  },
+  {
+    "symbol": "MGLV",
+    "company_name": "NexAI Digital Infrastruktur Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MGLV.JK"
+  },
+  {
+    "symbol": "MGNA",
+    "company_name": "Magna Investama Mandiri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MGNA.JK"
+  },
+  {
+    "symbol": "MGRO",
+    "company_name": "Mahkota Group Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MGRO.JK"
+  },
+  {
+    "symbol": "MHKI",
+    "company_name": "Multi Hanna Kreasindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MHKI.JK"
+  },
+  {
+    "symbol": "MICE",
+    "company_name": "Multi Indocitra Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MICE.JK"
+  },
+  {
+    "symbol": "MIDI",
+    "company_name": "Midi Utama Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MIDI.JK"
+  },
+  {
+    "symbol": "MIKA",
+    "company_name": "PT Mitra Keluarga Karyasehat Tbk",
+    "sector": "Health Care",
+    "subsector": "Healthcare Services",
+    "yahoo_symbol": "MIKA.JK"
+  },
+  {
+    "symbol": "MINA",
+    "company_name": "Sanurhasta Mitra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MINA.JK"
+  },
+  {
+    "symbol": "MINE",
+    "company_name": "Sinar Terang Mandiri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MINE.JK"
+  },
+  {
+    "symbol": "MIRA",
+    "company_name": "Mitra International Resources T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MIRA.JK"
+  },
+  {
+    "symbol": "MITI",
+    "company_name": "Mitra Investindo Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MITI.JK"
+  },
+  {
+    "symbol": "MKAP",
+    "company_name": "Multikarya Asia Pasifik Raya Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MKAP.JK"
+  },
+  {
+    "symbol": "MKPI",
+    "company_name": "Metropolitan Kentjana Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MKPI.JK"
+  },
+  {
+    "symbol": "MKTR",
+    "company_name": "Menthobi Karyatama Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MKTR.JK"
+  },
+  {
+    "symbol": "MLBI",
+    "company_name": "Multi Bintang Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MLBI.JK"
+  },
+  {
+    "symbol": "MLIA",
+    "company_name": "Mulia Industrindo Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MLIA.JK"
+  },
+  {
+    "symbol": "MLPL",
+    "company_name": "Multipolar Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MLPL.JK"
+  },
+  {
+    "symbol": "MLPT",
+    "company_name": "Multipolar Technology Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MLPT.JK"
+  },
+  {
+    "symbol": "MMIX",
+    "company_name": "Multi Medika Internasional Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MMIX.JK"
+  },
+  {
+    "symbol": "MMLP",
+    "company_name": "Mega Manunggal Property Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MMLP.JK"
+  },
+  {
+    "symbol": "MNCN",
+    "company_name": "PT Media Nusantara Citra Tbk",
+    "sector": "Communication Services",
+    "subsector": "Media",
+    "yahoo_symbol": "MNCN.JK"
+  },
+  {
+    "symbol": "MOLI",
+    "company_name": "Madusari Murni Indah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MOLI.JK"
+  },
+  {
+    "symbol": "MORA",
+    "company_name": "Ekamas Mora Republik Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MORA.JK"
+  },
+  {
+    "symbol": "MPIX",
+    "company_name": "Mitra Pedagang Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MPIX.JK"
+  },
+  {
+    "symbol": "MPMX",
+    "company_name": "Mitra Pinasthika Mustika Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MPMX.JK"
+  },
+  {
+    "symbol": "MPOW",
+    "company_name": "Megapower Makmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MPOW.JK"
+  },
+  {
+    "symbol": "MPPA",
+    "company_name": "Matahari Putra Prima Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MPPA.JK"
+  },
+  {
+    "symbol": "MPRO",
+    "company_name": "Maha Properti Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MPRO.JK"
+  },
+  {
+    "symbol": "MPXL",
+    "company_name": "MPX Logistics International Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MPXL.JK"
+  },
+  {
+    "symbol": "MRAT",
+    "company_name": "Mustika Ratu Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MRAT.JK"
+  },
+  {
+    "symbol": "MSIE",
+    "company_name": "Multisarana Intan Eduka Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MSIE.JK"
+  },
+  {
+    "symbol": "MSIN",
+    "company_name": "MNC Digital Entertainment Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MSIN.JK"
+  },
+  {
+    "symbol": "MSJA",
+    "company_name": "Multi Spunindo Jaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MSJA.JK"
+  },
+  {
+    "symbol": "MSKY",
+    "company_name": "MNC Sky Vision Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MSKY.JK"
+  },
+  {
+    "symbol": "MSTI",
+    "company_name": "Mastersystem Infotama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MSTI.JK"
+  },
+  {
+    "symbol": "MTDL",
+    "company_name": "Metrodata Electronics Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MTDL.JK"
+  },
+  {
+    "symbol": "MTEL",
+    "company_name": "PT Dayamitra Telekomunikasi Tbk",
+    "sector": "Telecommunications",
+    "subsector": "Tower",
+    "yahoo_symbol": "MTEL.JK"
+  },
+  {
+    "symbol": "MTLA",
+    "company_name": "Metropolitan Land Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MTLA.JK"
+  },
+  {
+    "symbol": "MTMH",
+    "company_name": "Murni Sadar Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MTMH.JK"
+  },
+  {
+    "symbol": "MTWI",
+    "company_name": "Malacca Trust Wuwungan Insuranc",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MTWI.JK"
+  },
+  {
+    "symbol": "MUTU",
+    "company_name": "Mutuagung Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MUTU.JK"
+  },
+  {
+    "symbol": "MYOH",
+    "company_name": "Samindo Resources Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "MYOH.JK"
+  },
+  {
+    "symbol": "MYOR",
+    "company_name": "PT Mayora Indah Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Food",
+    "yahoo_symbol": "MYOR.JK"
+  },
+  {
+    "symbol": "NAIK",
+    "company_name": "Adiwarna Anugerah Abadi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NAIK.JK"
+  },
+  {
+    "symbol": "NANO",
+    "company_name": "Nanotech Indonesia Global Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NANO.JK"
+  },
+  {
+    "symbol": "NASA",
+    "company_name": "Andalan Perkasa Abadi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NASA.JK"
+  },
+  {
+    "symbol": "NASI",
+    "company_name": "Wahana Inti Makmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NASI.JK"
+  },
+  {
+    "symbol": "NATO",
+    "company_name": "Olympus Strategic Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NATO.JK"
+  },
+  {
+    "symbol": "NAYZ",
+    "company_name": "Hassana Boga Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NAYZ.JK"
+  },
+  {
+    "symbol": "NCKL",
+    "company_name": "Trimegah Bangun Persada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NCKL.JK"
+  },
+  {
+    "symbol": "NELY",
+    "company_name": "Pelayaran Nelly Dwi Putri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NELY.JK"
+  },
+  {
+    "symbol": "NEST",
+    "company_name": "Esta Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NEST.JK"
+  },
+  {
+    "symbol": "NETV",
+    "company_name": "MDTV Media Technologies Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NETV.JK"
+  },
+  {
+    "symbol": "NFCX",
+    "company_name": "NFC Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NFCX.JK"
+  },
+  {
+    "symbol": "NICE",
+    "company_name": "Adhi Kartiko Pratama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NICE.JK"
+  },
+  {
+    "symbol": "NICK",
+    "company_name": "Charnic Capital Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NICK.JK"
+  },
+  {
+    "symbol": "NICL",
+    "company_name": "PAM Mineral Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NICL.JK"
+  },
+  {
+    "symbol": "NIKL",
+    "company_name": "Pelat Timah Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NIKL.JK"
+  },
+  {
+    "symbol": "NINE",
+    "company_name": "Techno9 Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NINE.JK"
+  },
+  {
+    "symbol": "NIRO",
+    "company_name": "City Retail Developments Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NIRO.JK"
+  },
+  {
+    "symbol": "NISP",
+    "company_name": "PT Bank OCBC NISP Tbk",
+    "sector": "Financials",
+    "subsector": "Bank",
+    "yahoo_symbol": "NISP.JK"
+  },
+  {
+    "symbol": "NOBU",
+    "company_name": "Bank Nationalnobu Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NOBU.JK"
+  },
+  {
+    "symbol": "NPGF",
+    "company_name": "Nusa Palapa Gemilang Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NPGF.JK"
+  },
+  {
+    "symbol": "NRCA",
+    "company_name": "Nusa Raya Cipta Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NRCA.JK"
+  },
+  {
+    "symbol": "NSSS",
+    "company_name": "Nusantara Sawit Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NSSS.JK"
+  },
+  {
+    "symbol": "NTBK",
+    "company_name": "Nusatama Berkah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NTBK.JK"
+  },
+  {
+    "symbol": "NZIA",
+    "company_name": "Nusantara Almazia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "NZIA.JK"
+  },
+  {
+    "symbol": "OASA",
+    "company_name": "Maharaksa Biru Energi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OASA.JK"
+  },
+  {
+    "symbol": "OBAT",
+    "company_name": "Brigit Biofarmaka Teknologi Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OBAT.JK"
+  },
+  {
+    "symbol": "OBMD",
+    "company_name": "OBM Drilchem Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OBMD.JK"
+  },
+  {
+    "symbol": "OILS",
+    "company_name": "Indo Oil Perkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OILS.JK"
+  },
+  {
+    "symbol": "OKAS",
+    "company_name": "Ancora Indonesia Resources Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OKAS.JK"
+  },
+  {
+    "symbol": "OLIV",
+    "company_name": "Atlas Nexus Group Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OLIV.JK"
+  },
+  {
+    "symbol": "OMED",
+    "company_name": "Jayamas Medica Industri Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OMED.JK"
+  },
+  {
+    "symbol": "OMRE",
+    "company_name": "Indonesia Prima Property Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OMRE.JK"
+  },
+  {
+    "symbol": "OPMS",
+    "company_name": "Optima Prima Metal Sinergi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "OPMS.JK"
+  },
+  {
+    "symbol": "PACK",
+    "company_name": "Abadi Nusantara Hijau Investama",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PACK.JK"
+  },
+  {
+    "symbol": "PADA",
+    "company_name": "Personel Alih Daya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PADA.JK"
+  },
+  {
+    "symbol": "PADI",
+    "company_name": "PT Minna Padi Investama Sekuritas Tbk",
+    "sector": "Financials",
+    "subsector": "Securities",
+    "yahoo_symbol": "PADI.JK"
+  },
+  {
+    "symbol": "PALM",
+    "company_name": "Provident Investasi Bersama Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PALM.JK"
+  },
+  {
+    "symbol": "PAMG",
+    "company_name": "Bima Sakti Pertiwi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PAMG.JK"
+  },
+  {
+    "symbol": "PANI",
+    "company_name": "Pantai Indah Kapuk Dua Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PANI.JK"
+  },
+  {
+    "symbol": "PANR",
+    "company_name": "Panorama Sentrawisata Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PANR.JK"
+  },
+  {
+    "symbol": "PANS",
+    "company_name": "Panin Sekuritas Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PANS.JK"
+  },
+  {
+    "symbol": "PART",
+    "company_name": "Cipta Perdana Lancar Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PART.JK"
+  },
+  {
+    "symbol": "PBID",
+    "company_name": "Panca Budi Idaman Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PBID.JK"
+  },
+  {
+    "symbol": "PBRX",
+    "company_name": "Pan Brothers Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PBRX.JK"
+  },
+  {
+    "symbol": "PBSA",
+    "company_name": "Paramita Bangun Sarana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PBSA.JK"
+  },
+  {
+    "symbol": "PCAR",
+    "company_name": "Prima Cakrawala Abadi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PCAR.JK"
+  },
+  {
+    "symbol": "PDES",
+    "company_name": "Destinasi Tirta Nusantara Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PDES.JK"
+  },
+  {
+    "symbol": "PDPP",
+    "company_name": "Primadaya Plastisindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PDPP.JK"
+  },
+  {
+    "symbol": "PEGE",
+    "company_name": "Panca Global Kapital Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PEGE.JK"
+  },
+  {
+    "symbol": "PEHA",
+    "company_name": "Phapros Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PEHA.JK"
+  },
+  {
+    "symbol": "PEVE",
+    "company_name": "Penta Valent Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PEVE.JK"
+  },
+  {
+    "symbol": "PGAS",
+    "company_name": "PT Perusahaan Gas Negara Tbk",
+    "sector": "Energy",
+    "subsector": "Gas Distribution",
+    "yahoo_symbol": "PGAS.JK"
+  },
+  {
+    "symbol": "PGEO",
+    "company_name": "Pertamina Geothermal Energy Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PGEO.JK"
+  },
+  {
+    "symbol": "PGJO",
+    "company_name": "Bahtera Bumi Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PGJO.JK"
+  },
+  {
+    "symbol": "PGLI",
+    "company_name": "Pembangunan Graha Lestari Indah",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PGLI.JK"
+  },
+  {
+    "symbol": "PGUN",
+    "company_name": "Pradiksi Gunatama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PGUN.JK"
+  },
+  {
+    "symbol": "PICO",
+    "company_name": "Pelangi Indah Canindo Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PICO.JK"
+  },
+  {
+    "symbol": "PIPA",
+    "company_name": "Oxala Energy International Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PIPA.JK"
+  },
+  {
+    "symbol": "PJAA",
+    "company_name": "Pembangunan Jaya Ancol Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PJAA.JK"
+  },
+  {
+    "symbol": "PJHB",
+    "company_name": "Pelayaran Jaya Hidup Baru Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PJHB.JK"
+  },
+  {
+    "symbol": "PKPK",
+    "company_name": "Paragon Karya Perkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PKPK.JK"
+  },
+  {
+    "symbol": "PLAN",
+    "company_name": "Planet Properindo Jaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PLAN.JK"
+  },
+  {
+    "symbol": "PMJS",
+    "company_name": "Putra Mandiri Jembar Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PMJS.JK"
+  },
+  {
+    "symbol": "PMUI",
+    "company_name": "Prima Multi Usaha Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PMUI.JK"
+  },
+  {
+    "symbol": "PNBN",
+    "company_name": "Bank Pan Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PNBN.JK"
+  },
+  {
+    "symbol": "PNBS",
+    "company_name": "Bank Panin Dubai Syariah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PNBS.JK"
+  },
+  {
+    "symbol": "PNGO",
+    "company_name": "AEP Pinago Plantations Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PNGO.JK"
+  },
+  {
+    "symbol": "PNIN",
+    "company_name": "Paninvest Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PNIN.JK"
+  },
+  {
+    "symbol": "PNLF",
+    "company_name": "Panin Financial Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PNLF.JK"
+  },
+  {
+    "symbol": "PNSE",
+    "company_name": "Pudjiadi & Sons Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PNSE.JK"
+  },
+  {
+    "symbol": "POLA",
+    "company_name": "Pool Advista Finance Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "POLA.JK"
+  },
+  {
+    "symbol": "POLI",
+    "company_name": "Pollux Hotels Group Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "POLI.JK"
+  },
+  {
+    "symbol": "POLU",
+    "company_name": "Golden Flower Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "POLU.JK"
+  },
+  {
+    "symbol": "PORT",
+    "company_name": "Nusantara Pelabuhan Handal Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PORT.JK"
+  },
+  {
+    "symbol": "POWR",
+    "company_name": "Cikarang Listrindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "POWR.JK"
+  },
+  {
+    "symbol": "PPGL",
+    "company_name": "Prima Globalindo Logistik Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PPGL.JK"
+  },
+  {
+    "symbol": "PPRE",
+    "company_name": "PP Presisi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PPRE.JK"
+  },
+  {
+    "symbol": "PPRI",
+    "company_name": "Paperocks Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PPRI.JK"
+  },
+  {
+    "symbol": "PPRO",
+    "company_name": "PP Properti Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PPRO.JK"
+  },
+  {
+    "symbol": "PRAY",
+    "company_name": "Famon Awal Bros Sedaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PRAY.JK"
+  },
+  {
+    "symbol": "PRDA",
+    "company_name": "Prodia Widyahusada Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PRDA.JK"
+  },
+  {
+    "symbol": "PRDL",
+    "company_name": "Prodia Diagnostic Line Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PRDL.JK"
+  },
+  {
+    "symbol": "PRIM",
+    "company_name": "Royal Prima Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PRIM.JK"
+  },
+  {
+    "symbol": "PSAB",
+    "company_name": "J Resources Asia Pasifik Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PSAB.JK"
+  },
+  {
+    "symbol": "PSAT",
+    "company_name": "Pancaran Samudera Transport Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PSAT.JK"
+  },
+  {
+    "symbol": "PSDN",
+    "company_name": "Prasidha Aneka Niaga Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PSDN.JK"
+  },
+  {
+    "symbol": "PSGO",
+    "company_name": "Palma Serasih Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PSGO.JK"
+  },
+  {
+    "symbol": "PSKT",
+    "company_name": "Red Planet Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PSKT.JK"
+  },
+  {
+    "symbol": "PSSI",
+    "company_name": "IMC Pelita Logistik Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PSSI.JK"
+  },
+  {
+    "symbol": "PTBA",
+    "company_name": "PT Bukit Asam Tbk",
+    "sector": "Energy",
+    "subsector": "Coal Mining",
+    "yahoo_symbol": "PTBA.JK"
+  },
+  {
+    "symbol": "PTIS",
+    "company_name": "Indo Straits Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PTIS.JK"
+  },
+  {
+    "symbol": "PTMP",
+    "company_name": "Mitra Pack Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PTMP.JK"
+  },
+  {
+    "symbol": "PTPP",
+    "company_name": "PT PP (Persero) Tbk",
+    "sector": "Industrials",
+    "subsector": "Construction",
+    "yahoo_symbol": "PTPP.JK"
+  },
+  {
+    "symbol": "PTPS",
+    "company_name": "Pulau Subur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PTPS.JK"
+  },
+  {
+    "symbol": "PTPW",
+    "company_name": "Pratama Widya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PTPW.JK"
+  },
+  {
+    "symbol": "PTRO",
+    "company_name": "Petrosea Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PTRO.JK"
+  },
+  {
+    "symbol": "PTSN",
+    "company_name": "Sat Nusapersada Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PTSN.JK"
+  },
+  {
+    "symbol": "PTSP",
+    "company_name": "Pioneerindo Gourmet Internation",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PTSP.JK"
+  },
+  {
+    "symbol": "PUDP",
+    "company_name": "Pudjiadi Prestige Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PUDP.JK"
+  },
+  {
+    "symbol": "PURA",
+    "company_name": "Putra Rajawali Kencana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PURA.JK"
+  },
+  {
+    "symbol": "PURI",
+    "company_name": "Puri Global Sukses Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PURI.JK"
+  },
+  {
+    "symbol": "PWON",
+    "company_name": "PT Pakuwon Jati Tbk",
+    "sector": "Real Estate",
+    "subsector": "Property",
+    "yahoo_symbol": "PWON.JK"
+  },
+  {
+    "symbol": "PYFA",
+    "company_name": "Pyridam Farma Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PYFA.JK"
+  },
+  {
+    "symbol": "PZZA",
+    "company_name": "Sarimelati Kencana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "PZZA.JK"
+  },
+  {
+    "symbol": "RAAM",
+    "company_name": "Tripar Multivision Plus Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RAAM.JK"
+  },
+  {
+    "symbol": "RAJA",
+    "company_name": "Rukun Raharja Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RAJA.JK"
+  },
+  {
+    "symbol": "RALS",
+    "company_name": "Ramayana Lestari Sentosa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RALS.JK"
+  },
+  {
+    "symbol": "RANC",
+    "company_name": "Supra Boga Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RANC.JK"
+  },
+  {
+    "symbol": "RANS",
+    "company_name": "Rans Entertainmen Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RANS.JK"
+  },
+  {
+    "symbol": "RATU",
+    "company_name": "Raharja Energi Cepu Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RATU.JK"
+  },
+  {
+    "symbol": "RBMS",
+    "company_name": "Ristia Bintang Mahkotasejati Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RBMS.JK"
+  },
+  {
+    "symbol": "RCCC",
+    "company_name": "Utama Radar Cahaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RCCC.JK"
+  },
+  {
+    "symbol": "RDTX",
+    "company_name": "Roda Vivatex Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RDTX.JK"
+  },
+  {
+    "symbol": "REAL",
+    "company_name": "Repower Asia Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "REAL.JK"
+  },
+  {
+    "symbol": "RELF",
+    "company_name": "Graha Mitra Asia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RELF.JK"
+  },
+  {
+    "symbol": "RELI",
+    "company_name": "Reliance Sekuritas Indonesia Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RELI.JK"
+  },
+  {
+    "symbol": "RGAS",
+    "company_name": "Kian Santang Muliatama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RGAS.JK"
+  },
+  {
+    "symbol": "RICY",
+    "company_name": "Ricky Putra Globalindo Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RICY.JK"
+  },
+  {
+    "symbol": "RIGS",
+    "company_name": "Rig Tenders Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RIGS.JK"
+  },
+  {
+    "symbol": "RISE",
+    "company_name": "Jaya Sukses Makmur Sentosa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RISE.JK"
+  },
+  {
+    "symbol": "RLCO",
+    "company_name": "Abadi Lestari Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RLCO.JK"
+  },
+  {
+    "symbol": "RMKE",
+    "company_name": "RMK Energy Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RMKE.JK"
+  },
+  {
+    "symbol": "RMKO",
+    "company_name": "Royaltama Mulia Kontraktorindo ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RMKO.JK"
+  },
+  {
+    "symbol": "ROCK",
+    "company_name": "Rockfields Properti Indonesia T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ROCK.JK"
+  },
+  {
+    "symbol": "RODA",
+    "company_name": "Pikko Land Development Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RODA.JK"
+  },
+  {
+    "symbol": "RONY",
+    "company_name": "Aracord Nusantara Group Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RONY.JK"
+  },
+  {
+    "symbol": "ROTI",
+    "company_name": "Nippon Indosari Corpindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ROTI.JK"
+  },
+  {
+    "symbol": "RSCH",
+    "company_name": "Charlie Hospital Semarang Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RSCH.JK"
+  },
+  {
+    "symbol": "RSGK",
+    "company_name": "Kedoya Adyaraya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RSGK.JK"
+  },
+  {
+    "symbol": "RUIS",
+    "company_name": "Radiant Utama Interinsco Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RUIS.JK"
+  },
+  {
+    "symbol": "RUNS",
+    "company_name": "Global Sukses Solusi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "RUNS.JK"
+  },
+  {
+    "symbol": "SAFE",
+    "company_name": "Steady Safe Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SAFE.JK"
+  },
+  {
+    "symbol": "SAGE",
+    "company_name": "Saptausaha Gemilangindah Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SAGE.JK"
+  },
+  {
+    "symbol": "SAME",
+    "company_name": "Sarana Meditama Metropolitan Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SAME.JK"
+  },
+  {
+    "symbol": "SAMF",
+    "company_name": "Saraswanti Anugerah Makmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SAMF.JK"
+  },
+  {
+    "symbol": "SAPX",
+    "company_name": "Satria Antaran Prima Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SAPX.JK"
+  },
+  {
+    "symbol": "SATU",
+    "company_name": "Kota Satu Properti Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SATU.JK"
+  },
+  {
+    "symbol": "SBMA",
+    "company_name": "Surya Biru Murni Acetylene Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SBMA.JK"
+  },
+  {
+    "symbol": "SCCO",
+    "company_name": "Supreme Cable Manufacturing & C",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SCCO.JK"
+  },
+  {
+    "symbol": "SCMA",
+    "company_name": "PT Surya Citra Media Tbk",
+    "sector": "Communication Services",
+    "subsector": "Media",
+    "yahoo_symbol": "SCMA.JK"
+  },
+  {
+    "symbol": "SCNP",
+    "company_name": "Selaras Citra Nusantara Perkasa",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SCNP.JK"
+  },
+  {
+    "symbol": "SDMU",
+    "company_name": "Sidomulyo Selaras Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SDMU.JK"
+  },
+  {
+    "symbol": "SDPC",
+    "company_name": "Millennium Pharmacon Internatio",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SDPC.JK"
+  },
+  {
+    "symbol": "SDRA",
+    "company_name": "Bank Woori Saudara Indonesia 19",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SDRA.JK"
+  },
+  {
+    "symbol": "SEMA",
+    "company_name": "Semacom Integrated Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SEMA.JK"
+  },
+  {
+    "symbol": "SFAN",
+    "company_name": "Surya Fajar Capital Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SFAN.JK"
+  },
+  {
+    "symbol": "SGER",
+    "company_name": "Sumber Global Energy Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SGER.JK"
+  },
+  {
+    "symbol": "SGRO",
+    "company_name": "Prime Agri Resources Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SGRO.JK"
+  },
+  {
+    "symbol": "SHID",
+    "company_name": "Hotel Sahid Jaya International ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SHID.JK"
+  },
+  {
+    "symbol": "SHIP",
+    "company_name": "Sillo Maritime Perdana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SHIP.JK"
+  },
+  {
+    "symbol": "SICO",
+    "company_name": "Sigma Energy Compressindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SICO.JK"
+  },
+  {
+    "symbol": "SIDO",
+    "company_name": "PT Industri Jamu dan Farmasi Sido Muncul Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Consumer Products",
+    "yahoo_symbol": "SIDO.JK"
+  },
+  {
+    "symbol": "SILO",
+    "company_name": "Siloam International Hospitals ",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SILO.JK"
+  },
+  {
+    "symbol": "SIMP",
+    "company_name": "Salim Ivomas Pratama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SIMP.JK"
+  },
+  {
+    "symbol": "SINI",
+    "company_name": "Singaraja Putra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SINI.JK"
+  },
+  {
+    "symbol": "SIPD",
+    "company_name": "Sreeya Sewu Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SIPD.JK"
+  },
+  {
+    "symbol": "SKBM",
+    "company_name": "Sekar Bumi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SKBM.JK"
+  },
+  {
+    "symbol": "SKLT",
+    "company_name": "Sekar Laut Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SKLT.JK"
+  },
+  {
+    "symbol": "SKRN",
+    "company_name": "Superkrane Mitra Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SKRN.JK"
+  },
+  {
+    "symbol": "SLIS",
+    "company_name": "Gaya Abadi Sempurna Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SLIS.JK"
+  },
+  {
+    "symbol": "SMAR",
+    "company_name": "PT SMART Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Plantation",
+    "yahoo_symbol": "SMAR.JK"
+  },
+  {
+    "symbol": "SMBR",
+    "company_name": "Semen Baturaja (Persero) Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMBR.JK"
+  },
+  {
+    "symbol": "SMDM",
+    "company_name": "Suryamas Dutamakmur Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMDM.JK"
+  },
+  {
+    "symbol": "SMDR",
+    "company_name": "Samudera Indonesia  Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMDR.JK"
+  },
+  {
+    "symbol": "SMGA",
+    "company_name": "Sumber Mineral Global Abadi Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMGA.JK"
+  },
+  {
+    "symbol": "SMGR",
+    "company_name": "PT Semen Indonesia Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Cement",
+    "yahoo_symbol": "SMGR.JK"
+  },
+  {
+    "symbol": "SMIL",
+    "company_name": "Sarana Mitra Luas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMIL.JK"
+  },
+  {
+    "symbol": "SMKL",
+    "company_name": "Satyamitra Kemas Lestari Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMKL.JK"
+  },
+  {
+    "symbol": "SMKM",
+    "company_name": "Sumber Mas Konstruksi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMKM.JK"
+  },
+  {
+    "symbol": "SMLE",
+    "company_name": "Sinergi Multi Lestarindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMLE.JK"
+  },
+  {
+    "symbol": "SMMA",
+    "company_name": "Sinarmas Multiartha Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMMA.JK"
+  },
+  {
+    "symbol": "SMMT",
+    "company_name": "Golden Eagle Energy Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMMT.JK"
+  },
+  {
+    "symbol": "SMRA",
+    "company_name": "PT Summarecon Agung Tbk",
+    "sector": "Real Estate",
+    "subsector": "Property",
+    "yahoo_symbol": "SMRA.JK"
+  },
+  {
+    "symbol": "SMSM",
+    "company_name": "Selamat Sempurna Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SMSM.JK"
+  },
+  {
+    "symbol": "SNLK",
+    "company_name": "Sunter Lakeside Hotel Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SNLK.JK"
+  },
+  {
+    "symbol": "SOCI",
+    "company_name": "Soechi Lines Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SOCI.JK"
+  },
+  {
+    "symbol": "SOFA",
+    "company_name": "Solusi Environment Asia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SOFA.JK"
+  },
+  {
+    "symbol": "SOHO",
+    "company_name": "Soho Global Health Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SOHO.JK"
+  },
+  {
+    "symbol": "SOLA",
+    "company_name": "Xolare RCR Energy Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SOLA.JK"
+  },
+  {
+    "symbol": "SONA",
+    "company_name": "Sona Topas Tourism Industry Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SONA.JK"
+  },
+  {
+    "symbol": "SOSS",
+    "company_name": "ALSOK Indonesia Services Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SOSS.JK"
+  },
+  {
+    "symbol": "SOTS",
+    "company_name": "Satria Mega Kencana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SOTS.JK"
+  },
+  {
+    "symbol": "SPMA",
+    "company_name": "Suparma Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SPMA.JK"
+  },
+  {
+    "symbol": "SPRE",
+    "company_name": "Soraya Berjaya Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SPRE.JK"
+  },
+  {
+    "symbol": "SPTO",
+    "company_name": "Surya Pertiwi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SPTO.JK"
+  },
+  {
+    "symbol": "SQMI",
+    "company_name": "Wilton Makmur Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SQMI.JK"
+  },
+  {
+    "symbol": "SRAJ",
+    "company_name": "Sejahteraraya Anugrahjaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SRAJ.JK"
+  },
+  {
+    "symbol": "SRSN",
+    "company_name": "Indo Acidatama Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SRSN.JK"
+  },
+  {
+    "symbol": "SRTG",
+    "company_name": "Saratoga Investama Sedaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SRTG.JK"
+  },
+  {
+    "symbol": "SSIA",
+    "company_name": "Surya Semesta Internusa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SSIA.JK"
+  },
+  {
+    "symbol": "SSMS",
+    "company_name": "Sawit Sumbermas Sarana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SSMS.JK"
+  },
+  {
+    "symbol": "SSTM",
+    "company_name": "Sunson Textile Manufacture Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SSTM.JK"
+  },
+  {
+    "symbol": "STAA",
+    "company_name": "Sumber Tani Agung Resources Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "STAA.JK"
+  },
+  {
+    "symbol": "STAR",
+    "company_name": "Calculus Global Ventures Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "STAR.JK"
+  },
+  {
+    "symbol": "STRK",
+    "company_name": "Lovina Beach Brewery Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "STRK.JK"
+  },
+  {
+    "symbol": "STTP",
+    "company_name": "Siantar Top Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "STTP.JK"
+  },
+  {
+    "symbol": "SULI",
+    "company_name": "SLJ Global Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SULI.JK"
+  },
+  {
+    "symbol": "SUNI",
+    "company_name": "Sunindo Pratama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SUNI.JK"
+  },
+  {
+    "symbol": "SUPA",
+    "company_name": "Super Bank Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SUPA.JK"
+  },
+  {
+    "symbol": "SURE",
+    "company_name": "Super Energy Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SURE.JK"
+  },
+  {
+    "symbol": "SURI",
+    "company_name": "Maja Agung Latexindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SURI.JK"
+  },
+  {
+    "symbol": "SWID",
+    "company_name": "Saraswanti Indoland Development",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "SWID.JK"
+  },
+  {
+    "symbol": "TALF",
+    "company_name": "Tunas Alfin Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TALF.JK"
+  },
+  {
+    "symbol": "TAMA",
+    "company_name": "Lancartama Sejati Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TAMA.JK"
+  },
+  {
+    "symbol": "TAMU",
+    "company_name": "Pelayaran Tamarin Samudra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TAMU.JK"
+  },
+  {
+    "symbol": "TAPG",
+    "company_name": "PT Triputra Agro Persada Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Plantation",
+    "yahoo_symbol": "TAPG.JK"
+  },
+  {
+    "symbol": "TARA",
+    "company_name": "Agung Semesta Sejahtera Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TARA.JK"
+  },
+  {
+    "symbol": "TAXI",
+    "company_name": "Express Transindo Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TAXI.JK"
+  },
+  {
+    "symbol": "TBIG",
+    "company_name": "PT Tower Bersama Infrastructure Tbk",
+    "sector": "Telecommunications",
+    "subsector": "Tower",
+    "yahoo_symbol": "TBIG.JK"
+  },
+  {
+    "symbol": "TBLA",
+    "company_name": "PT Tunas Baru Lampung Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Plantation",
+    "yahoo_symbol": "TBLA.JK"
+  },
+  {
+    "symbol": "TBMS",
+    "company_name": "Tembaga Mulia Semanan Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TBMS.JK"
+  },
+  {
+    "symbol": "TCID",
+    "company_name": "Mandom Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TCID.JK"
+  },
+  {
+    "symbol": "TCPI",
+    "company_name": "Transcoal Pacific Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TCPI.JK"
+  },
+  {
+    "symbol": "TEBE",
+    "company_name": "Dana Brata Luhur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TEBE.JK"
+  },
+  {
+    "symbol": "TFAS",
+    "company_name": "Telefast Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TFAS.JK"
+  },
+  {
+    "symbol": "TFCO",
+    "company_name": "Tifico Fiber Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TFCO.JK"
+  },
+  {
+    "symbol": "TGKA",
+    "company_name": "Tigaraksa Satria Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TGKA.JK"
+  },
+  {
+    "symbol": "TGUK",
+    "company_name": "Platinum Wahab Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TGUK.JK"
+  },
+  {
+    "symbol": "TIFA",
+    "company_name": "KDB Tifa Finance Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TIFA.JK"
+  },
+  {
+    "symbol": "TINS",
+    "company_name": "PT Timah Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Tin Mining",
+    "yahoo_symbol": "TINS.JK"
+  },
+  {
+    "symbol": "TIRA",
+    "company_name": "Tira Austenite Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TIRA.JK"
+  },
+  {
+    "symbol": "TKIM",
+    "company_name": "PT Pabrik Kertas Tjiwi Kimia Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Pulp & Paper",
+    "yahoo_symbol": "TKIM.JK"
+  },
+  {
+    "symbol": "TLDN",
+    "company_name": "Teladan Prima Agro Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TLDN.JK"
+  },
+  {
+    "symbol": "TLKM",
+    "company_name": "PT Telkom Indonesia (Persero) Tbk",
+    "sector": "Telecommunications",
+    "subsector": "Telecom",
+    "yahoo_symbol": "TLKM.JK"
+  },
+  {
+    "symbol": "TMAS",
+    "company_name": "Temas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TMAS.JK"
+  },
+  {
+    "symbol": "TMPO",
+    "company_name": "Tempo Intimedia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TMPO.JK"
+  },
+  {
+    "symbol": "TNCA",
+    "company_name": "Trimuda Nuansa Citra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TNCA.JK"
+  },
+  {
+    "symbol": "TOBA",
+    "company_name": "TBS Energi Utama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TOBA.JK"
+  },
+  {
+    "symbol": "TOOL",
+    "company_name": "Rohartindo Nusantara Luas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TOOL.JK"
+  },
+  {
+    "symbol": "TOSK",
+    "company_name": "Topindo Solusi Komunika Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TOSK.JK"
+  },
+  {
+    "symbol": "TOTL",
+    "company_name": "Total Bangun Persada Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TOTL.JK"
+  },
+  {
+    "symbol": "TOTO",
+    "company_name": "Surya Toto Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TOTO.JK"
+  },
+  {
+    "symbol": "TOWR",
+    "company_name": "PT Sarana Menara Nusantara Tbk",
+    "sector": "Telecommunications",
+    "subsector": "Tower",
+    "yahoo_symbol": "TOWR.JK"
+  },
+  {
+    "symbol": "TPIA",
+    "company_name": "PT Chandra Asri Pacific Tbk",
+    "sector": "Basic Materials",
+    "subsector": "Petrochemical",
+    "yahoo_symbol": "TPIA.JK"
+  },
+  {
+    "symbol": "TPMA",
+    "company_name": "Trans Power Marine Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TPMA.JK"
+  },
+  {
+    "symbol": "TRGU",
+    "company_name": "Cerestar Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRGU.JK"
+  },
+  {
+    "symbol": "TRIM",
+    "company_name": "Trimegah Sekuritas Indonesia Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRIM.JK"
+  },
+  {
+    "symbol": "TRIN",
+    "company_name": "Perintis Triniti Properti Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRIN.JK"
+  },
+  {
+    "symbol": "TRIS",
+    "company_name": "Trisula International Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRIS.JK"
+  },
+  {
+    "symbol": "TRJA",
+    "company_name": "Transkon Jaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRJA.JK"
+  },
+  {
+    "symbol": "TRON",
+    "company_name": "Teknologi Karya Digital Nusa Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRON.JK"
+  },
+  {
+    "symbol": "TRST",
+    "company_name": "Trias Sentosa Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRST.JK"
+  },
+  {
+    "symbol": "TRUK",
+    "company_name": "Guna Timur Raya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRUK.JK"
+  },
+  {
+    "symbol": "TRUS",
+    "company_name": "Trust Finance Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TRUS.JK"
+  },
+  {
+    "symbol": "TSPC",
+    "company_name": "Tempo Scan Pacific Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TSPC.JK"
+  },
+  {
+    "symbol": "TUGU",
+    "company_name": "Asuransi Tugu Pratama Indonesia",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TUGU.JK"
+  },
+  {
+    "symbol": "TYRE",
+    "company_name": "King Tire Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "TYRE.JK"
+  },
+  {
+    "symbol": "UANG",
+    "company_name": "Pakuan Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UANG.JK"
+  },
+  {
+    "symbol": "UCID",
+    "company_name": "Uni-Charm Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UCID.JK"
+  },
+  {
+    "symbol": "UDNG",
+    "company_name": "Agro Bahari Nusantara Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UDNG.JK"
+  },
+  {
+    "symbol": "UFOE",
+    "company_name": "Damai Sejahtera Abadi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UFOE.JK"
+  },
+  {
+    "symbol": "ULTJ",
+    "company_name": "Ultrajaya Milk Industry & Tradi",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ULTJ.JK"
+  },
+  {
+    "symbol": "UNIC",
+    "company_name": "Unggul Indah Cahaya Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UNIC.JK"
+  },
+  {
+    "symbol": "UNIQ",
+    "company_name": "Ulima Nitra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UNIQ.JK"
+  },
+  {
+    "symbol": "UNTD",
+    "company_name": "Terang Dunia Internusa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UNTD.JK"
+  },
+  {
+    "symbol": "UNTR",
+    "company_name": "PT United Tractors Tbk",
+    "sector": "Industrials",
+    "subsector": "Heavy Equipment",
+    "yahoo_symbol": "UNTR.JK"
+  },
+  {
+    "symbol": "UNVR",
+    "company_name": "PT Unilever Indonesia Tbk",
+    "sector": "Consumer Non-Cyclical",
+    "subsector": "Consumer Products",
+    "yahoo_symbol": "UNVR.JK"
+  },
+  {
+    "symbol": "URBN",
+    "company_name": "Urban Jakarta Propertindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "URBN.JK"
+  },
+  {
+    "symbol": "UVCR",
+    "company_name": "Trimegah Karya Pratama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "UVCR.JK"
+  },
+  {
+    "symbol": "VAST",
+    "company_name": "Vastland Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VAST.JK"
+  },
+  {
+    "symbol": "VERN",
+    "company_name": "Verona Indah Pictures Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VERN.JK"
+  },
+  {
+    "symbol": "VICI",
+    "company_name": "Victoria Care Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VICI.JK"
+  },
+  {
+    "symbol": "VICO",
+    "company_name": "Victoria Investama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VICO.JK"
+  },
+  {
+    "symbol": "VINS",
+    "company_name": "Victoria Insurance Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VINS.JK"
+  },
+  {
+    "symbol": "VISI",
+    "company_name": "Satu Visi Putra Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VISI.JK"
+  },
+  {
+    "symbol": "VIVA",
+    "company_name": "Visi Media Asia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VIVA.JK"
+  },
+  {
+    "symbol": "VKTR",
+    "company_name": "VKTR Teknologi Mobilitas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VKTR.JK"
+  },
+  {
+    "symbol": "VOKS",
+    "company_name": "Voksel Electric Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VOKS.JK"
+  },
+  {
+    "symbol": "VRNA",
+    "company_name": "Mizuho Leasing Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VRNA.JK"
+  },
+  {
+    "symbol": "VTNY",
+    "company_name": "Venteny Fortuna International T",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "VTNY.JK"
+  },
+  {
+    "symbol": "WAPO",
+    "company_name": "Wahana Pronatural Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WAPO.JK"
+  },
+  {
+    "symbol": "WBSA",
+    "company_name": "BSA Logistics Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WBSA.JK"
+  },
+  {
+    "symbol": "WEGE",
+    "company_name": "Wijaya Karya Bangunan Gedung Tb",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WEGE.JK"
+  },
+  {
+    "symbol": "WEHA",
+    "company_name": "WEHA Transportasi Indonesia Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WEHA.JK"
+  },
+  {
+    "symbol": "WGSH",
+    "company_name": "Wira Global Solusi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WGSH.JK"
+  },
+  {
+    "symbol": "WIDI",
+    "company_name": "Widiant Jaya Krenindo Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WIDI.JK"
+  },
+  {
+    "symbol": "WIFI",
+    "company_name": "Solusi Sinergi Digital Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WIFI.JK"
+  },
+  {
+    "symbol": "WIIM",
+    "company_name": "Wismilak Inti Makmur Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WIIM.JK"
+  },
+  {
+    "symbol": "WIKA",
+    "company_name": "PT Wijaya Karya (Persero) Tbk",
+    "sector": "Industrials",
+    "subsector": "Construction",
+    "yahoo_symbol": "WIKA.JK"
+  },
+  {
+    "symbol": "WINE",
+    "company_name": "Hatten Bali Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WINE.JK"
+  },
+  {
+    "symbol": "WINR",
+    "company_name": "Winner Nusantara Jaya Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WINR.JK"
+  },
+  {
+    "symbol": "WINS",
+    "company_name": "Wintermar Offshore Marine Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WINS.JK"
+  },
+  {
+    "symbol": "WIRG",
+    "company_name": "WIR ASIA Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WIRG.JK"
+  },
+  {
+    "symbol": "WMPP",
+    "company_name": "Widodo Makmur Perkasa Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WMPP.JK"
+  },
+  {
+    "symbol": "WMUU",
+    "company_name": "Widodo Makmur Unggas Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WMUU.JK"
+  },
+  {
+    "symbol": "WOMF",
+    "company_name": "Wahana Ottomitra Multiartha Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WOMF.JK"
+  },
+  {
+    "symbol": "WOOD",
+    "company_name": "Integra Indocabinet Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WOOD.JK"
+  },
+  {
+    "symbol": "WOWS",
+    "company_name": "Ginting Jaya Energi Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "WOWS.JK"
+  },
+  {
+    "symbol": "WSKT",
+    "company_name": "PT Waskita Karya (Persero) Tbk",
+    "sector": "Industrials",
+    "subsector": "Construction",
+    "yahoo_symbol": "WSKT.JK"
+  },
+  {
+    "symbol": "WTON",
+    "company_name": "PT Wijaya Karya Beton Tbk",
+    "sector": "Industrials",
+    "subsector": "Construction",
+    "yahoo_symbol": "WTON.JK"
+  },
+  {
+    "symbol": "YELO",
+    "company_name": "Yelooo Integra Datanet Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "YELO.JK"
+  },
+  {
+    "symbol": "YOII",
+    "company_name": "Asuransi Digital Bersama Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "YOII.JK"
+  },
+  {
+    "symbol": "YPAS",
+    "company_name": "Yanaprima Hastapersada Tbk",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "YPAS.JK"
+  },
+  {
+    "symbol": "YULE",
+    "company_name": "Yulie Sekuritas Indonesia Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "YULE.JK"
+  },
+  {
+    "symbol": "YUPI",
+    "company_name": "Yupi Indo Jelly Gum Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "YUPI.JK"
+  },
+  {
+    "symbol": "ZATA",
+    "company_name": "PT Bersama Zatta Jaya Tbk",
+    "sector": "Industrials",
+    "subsector": "Engineering & Construction",
+    "yahoo_symbol": "ZATA.JK"
+  },
+  {
+    "symbol": "ZONE",
+    "company_name": "Mega Perintis Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ZONE.JK"
+  },
+  {
+    "symbol": "ZYRX",
+    "company_name": "Zyrexindo Mandiri Buana Tbk.",
+    "sector": null,
+    "subsector": null,
+    "yahoo_symbol": "ZYRX.JK"
+  }
+]
