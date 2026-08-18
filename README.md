@@ -145,7 +145,7 @@ sudo systemctl enable --now stocks-backend stocks-frontend stocks-collector stoc
 
 ## Catatan Deployment
 
-- Nginx: `stocks.mqdd.my.id` → frontend `:3100`, `ai.mqdd.my.id` → 9Router `:20128`
+- Nginx: frontend `:3100`, 9Router `:20128`
 - Data harga dari **Yahoo Finance** (IDX resmi memblokir scraping); 429 di-backoff otomatis
 - Ticker IDX = `KODE.JK` (contoh `BBCA.JK`), indeks = `^JKSE`
 - Build frontend harus sebagai user pemilik (bukan `stocks`) lalu `chown -R stocks:stocks` sebelum restart service
