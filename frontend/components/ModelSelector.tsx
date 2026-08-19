@@ -73,7 +73,7 @@ export default function ModelSelector({ onChange }: Props) {
           <option key={m.id} value={m.id}>{m.name}</option>
         ))}</optgroup>}
         {cloudModels.length > 0 && <optgroup label="CLOUD">{cloudModels.map((m) => (
-          <option key={m.id} value={m.id}>{(m.usable === false) ? `${m.name} (butuh akun eksternal)` : m.name}</option>
+          <option key={m.id} value={m.id}>{(m.usable === false) ? `${m.name} (tidak tersedia)` : m.name}</option>
         ))}</optgroup>}
       </select>
       <button className="btn btn-xs" onClick={refresh} disabled={refreshing} title="Refresh model list">

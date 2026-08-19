@@ -78,14 +78,21 @@ async def discover_models() -> list[dict]:
     models: list[dict] = []
     for m in sorted(_ollama_ids):
         models.append({"id": m, "name": _pretty_name(m), "provider": "ollama", "local": True, "usable": True})
-    for m in sorted(_router_ids):
+    router_ids = sorted(_router_ids)
+    probe_results = await asyncio.gather(
+        *(_probe_router_model(m) for m in router_ids if _is_router_model_usable(m))
+    )
+    probed = dict(zip([m for m in router_ids if _is_router_model_usable(m)], probe_results))
+    for m in router_ids:
+        heuristic = _is_router_model_usable(m)
+        usable = probed.get(m, False) if heuristic else False
         models.append(
             {
                 "id": m,
                 "name": _pretty_name(m),
                 "provider": "9router",
                 "local": False,
-                "usable": _is_router_model_usable(m),
+                "usable": usable,
             }
         )
     return models
@@ -97,9 +104,41 @@ def _is_router_model_usable(model_id: str) -> bool:
     base = model_id.lower()
     if "codex-spark" in base:
         return False
-    if any(x in base for x in ("/opencode", "/mimo", "/claude", "/gemini")):
+    if any(x in base for x in ("/opencode", "/mimo", "/claude")):
         return False
     return True
+
+
+_PROBE_TTL = 300
+_probe_cache: dict[str, tuple[float, bool]] = {}
+
+
+async def _probe_router_model(model_id: str) -> bool:
+    now = time.time()
+    hit = _probe_cache.get(model_id)
+    if hit and now - hit[0] < _PROBE_TTL:
+        return hit[1]
+    ok = False
+    try:
+        headers = {"Content-Type": "application/json"}
+        if settings.nine_router_api_key:
+            headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.post(
+                f"{settings.nine_router_url}/chat/completions",
+                headers=headers,
+                json={
+                    "model": model_id,
+                    "messages": [{"role": "user", "content": "ping"}],
+                    "stream": False,
+                    "max_tokens": 1,
+                },
+            )
+            ok = resp.status_code == 200
+    except Exception:
+        ok = False
+    _probe_cache[model_id] = (now, ok)
+    return ok
 
 
 def _pretty_name(model_id: str) -> str:
@@ -134,18 +173,41 @@ class _LocalGuard:
         self._lock.release()
 
 
+_ROUTER_RETRIES = 2
+
+
+def _retry_delay(attempt: int) -> float:
+    return 1.5 * (attempt + 1)
+
+
 async def _call_router(messages: list[dict], model: str, stream: bool) -> Any:
     headers = {"Content-Type": "application/json"}
     if settings.nine_router_api_key:
         headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
-    async with httpx.AsyncClient(timeout=600) as client:
-        resp = await client.post(
-            f"{settings.nine_router_url}/chat/completions",
-            headers=headers,
-            json={"model": model, "messages": messages, "stream": stream},
-        )
-        resp.raise_for_status()
-        return resp
+    last_exc: Exception | None = None
+    for attempt in range(_ROUTER_RETRIES + 1):
+        try:
+            async with httpx.AsyncClient(timeout=600) as client:
+                resp = await client.post(
+                    f"{settings.nine_router_url}/chat/completions",
+                    headers=headers,
+                    json={"model": model, "messages": messages, "stream": stream},
+                )
+                if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+                    last_exc = httpx.HTTPStatusError(
+                        f"Client error '{resp.status_code}' for url '{resp.url}'", request=resp.request, response=resp
+                    )
+                    await asyncio.sleep(_retry_delay(attempt))
+                    continue
+                resp.raise_for_status()
+                return resp
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+                last_exc = exc
+                await asyncio.sleep(_retry_delay(attempt))
+                continue
+            raise
+    raise AIError(f"9router request failed after retries: {last_exc}", "9router", model) from last_exc
 
 
 async def _call_ollama(messages: list[dict], model: str, stream: bool, max_tokens: int = 1000) -> Any:
@@ -226,28 +288,50 @@ async def complete(
                     headers = {"Content-Type": "application/json"}
                     if settings.nine_router_api_key:
                         headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
-                    async with httpx.AsyncClient(timeout=600) as client:
-                        async with client.stream(
-                            "POST",
-                            f"{settings.nine_router_url}/chat/completions",
-                            headers=headers,
-                            json={"model": model, "messages": messages, "stream": True},
-                        ) as resp:
-                            resp.raise_for_status()
-                            async for line in resp.aiter_lines():
-                                if not line.startswith("data:"):
-                                    continue
-                                data = line[5:].strip()
-                                if data == "[DONE]":
-                                    break
-                                try:
-                                    chunk = json.loads(data)
-                                except Exception:
-                                    continue
-                                delta = chunk.get("choices", [{}])[0].get("delta", {})
-                                content = delta.get("content", "")
-                                if content:
-                                    yield content
+                    last_exc: Exception | None = None
+                    for attempt in range(_ROUTER_RETRIES + 1):
+                        try:
+                            async with httpx.AsyncClient(timeout=600) as client:
+                                async with client.stream(
+                                    "POST",
+                                    f"{settings.nine_router_url}/chat/completions",
+                                    headers=headers,
+                                    json={"model": model, "messages": messages, "stream": True},
+                                ) as resp:
+                                    if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+                                        last_exc = httpx.HTTPStatusError(
+                                            f"Client error '{resp.status_code}' for url '{resp.url}'",
+                                            request=resp.request,
+                                            response=resp,
+                                        )
+                                        await asyncio.sleep(_retry_delay(attempt))
+                                        continue
+                                    resp.raise_for_status()
+                                    async for line in resp.aiter_lines():
+                                        if not line.startswith("data:"):
+                                            continue
+                                        data = line[5:].strip()
+                                        if data == "[DONE]":
+                                            break
+                                        try:
+                                            chunk = json.loads(data)
+                                        except Exception:
+                                            continue
+                                        delta = chunk.get("choices", [{}])[0].get("delta", {})
+                                        content = delta.get("content", "")
+                                        if content:
+                                            yield content
+                            break
+                        except httpx.HTTPStatusError as exc:
+                            if exc.response.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+                                last_exc = exc
+                                await asyncio.sleep(_retry_delay(attempt))
+                                continue
+                            raise
+                        except Exception:
+                            raise
+                    if last_exc is not None:
+                        raise AIError(f"9router request failed after retries: {last_exc}", "9router", model) from last_exc
             success = True
         except AIError:
             raise

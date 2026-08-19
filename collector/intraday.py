@@ -91,9 +91,28 @@ async def poll_once(client: httpx.AsyncClient) -> None:
         company_id, symbol, yahoo_symbol = item
         try:
             chart = await yahoo.fetch_chart(yahoo_symbol, "1d", "1m", client=client)
-            if not chart:
-                return symbol, 0
-            rows = yahoo.chart_to_intraday_rows(chart)
+            rows = yahoo.chart_to_intraday_rows(chart) if chart else []
+            meta = chart.get("meta", {}) if chart else {}
+            if not rows:
+                chart5 = await yahoo.fetch_chart(yahoo_symbol, "5d", "5m", client=client)
+                rows5 = yahoo.chart_to_intraday_rows(chart5) if chart5 else []
+                meta = chart5.get("meta", {}) if chart5 else meta
+                rows = rows5
+            if not rows:
+                price = meta.get("regularMarketPrice")
+                market_time = meta.get("regularMarketTime")
+                if price is None or not market_time:
+                    return symbol, 0
+                rows = [
+                    {
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(market_time)) + "Z",
+                        "price": price,
+                        "open": meta.get("regularMarketDayOpen"),
+                        "high": meta.get("regularMarketDayHigh"),
+                        "low": meta.get("regularMarketDayLow"),
+                        "volume": meta.get("regularMarketVolume") or 0,
+                    }
+                ]
             # Keep only today's WIB rows
             today_wib = now_wib().date()
             kept = []

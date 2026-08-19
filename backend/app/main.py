@@ -358,7 +358,22 @@ def stock_news(symbol: str, db: Session = Depends(get_db)):
 
 
 def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
-    """Latest price rows for all companies with change computed in SQL."""
+    """Latest price rows (intraday-first) for all companies with change computed in bulk."""
+    intra_rows = db.execute(
+        select(db_models.IntradayPrice)
+        .where(
+            db_models.IntradayPrice.timestamp >= datetime.now(timezone.utc) - timedelta(minutes=15),
+        )
+        .order_by(desc(db_models.IntradayPrice.timestamp))
+    ).scalars().all()
+    intra_latest: dict[int, db_models.IntradayPrice] = {}
+    intra_vol: dict[int, float] = {}
+    for r in intra_rows:
+        intra_latest.setdefault(r.company_id, r)
+        v = r.volume or 0
+        if v > intra_vol.get(r.company_id, 0):
+            intra_vol[r.company_id] = v
+
     sub = (
         select(
             db_models.DailyPrice.company_id,
@@ -373,28 +388,36 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
         .subquery()
     )
     latest_alias = aliased(db_models.DailyPrice, latest)
-    stmt = (
+    rows = db.execute(
         select(db_models.Company, latest_alias)
         .join(latest_alias, latest_alias.company_id == db_models.Company.id)
         .where(db_models.Company.symbol != "IHSG")
-    )
-    rows = db.execute(stmt).all()
+    ).all()
     out = []
     for company, lp in rows:
-        prev = lp.previous_close
+        ir = intra_latest.get(company.id)
+        prev = float(lp.previous_close) if lp.previous_close else None
         if not prev:
             continue
-        change_pct = (lp.close - prev) / prev * 100
+        if ir:
+            close = float(ir.price)
+            volume = intra_vol.get(company.id, ir.volume)
+            date = ir.timestamp.isoformat()
+        else:
+            close = float(lp.close)
+            volume = lp.volume
+            date = str(lp.date)
+        change_pct = (close - prev) / prev * 100
         out.append(
             {
                 "symbol": company.symbol,
                 "company_name": company.company_name,
-                "close": float(lp.close),
-                "previous_close": float(prev),
-                "change": round(float(lp.close) - float(prev), 2),
+                "close": close,
+                "previous_close": prev,
+                "change": round(close - prev, 2),
                 "change_pct": round(change_pct, 2),
-                "volume": lp.volume,
-                "date": str(lp.date),
+                "volume": volume,
+                "date": date,
             }
         )
     if order == "pct_desc":
@@ -402,7 +425,11 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
     elif order == "pct_asc":
         out.sort(key=lambda x: x["change_pct"])
     elif order == "volume":
-        out.sort(key=lambda x: x["volume"] or 0, reverse=True)
+        today_iso = datetime.now(timezone.utc).astimezone().date().isoformat()
+        today_rows = [r for r in out if r["date"].startswith(today_iso)]
+        pool = today_rows if today_rows else out
+        pool.sort(key=lambda x: x["volume"] or 0, reverse=True)
+        return pool[:limit]
     return out[:limit]
 
 
@@ -413,9 +440,8 @@ def market_overview(db: Session = Depends(get_db)):
     gainers = _market_rows(db, 10, "pct_desc")
     losers = _market_rows(db, 10, "pct_asc")
     active = _market_rows(db, 10, "volume")
-    total_volume = db.execute(
-        select(func.sum(db_models.DailyPrice.volume)).select_from(db_models.DailyPrice)
-    ).scalar() or 0
+    all_rows = _market_rows(db, 10_000, "pct_desc")
+    total_volume = sum(r["volume"] or 0 for r in all_rows)
     return {
         "ihsg": {"symbol": "IHSG", "price": ihsg_price},
         "gainers": gainers,
