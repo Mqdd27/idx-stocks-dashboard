@@ -247,6 +247,17 @@ tr:hover td { background: rgba(22,28,41,.6); }
 }
 @keyframes sp { to { transform: rotate(360deg); } }
 
+.live-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green, #2ea043);
+  animation: livePulse 1.6s infinite; vertical-align: 0; margin-right: 5px;
+}
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 rgba(46, 160, 67, .7); }
+  70% { box-shadow: 0 0 0 6px rgba(46, 160, 67, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 160, 67, 0); }
+}
+
 .chart-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
 .chart-toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
 .chart-toolbar button {

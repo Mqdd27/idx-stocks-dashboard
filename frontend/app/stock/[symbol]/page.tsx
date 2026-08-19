@@ -31,6 +31,13 @@ export default function StockDetailPage() {
     return () => { alive = false; };
   }, [symbol]);
 
+  useEffect(() => {
+    const iv = setInterval(() => {
+      api.stock(symbol).then((s) => setStock(s)).catch(() => {});
+    }, 5000);
+    return () => clearInterval(iv);
+  }, [symbol]);
+
   if (err) return <div className="empty-state">Saham tidak ditemukan.</div>;
   if (!stock) return <div className="empty-state"><span className="spin" /> Memuat…</div>;
 
@@ -63,7 +70,9 @@ export default function StockDetailPage() {
         <div style={{ textAlign: "right" }}>
           {p ? (
             <>
-              <div className="price-big" style={{ color: changeColor }}>{fmtNum(p.close)}</div>
+              <div className="price-big" style={{ color: changeColor }}>
+                {p.live && <span className="live-dot" title="Harga realtime (intraday)" />} {fmtNum(p.close)}
+              </div>
               <div className={`price-change ${cls(changePct)}`}>
                 {p.change != null && `${p.change > 0 ? "+" : ""}${fmtNum(p.change)}`} ({pct(changePct)})
               </div>

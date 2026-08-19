@@ -1,7 +1,7 @@
 """Stocks Dashboard - FastAPI backend."""
 import json
 import time
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -70,26 +70,56 @@ def _get_company(db: Session, symbol: str) -> db_models.Company:
 
 
 def _latest_price(db: Session, company_id: int) -> Optional[dict]:
-    row = db.execute(
+    prev = db.execute(
         select(db_models.DailyPrice)
         .where(db_models.DailyPrice.company_id == company_id)
         .order_by(desc(db_models.DailyPrice.date))
         .limit(1)
     ).scalar_one_or_none()
-    if not row:
+    intraday = db.execute(
+        select(db_models.IntradayPrice)
+        .where(
+            db_models.IntradayPrice.company_id == company_id,
+            db_models.IntradayPrice.timestamp >= datetime.now(timezone.utc) - timedelta(minutes=15),
+        )
+        .order_by(desc(db_models.IntradayPrice.timestamp))
+        .limit(1)
+    ).scalar_one_or_none()
+
+    def _change(close: float, previous_close: float | None) -> tuple[Optional[float], Optional[float]]:
+        change = (close - previous_close) if previous_close else None
+        change_pct = (change / previous_close * 100) if previous_close else None
+        return (round(change, 2) if change is not None else None,
+                round(change_pct, 2) if change_pct is not None else None)
+
+    if intraday:
+        change, change_pct = _change(float(intraday.price), float(prev.previous_close) if prev and prev.previous_close else None)
+        return {
+            "date": intraday.timestamp.isoformat(),
+            "open": float(intraday.open) if intraday.open is not None else None,
+            "high": float(intraday.high) if intraday.high is not None else None,
+            "low": float(intraday.low) if intraday.low is not None else None,
+            "close": float(intraday.price) if intraday.price is not None else None,
+            "previous_close": float(prev.previous_close) if prev and prev.previous_close else None,
+            "volume": intraday.volume,
+            "change": change,
+            "change_pct": change_pct,
+            "live": True,
+        }
+    if not prev:
         return None
-    change = (row.close - row.previous_close) if row.previous_close else None
-    change_pct = (change / row.previous_close * 100) if row.previous_close else None
+    change, change_pct = _change(float(prev.close), float(prev.previous_close) if prev.previous_close else None)
     return {
-        "date": str(row.date),
-        "open": float(row.open) if row.open is not None else None,
-        "high": float(row.high) if row.high is not None else None,
-        "low": float(row.low) if row.low is not None else None,
-        "close": float(row.close) if row.close is not None else None,
-        "previous_close": float(row.previous_close) if row.previous_close is not None else None,
-        "volume": row.volume,
-        "change": round(change, 2) if change is not None else None,
-        "change_pct": round(change_pct, 2) if change_pct is not None else None,
+        "date": str(prev.date),
+        "open": float(prev.open) if prev.open is not None else None,
+        "high": float(prev.high) if prev.high is not None else None,
+        "low": float(prev.low) if prev.low is not None else None,
+        "close": float(prev.close) if prev.close is not None else None,
+        "previous_close": float(prev.previous_close) if prev.previous_close is not None else None,
+        "volume": prev.volume,
+        "change": change,
+        "change_pct": change_pct,
+        "live": False,
     }
 
 

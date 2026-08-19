@@ -8,6 +8,7 @@ export interface PriceInfo {
   volume: number | null;
   change: number | null;
   change_pct: number | null;
+  live?: boolean;
 }
 
 export interface Ratios {
