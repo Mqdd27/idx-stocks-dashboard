@@ -16,12 +16,12 @@ from app import models as db_models  # noqa: E402
 
 TZ = ZoneInfo("Asia/Jakarta")
 
-# IDX trading hours (WIB): pre-open 09:00-09:15, regular 09:15-11:30, 13:30-15:30
+# IDX trading hours (WIB): pre-open 09:00-09:15, regular 09:15-12:00, 13:30-15:50
 PRE_OPEN_START = dtime(9, 0)
 PRE_OPEN_END = dtime(9, 15)
-MORNING_END = dtime(11, 30)
+MORNING_END = dtime(12, 0)
 AFTERNOON_START = dtime(13, 30)
-CLOSE_TIME = dtime(15, 30)
+CLOSE_TIME = dtime(16, 0)
 
 
 def now_wib() -> datetime:

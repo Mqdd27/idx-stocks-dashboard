@@ -365,12 +365,14 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<{ analysis: string; model: string; provider: string; generated_at: string } | null>(null);
   const [fb, setFb] = useState<{ message: string; provider: string } | null>(null);
+  const [queued, setQueued] = useState(0);
 
   async function analyze(overrideModel?: string) {
     const m = overrideModel || model;
     setBusy(true);
     setFb(null);
     setResult(null);
+    setQueued(0);
     try {
       const r = await api.aiAnalyze(symbol, m);
       if ((r as any).error) {
@@ -384,6 +386,14 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
       setBusy(false);
     }
   }
+
+  useEffect(() => {
+    if (!busy) return;
+    const iv = setInterval(() => {
+      api.aiQueue().then((q) => setQueued(q.queued || 0)).catch(() => {});
+    }, 5000);
+    return () => clearInterval(iv);
+  }, [busy]);
 
   return (
     <div>
@@ -400,7 +410,13 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
         </div>
       </div>
 
-      {busy && <div className="queue-note" style={{ marginTop: 12 }}>Local AI is busy. Your request is queued.</div>}
+      {busy && (
+        <div className="queue-note" style={{ marginTop: 12 }}>
+          {queued > 0
+            ? `Model lokal sedang sibuk — ${queued} request dalam antrian.`
+            : "Memproses analisis… (model lokal butuh ±2–3 menit, cloud ±10–30 detik)"}
+        </div>
+      )}
 
       {fb && (
         <div className="analysis-err">

@@ -69,6 +69,13 @@ def _get_company(db: Session, symbol: str) -> db_models.Company:
     return company
 
 
+def _today_start_utc() -> datetime:
+    from zoneinfo import ZoneInfo
+
+    wib = datetime.now(timezone.utc).astimezone(ZoneInfo(settings.timezone))
+    return datetime.combine(wib.date(), datetime.min.time()).replace(tzinfo=ZoneInfo(settings.timezone)).astimezone(timezone.utc)
+
+
 def _latest_price(db: Session, company_id: int) -> Optional[dict]:
     prev = db.execute(
         select(db_models.DailyPrice)
@@ -80,7 +87,7 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
         select(db_models.IntradayPrice)
         .where(
             db_models.IntradayPrice.company_id == company_id,
-            db_models.IntradayPrice.timestamp >= datetime.now(timezone.utc) - timedelta(minutes=15),
+            db_models.IntradayPrice.timestamp >= _today_start_utc(),
         )
         .order_by(desc(db_models.IntradayPrice.timestamp))
         .limit(1)
@@ -94,6 +101,7 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
 
     if intraday:
         change, change_pct = _change(float(intraday.price), float(prev.previous_close) if prev and prev.previous_close else None)
+        fresh = (datetime.now(timezone.utc) - intraday.timestamp).total_seconds() <= 900
         return {
             "date": intraday.timestamp.isoformat(),
             "open": float(intraday.open) if intraday.open is not None else None,
@@ -104,7 +112,7 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
             "volume": intraday.volume,
             "change": change,
             "change_pct": change_pct,
-            "live": True,
+            "live": fresh,
         }
     if not prev:
         return None
@@ -362,7 +370,7 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
     intra_rows = db.execute(
         select(db_models.IntradayPrice)
         .where(
-            db_models.IntradayPrice.timestamp >= datetime.now(timezone.utc) - timedelta(minutes=15),
+            db_models.IntradayPrice.timestamp >= _today_start_utc(),
         )
         .order_by(desc(db_models.IntradayPrice.timestamp))
     ).scalars().all()
@@ -719,7 +727,7 @@ async def ai_analyze(request: Request, db: Session = Depends(get_db)):
     started = time.monotonic()
     try:
         text = await complete(
-            messages, model, request_type="analyze", symbol=symbol, max_tokens=1500
+            messages, model, request_type="analyze", symbol=symbol, max_tokens=1000
         )
         latency = int((time.monotonic() - started) * 1000)
         provider, is_local = _model_kind(model)
