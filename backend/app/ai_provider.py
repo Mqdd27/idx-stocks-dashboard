@@ -132,6 +132,7 @@ async def _probe_router_model(model_id: str) -> bool:
                     "messages": [{"role": "user", "content": "ping"}],
                     "stream": False,
                     "max_tokens": 1,
+                    **({"think": False} if model_id.startswith("ollama") else {}),
                 },
             )
             ok = resp.status_code == 200
@@ -191,7 +192,12 @@ async def _call_router(messages: list[dict], model: str, stream: bool) -> Any:
                 resp = await client.post(
                     f"{settings.nine_router_url}/chat/completions",
                     headers=headers,
-                    json={"model": model, "messages": messages, "stream": stream},
+                    json={
+                        "model": model,
+                        "messages": messages,
+                        "stream": stream,
+                        **({"think": False} if model.startswith("ollama") else {}),
+                    },
                 )
                 if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
                     last_exc = httpx.HTTPStatusError(
@@ -296,7 +302,8 @@ async def complete(
                                     "POST",
                                     f"{settings.nine_router_url}/chat/completions",
                                     headers=headers,
-                                    json={"model": model, "messages": messages, "stream": True},
+                                    json={"model": model, "messages": messages, "stream": True,
+                                      **({"think": False} if model.startswith("ollama") else {})},
                                 ) as resp:
                                     if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
                                         last_exc = httpx.HTTPStatusError(
