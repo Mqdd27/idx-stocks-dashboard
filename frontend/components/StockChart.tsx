@@ -123,6 +123,11 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
     });
   }
 
+  function openTradingView() {
+    const base = symbol.replace(/\.JK$/, "");
+    window.open(`https://www.tradingview.com/chart/?symbol=IDX:${base}`, "_blank", "noopener");
+  }
+
   function applyIndicators(inds: string[]) {
     if (!chartRef.current || !candleRef.current) return;
     overlayRef.current.forEach((s) => chartRef.current?.removeSeries(s));
@@ -210,7 +215,10 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
         ))}
       </div>
       <div className="legend">{legend.map((l, i) => <span key={i}>{l}</span>)}</div>
-      <div ref={containerRef} />
+      <div className="tv-overlay">
+        <div className="tv-badge" onClick={openTradingView} title="Buka di TradingView">TradingView ↗</div>
+        <div ref={containerRef} onClick={openTradingView} />
+      </div>
     </div>
   );
 }
