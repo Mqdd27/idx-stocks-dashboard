@@ -132,7 +132,7 @@ async def _probe_router_model(model_id: str) -> bool:
                     "messages": [{"role": "user", "content": "ping"}],
                     "stream": False,
                     "max_tokens": 1,
-                    **({"think": False} if model_id.startswith("ollama") else {}),
+                    **({"think": False, "keep_alive": "30m"} if model_id.startswith("ollama") else {}),
                 },
             )
             ok = resp.status_code == 200
@@ -196,7 +196,7 @@ async def _call_router(messages: list[dict], model: str, stream: bool) -> Any:
                         "model": model,
                         "messages": messages,
                         "stream": stream,
-                        **({"think": False} if model.startswith("ollama") else {}),
+                        **({"think": False, "keep_alive": "30m"} if model.startswith("ollama") else {}),
                     },
                 )
                 if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
@@ -248,7 +248,7 @@ async def complete(
     error_msg: Optional[str] = None
 
     async def _guard():
-        if is_local:
+        if is_local or model.startswith("ollama"):
             return _LocalGuard()
         return _noop_guard()
 
@@ -303,7 +303,7 @@ async def complete(
                                     f"{settings.nine_router_url}/chat/completions",
                                     headers=headers,
                                     json={"model": model, "messages": messages, "stream": True,
-                                      **({"think": False} if model.startswith("ollama") else {})},
+                                      **({"think": False, "keep_alive": "30m"} if model.startswith("ollama") else {})},
                                 ) as resp:
                                     if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
                                         last_exc = httpx.HTTPStatusError(
