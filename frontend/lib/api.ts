@@ -118,6 +118,58 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ symbol, model }),
     }),
+  aiAnalyzeStream: async (
+    symbol: string,
+    model: string,
+    onDelta: (d: string) => void,
+    onDone: (meta: { model: string; provider: string; generated_at: string }) => void,
+    onError: (msg: string, provider?: string) => void,
+  ): Promise<void> => {
+    const resp = await fetch("/api/ai/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ symbol, model, stream: true }),
+    });
+    if (!resp.ok) {
+      let detail = "";
+      try {
+        const j = await resp.json();
+        detail = j.detail || j.error || "";
+      } catch {
+        /* ignore */
+      }
+      throw new Error(`${resp.status} ${detail}`.trim());
+    }
+    const reader = resp.body?.getReader();
+    if (!reader) return;
+    const decoder = new TextDecoder();
+    let buf = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop() ?? "";
+      for (const line of lines) {
+        const t = line.trim();
+        if (!t.startsWith("data:")) continue;
+        let p: any;
+        try {
+          p = JSON.parse(t.slice(5).trim());
+        } catch {
+          continue;
+        }
+        if (p.delta) onDelta(p.delta);
+        else if (p.error) {
+          onError(String(p.error), p.provider);
+          return;
+        } else if (p.done) {
+          onDone({ model: p.model, provider: p.provider, generated_at: p.generated_at });
+          return;
+        }
+      }
+    }
+  },
   aiSummarize: (symbol: string, model: string) =>
     jfetch<{ summary: string; model: string }>("/api/ai/summarize", {
       method: "POST",

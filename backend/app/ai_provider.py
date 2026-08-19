@@ -261,15 +261,17 @@ async def complete(
 
     async def _run_stream() -> AsyncIterator[str]:
         nonlocal success, error_msg
+        ollama_stream = provider == "ollama" or model.startswith("ollama")
+        ollama_model = model.split("/")[-1] if model.startswith("ollama") else model
         try:
             async with await _guard():
-                if provider == "ollama":
+                if ollama_stream:
                     async with httpx.AsyncClient(timeout=900) as client:
                         async with client.stream(
                             "POST",
                             f"{settings.ollama_url}/api/chat",
                             json={
-                                "model": model,
+                                "model": ollama_model,
                                 "messages": messages,
                                 "stream": True,
                                 "keep_alive": "30m",

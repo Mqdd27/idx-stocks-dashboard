@@ -373,13 +373,18 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
     setFb(null);
     setResult(null);
     setQueued(0);
+    let text = "";
     try {
-      const r = await api.aiAnalyze(symbol, m);
-      if ((r as any).error) {
-        setFb({ message: String((r as any).error), provider: String((r as any).provider || "unknown") });
-      } else {
-        setResult(r);
-      }
+      await api.aiAnalyzeStream(
+        symbol,
+        m,
+        (d) => {
+          text += d;
+          setResult({ analysis: text, model: m, provider: "streaming", generated_at: new Date().toISOString() });
+        },
+        (meta) => setResult({ analysis: text, model: meta.model, provider: meta.provider, generated_at: meta.generated_at }),
+        (msg, provider) => setFb({ message: msg, provider: provider || "unknown" }),
+      );
     } catch (e: any) {
       setFb({ message: String(e.message || e), provider: "unknown" });
     } finally {

@@ -1,4 +1,5 @@
 """Stocks Dashboard - FastAPI backend."""
+import asyncio
 import json
 import time
 from datetime import date, datetime, timedelta, timezone
@@ -725,6 +726,90 @@ async def ai_analyze(request: Request, db: Session = Depends(get_db)):
         },
     ]
     started = time.monotonic()
+    stream = bool(body.get("stream", False))
+    if stream:
+        async def event_stream():
+            q: asyncio.Queue = asyncio.Queue()
+            accumulated: list[str] = []
+
+            async def consume() -> None:
+                try:
+                    async for chunk in await complete(
+                        messages, model, stream=True, request_type="analyze", symbol=symbol, max_tokens=1000
+                    ):
+                        await q.put(("chunk", chunk))
+                    await q.put(("end", None))
+                except AIError as exc:
+                    await q.put(("error", exc))
+                except Exception as exc:  # noqa: BLE001
+                    await q.put(("error", exc))
+
+            task = asyncio.create_task(consume())
+            try:
+                while True:
+                    try:
+                        kind, payload = await asyncio.wait_for(q.get(), timeout=20)
+                    except asyncio.TimeoutError:
+                        yield ": ping\n\n"
+                        continue
+                    if kind == "chunk":
+                        accumulated.append(payload)
+                        yield f"data: {json.dumps({'delta': payload})}\n\n"
+                    elif kind == "end":
+                        text = "".join(accumulated)
+                        latency = int((time.monotonic() - started) * 1000)
+                        provider, is_local = _model_kind(model)
+                        if model.startswith("ollama"):
+                            provider, is_local = "ollama", True
+                        db.add(
+                            db_models.AIAnalysis(
+                                company_id=company.id,
+                                symbol=symbol,
+                                model=model,
+                                provider=provider,
+                                is_local=is_local,
+                                request_type="analyze",
+                                request_context=_json_safe(context),
+                                response=text,
+                                latency_ms=latency,
+                                success=True,
+                            )
+                        )
+                        db.commit()
+                        yield (
+                            "data: "
+                            + json.dumps(
+                                {
+                                    "done": True,
+                                    "model": model,
+                                    "provider": provider,
+                                    "generated_at": datetime.now().astimezone().isoformat(),
+                                }
+                            )
+                            + "\n\n"
+                        )
+                        return
+                    else:
+                        exc = payload
+                        db.rollback()
+                        yield (
+                            "data: "
+                            + json.dumps(
+                                {
+                                    "error": str(exc),
+                                    "provider": exc.provider if isinstance(exc, AIError) else "unknown",
+                                    "model": exc.model if isinstance(exc, AIError) else model,
+                                    "fallback_available": True,
+                                }
+                            )
+                            + "\n\n"
+                        )
+                        return
+            finally:
+                task.cancel()
+
+        return StreamingResponse(event_stream(), media_type="text/event-stream")
+
     try:
         text = await complete(
             messages, model, request_type="analyze", symbol=symbol, max_tokens=1000
