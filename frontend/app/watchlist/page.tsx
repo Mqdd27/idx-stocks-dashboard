@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { fmtNum, fmtVol, pct, cls } from "@/lib/format";
@@ -8,9 +8,22 @@ import { fmtNum, fmtVol, pct, cls } from "@/lib/format";
 export default function WatchlistPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [flashes, setFlashes] = useState<Record<string, "up" | "down">>({});
+  const prevPrices = useRef<Record<string, number>>({});
 
   const load = useCallback(() => {
-    api.watchlist().then((w) => { setItems(w.data); setLoaded(true); }).catch(() => setLoaded(true));
+    api.watchlist().then((w) => {
+      const newFlashes: Record<string, "up" | "down"> = {};
+      for (const it of w.data) {
+        const c = it.price?.close;
+        const p = prevPrices.current[it.symbol];
+        if (c != null && p != null && c !== p) newFlashes[it.symbol] = c > p ? "up" : "down";
+        if (c != null) prevPrices.current[it.symbol] = c;
+      }
+      setFlashes(newFlashes);
+      setItems(w.data);
+      setLoaded(true);
+    }).catch(() => setLoaded(true));
   }, []);
 
   useEffect(() => {
@@ -47,7 +60,14 @@ export default function WatchlistPage() {
               {items.map((it) => (
                 <tr key={it.symbol}>
                   <td><Link href={`/stock/${it.symbol}`} className="sym-badge">{it.symbol}</Link></td>
-                  <td className="num">{it.price ? fmtNum(it.price.close) : "-"}</td>
+                  <td
+                    className={`num ${flashes[it.symbol] ? `flash-${flashes[it.symbol]}` : ""}`}
+                    onAnimationEnd={() => setFlashes((f) => {
+                      const n = { ...f };
+                      delete n[it.symbol];
+                      return n;
+                    })}
+                  >{it.price ? fmtNum(it.price.close) : "-"}</td>
                   <td className={`num ${cls(it.price?.change_pct)}`}>{it.price ? pct(it.price.change_pct) : "-"}</td>
                   <td className="num">{it.price ? fmtVol(it.price.volume) : "-"}</td>
                   <td className="num">{it.ratios?.per != null ? fmtNum(it.ratios.per) : "-"}</td>

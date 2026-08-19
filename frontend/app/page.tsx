@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { fmtNum, fmtVol, pct, cls } from "@/lib/format";
@@ -8,11 +8,30 @@ import { fmtNum, fmtVol, pct, cls } from "@/lib/format";
 export default function MarketPage() {
   const [data, setData] = useState<any>(null);
   const [err, setErr] = useState(false);
+  const [ihsgFlash, setIhsgFlash] = useState<"up" | "down" | null>(null);
+  const [rowFlashes, setRowFlashes] = useState<Record<string, "up" | "down">>({});
+  const prevIhsg = useRef<number | null>(null);
+  const prevRows = useRef<Record<string, number>>({});
 
   useEffect(() => {
     let alive = true;
     const load = () => {
-      api.overview().then((d) => alive && setData(d)).catch(() => alive && setErr(true));
+      api.overview().then((d) => {
+        const ihsgC = d.ihsg?.price?.close;
+        const prevI = prevIhsg.current;
+        if (ihsgC != null && prevI != null && ihsgC !== prevI) setIhsgFlash(ihsgC > prevI ? "up" : "down");
+        if (ihsgC != null) prevIhsg.current = ihsgC;
+        const newFlashes: Record<string, "up" | "down"> = {};
+        for (const list of [d.gainers, d.losers, d.most_active]) {
+          for (const r of list || []) {
+            const p = prevRows.current[r.symbol];
+            if (r.close != null && p != null && r.close !== p) newFlashes[r.symbol] = r.close > p ? "up" : "down";
+            if (r.close != null) prevRows.current[r.symbol] = r.close;
+          }
+        }
+        setRowFlashes(newFlashes);
+        alive && setData(d);
+      }).catch(() => alive && setErr(true));
     };
     load();
     const iv = setInterval(load, 30000);
@@ -30,7 +49,11 @@ export default function MarketPage() {
       <div className="grid grid-3" style={{ marginBottom: 14 }}>
         <div className="card">
           <div className="card-title">IHSG</div>
-          <div className="price-big" style={{ color: ihsg?.change_pct != null && ihsg.change_pct >= 0 ? "var(--green)" : "var(--red)" }}>
+          <div
+            className={`price-big ${ihsgFlash ? `flash-${ihsgFlash}` : ""}`}
+            onAnimationEnd={() => setIhsgFlash(null)}
+            style={{ color: ihsg?.change_pct != null && ihsg.change_pct >= 0 ? "var(--green)" : "var(--red)" }}
+          >
             {ihsg ? fmtNum(ihsg.close) : "-"}
           </div>
           {ihsg && (
@@ -50,15 +73,15 @@ export default function MarketPage() {
       </div>
 
       <div className="grid grid-3">
-        <StockTable title="Top Gainers" rows={data.gainers} />
-        <StockTable title="Top Losers" rows={data.losers} />
-        <StockTable title="Most Active" rows={data.most_active} volume />
+        <StockTable title="Top Gainers" rows={data.gainers} flashes={rowFlashes} />
+        <StockTable title="Top Losers" rows={data.losers} flashes={rowFlashes} />
+        <StockTable title="Most Active" rows={data.most_active} volume flashes={rowFlashes} />
       </div>
     </div>
   );
 }
 
-function StockTable({ title, rows, volume }: { title: string; rows: any[]; volume?: boolean }) {
+function StockTable({ title, rows, volume, flashes }: { title: string; rows: any[]; volume?: boolean; flashes?: Record<string, "up" | "down"> }) {
   return (
     <div className="card">
       <div className="card-title">{title}</div>
@@ -70,7 +93,13 @@ function StockTable({ title, rows, volume }: { title: string; rows: any[]; volum
           {rows.map((r) => (
             <tr key={r.symbol}>
               <td><Link href={`/stock/${r.symbol}`} className="sym-badge">{r.symbol}</Link></td>
-              <td className="num">{fmtNum(r.close)}</td>
+              <td
+                className={`num ${flashes?.[r.symbol] ? `flash-${flashes[r.symbol]}` : ""}`}
+                onAnimationEnd={(e) => {
+                  const el = e.currentTarget;
+                  el.classList.remove("flash-up", "flash-down");
+                }}
+              >{fmtNum(r.close)}</td>
               <td className={`num ${cls(r.change_pct)}`}>{pct(r.change_pct)}</td>
               {volume && <td className="num">{fmtVol(r.volume)}</td>}
             </tr>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { api, type Stock, type Technicals } from "@/lib/api";
@@ -19,12 +19,16 @@ export default function StockDetailPage() {
   const [tab, setTab] = useState<Tab>("overview");
   const [inWatchlist, setInWatchlist] = useState(false);
   const [err, setErr] = useState(false);
+  const [flashDir, setFlashDir] = useState<"up" | "down" | null>(null);
+  const prevClose = useRef<number | null>(null);
 
   useEffect(() => {
     let alive = true;
     setStock(null);
     setTech(null);
     setTab("overview");
+    prevClose.current = null;
+    setFlashDir(null);
     api.stock(symbol).then((s) => alive && setStock(s)).catch(() => alive && setErr(true));
     api.technicals(symbol).then((t) => alive && setTech(t.technicals)).catch(() => {});
     api.watchlist().then((w) => alive && setInWatchlist(w.data.some((x) => x.symbol === symbol))).catch(() => {});
@@ -33,7 +37,13 @@ export default function StockDetailPage() {
 
   useEffect(() => {
     const iv = setInterval(() => {
-      api.stock(symbol).then((s) => setStock(s)).catch(() => {});
+      api.stock(symbol).then((s) => {
+        const c = s.price?.close;
+        const p = prevClose.current;
+        if (c != null && p != null && c !== p) setFlashDir(c > p ? "up" : "down");
+        if (c != null) prevClose.current = c;
+        setStock(s);
+      }).catch(() => {});
     }, 5000);
     return () => clearInterval(iv);
   }, [symbol]);
@@ -70,9 +80,13 @@ export default function StockDetailPage() {
         <div style={{ textAlign: "right" }}>
           {p ? (
             <>
-              <div className="price-big" style={{ color: changeColor }}>
-                {p.live && <span className="live-dot" title="Harga realtime (intraday)" />} {fmtNum(p.close)}
-              </div>
+              <div
+              className={`price-big ${flashDir ? `flash-${flashDir}` : ""}`}
+              onAnimationEnd={() => setFlashDir(null)}
+              style={{ color: changeColor }}
+            >
+              {p.live && <span className="live-dot" title="Harga realtime (intraday)" />} {fmtNum(p.close)}
+            </div>
               <div className={`price-change ${cls(changePct)}`}>
                 {p.change != null && `${p.change > 0 ? "+" : ""}${fmtNum(p.change)}`} ({pct(changePct)})
               </div>
@@ -359,7 +373,11 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
     setResult(null);
     try {
       const r = await api.aiAnalyze(symbol, m);
-      setResult(r);
+      if ((r as any).error) {
+        setFb({ message: String((r as any).error), provider: String((r as any).provider || "unknown") });
+      } else {
+        setResult(r);
+      }
     } catch (e: any) {
       setFb({ message: String(e.message || e), provider: "unknown" });
     } finally {
