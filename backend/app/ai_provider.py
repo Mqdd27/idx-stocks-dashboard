@@ -123,7 +123,8 @@ async def _probe_router_model(model_id: str) -> bool:
         headers = {"Content-Type": "application/json"}
         if settings.nine_router_api_key:
             headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
-        async with httpx.AsyncClient(timeout=15) as client:
+        probe_timeout = 180 if model_id.startswith("ollama") else 15
+        async with httpx.AsyncClient(timeout=probe_timeout) as client:
             resp = await client.post(
                 f"{settings.nine_router_url}/chat/completions",
                 headers=headers,
