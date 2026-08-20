@@ -262,7 +262,7 @@ async def complete(
 
     async def _run_stream() -> AsyncIterator[str]:
         nonlocal success, error_msg
-        ollama_stream = provider == "ollama" or model.startswith("ollama")
+        ollama_stream = provider == "ollama"
         ollama_model = model.split("/")[-1] if model.startswith("ollama") else model
         try:
             async with await _guard():
@@ -370,7 +370,7 @@ async def complete(
                     resp = await _call_router(messages, model, stream=False)
                     data = resp.json()
                     text = data["choices"][0]["message"]["content"]
-            if model.startswith("ollama") or provider == "ollama":
+            if provider == "ollama":
                 u = data.get("usage", {})
                 _record_router_usage(
                     model,
