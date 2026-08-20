@@ -266,6 +266,7 @@ async def complete(
         ollama_model = model.split("/")[-1] if model.startswith("ollama") else model
         try:
             async with await _guard():
+                usage: dict = {}
                 if ollama_stream:
                     async with httpx.AsyncClient(timeout=900) as client:
                         async with client.stream(
@@ -289,10 +290,16 @@ async def complete(
                                 except Exception:
                                     continue
                                 if chunk.get("done"):
+                                    usage = chunk
                                     break
                                 content = chunk.get("message", {}).get("content", "")
                                 if content:
                                     yield content
+                            _record_router_usage(
+                                model,
+                                usage.get("prompt_eval_count", 0),
+                                usage.get("eval_count", 0),
+                            )
                 else:
                     headers = {"Content-Type": "application/json"}
                     if settings.nine_router_api_key:
@@ -363,6 +370,13 @@ async def complete(
                     resp = await _call_router(messages, model, stream=False)
                     data = resp.json()
                     text = data["choices"][0]["message"]["content"]
+            if model.startswith("ollama") or provider == "ollama":
+                u = data.get("usage", {})
+                _record_router_usage(
+                    model,
+                    u.get("prompt_tokens", u.get("input_tokens", 0)),
+                    u.get("completion_tokens", u.get("output_tokens", 0)),
+                )
             success = True
             return text
         except AIError:
@@ -376,6 +390,48 @@ async def complete(
     if stream:
         return _run_stream()
     return await _run_full()
+
+
+def _record_router_usage(model: str, prompt_tokens: int, completion_tokens: int) -> None:
+    """9Router's passthrough path never records ollama usage; write it ourselves so
+    the 9Router dashboard shows the traffic."""
+    try:
+        import json as _json
+        import sqlite3
+        from datetime import datetime, timezone
+
+        base = model.split("/")[-1] if model.startswith("ollama") else model
+        if not base:
+            return
+        ts = datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+        con = sqlite3.connect("/home/mqdd/.9router/db/data.sqlite", timeout=10)
+        con.execute(
+            "INSERT INTO usageHistory(timestamp, provider, model, connectionId, apiKey, endpoint, promptTokens, completionTokens, cost, status, tokens, meta) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                ts,
+                "ollama-local",
+                base,
+                None,
+                None,
+                f"{settings.nine_router_url}/chat/completions",
+                prompt_tokens,
+                completion_tokens,
+                0.0,
+                "ok",
+                _json.dumps(
+                    {
+                        "prompt_tokens": prompt_tokens,
+                        "completion_tokens": completion_tokens,
+                        "total_tokens": prompt_tokens + completion_tokens,
+                    }
+                ),
+                _json.dumps({}),
+            ),
+        )
+        con.commit()
+        con.close()
+    except Exception:
+        pass
 
 
 def _log_request(
