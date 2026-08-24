@@ -183,16 +183,10 @@ def health(db: Session = Depends(get_db)):
 
 
 @app.get("/api/stocks")
-def list_stocks(
-    q: str | None = Query(None, min_length=1, max_length=100),
-    limit: int = Query(8, ge=1, le=1000),
-    db: Session = Depends(get_db),
-):
-    query = select(db_models.Company).order_by(db_models.Company.symbol)
-    if q and q.strip():
-        term = f"%{q.strip()}%"
-        query = query.where(db_models.Company.symbol.ilike(term) | db_models.Company.company_name.ilike(term))
-    companies = db.execute(query.limit(limit)).scalars().all()
+def list_stocks(db: Session = Depends(get_db)):
+    companies = db.execute(
+        select(db_models.Company).order_by(db_models.Company.symbol)
+    ).scalars().all()
     out = []
     for c in companies:
         price = _latest_price(db, c.id)
@@ -1117,24 +1111,8 @@ def _latest_prices(db: Session, symbols: set[str] | None = None):
     prices = {}
     for price, company in rows:
         if (symbols is None or company.symbol in symbols) and company.symbol not in prices and price.close is not None:
-            prices[company.symbol] = {"date": price.date, "price": float(price.close), "volume": price.volume, "timestamp": None, "source": "daily"}
-    intra = select(db_models.IntradayPrice, db_models.Company).join(db_models.Company, db_models.Company.id == db_models.IntradayPrice.company_id).where(db_models.IntradayPrice.timestamp >= _today_start_utc())
-    if symbols:
-        intra = intra.where(db_models.Company.symbol.in_(symbols))
-    for price, company in db.execute(intra.order_by(db_models.IntradayPrice.timestamp.desc())).all():
-        if price.price is not None and (company.symbol not in prices or (prices[company.symbol].get("timestamp") or datetime.min.replace(tzinfo=timezone.utc)) < price.timestamp):
-            prices[company.symbol] = {"date": price.timestamp.date(), "price": float(price.price), "volume": price.volume, "timestamp": price.timestamp, "source": "intraday"}
+            prices[company.symbol] = (price.date, float(price.close))
     return prices
-
-
-def _execution_snapshot(db: Session, company_id: int, now: datetime):
-    intra = db.execute(select(db_models.IntradayPrice).where(db_models.IntradayPrice.company_id == company_id, db_models.IntradayPrice.timestamp >= _today_start_utc()).order_by(desc(db_models.IntradayPrice.timestamp)).limit(1)).scalar_one_or_none()
-    if intra and intra.price is not None and (now - intra.timestamp).total_seconds() <= settings.paper_max_snapshot_age_seconds:
-        return {"price": float(intra.price), "volume": intra.volume, "timestamp": intra.timestamp, "date": intra.timestamp.date(), "source": "intraday"}
-    daily = db.execute(select(db_models.DailyPrice).where(db_models.DailyPrice.company_id == company_id, db_models.DailyPrice.date == now.astimezone().date()).limit(1)).scalar_one_or_none()
-    if daily and daily.close is not None:
-        return {"price": float(daily.close), "volume": daily.volume, "timestamp": now, "date": daily.date, "source": "daily"}
-    return None
 
 
 def _mark_and_close(db: Session, config):
@@ -1147,7 +1125,7 @@ def _mark_and_close(db: Session, config):
         latest = prices.get(trade.symbol)
         if not latest:
             continue
-        price = latest["price"]
+        _, price = latest
         exit_decision = check_exit(trade.entry_date, date.today(), price, float(trade.stop_loss), float(trade.take_profit), int(config.max_holding_days))
         if exit_decision.reason:
             fill = exit_decision.price * (1 - float(config.slippage_rate))
@@ -1180,7 +1158,7 @@ def paper_positions(db: Session = Depends(get_db)):
     prices = _latest_prices(db, {t.symbol for t in trades})
     data = []
     for trade in trades:
-        current_price = prices.get(trade.symbol, {}).get("price")
+        current_price = prices.get(trade.symbol, (None, None))[1]
         item = {k: v for k, v in trade.__dict__.items() if not k.startswith("_")}
         item["current_price"] = current_price
         item["unrealized_pnl"] = ((current_price - float(trade.entry_price)) * int(trade.quantity) * 100 if current_price is not None else None)
@@ -1283,39 +1261,25 @@ def paper_run(db: Session = Depends(get_db)):
     if not config.enabled:
         db.commit()
         return {"status": "disabled", "created": 0}
-    now = datetime.now(timezone.utc)
-    run_key = now.strftime("%Y-%m-%d")
+    run_key = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     if db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "run", db_models.PaperAuditEvent.payload["run_key"].as_string() == run_key)).scalar_one_or_none(): return {"status": "already_run", "run_key": run_key}
     created = 0
-    reasons = []
     open_trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    candidate_symbols = set(settings.paper_universe) if settings.paper_universe else None
+    prices = _latest_prices(db, candidate_symbols)
     used_cash = sum(float(t.entry_price) * t.quantity * 100 for t in open_trades)
     for item in paper_candidates(db)["data"]:
         if item["action"] != "buy" or len(open_trades) + created >= config.max_positions:
             continue
-        company = db.execute(select(db_models.Company).where(db_models.Company.symbol == item["symbol"])).scalar_one()
-        snapshot = _execution_snapshot(db, company.id, now)
-        if not snapshot:
-            reasons.append({"symbol": item["symbol"], "reason": "no current-session price snapshot"})
+        latest = prices.get(item["symbol"])
+        if not latest or latest[0] > date.today():
             continue
-        price = snapshot["price"]
-        historical = db.execute(select(db_models.DailyPrice).where(db_models.DailyPrice.company_id == company.id, db_models.DailyPrice.close.is_not(None)).order_by(db_models.DailyPrice.date.desc()).limit(settings.paper_candidates_limit)).scalars().all()[::-1]
-        current_indicators = analytics.technical_indicators([{"date": p.date, "open": p.open, "high": p.high, "low": p.low, "close": p.close, "volume": p.volume} for p in historical]) or {}
-        current_indicators["last_price"] = price
-        confirmation = decide(current_indicators, float(config.min_score), float(config.min_rr))
-        if confirmation.action != "buy":
-            reasons.append({"symbol": item["symbol"], "reason": "current snapshot failed setup confirmation"})
-            continue
-        duplicate = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.symbol == item["symbol"], db_models.PaperTrade.entry_date == snapshot["date"], db_models.PaperTrade.run_key == run_key)).scalar_one_or_none()
-        snapshot_key = snapshot["timestamp"].isoformat() if snapshot["timestamp"] else str(snapshot["date"])
-        if duplicate or db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "signal")).scalars().all() and any(e.payload.get("symbol") == item["symbol"] and e.payload.get("snapshot") == snapshot_key for e in db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "signal")).scalars().all()):
-            reasons.append({"symbol": item["symbol"], "reason": "duplicate signal or entry for snapshot"})
-            continue
+        price = latest[1]
         qty = size_position(float(config.cash) - used_cash, price, item["stop"], float(config.risk_per_trade), float(config.fee_rate), float(config.slippage_rate), float(config.max_exposure))
         cost = price * qty * 100 * (1 + float(config.fee_rate) + float(config.slippage_rate))
         if qty and used_cash + cost <= float(config.cash) and db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.symbol == item["symbol"], db_models.PaperTrade.status == "open")).scalar_one_or_none() is None:
-            db.add(db_models.PaperTrade(symbol=item["symbol"], entry_date=snapshot["date"], entry_timestamp=now, entry_price=price * (1 + float(config.slippage_rate)), quantity=qty, stop_loss=confirmation.stop, take_profit=confirmation.target, score=confirmation.score, reason=confirmation.reason, run_key=run_key)); db.add(db_models.PaperAuditEvent(event_type="signal", payload={"symbol": item["symbol"], "snapshot": snapshot_key, "timestamp": now.isoformat(), "action": "buy"})); created += 1; used_cash += cost
-    db.add(db_models.PaperAuditEvent(event_type="run", payload={"run_key": run_key, "created": created, "reasons": reasons, "timestamp": now.isoformat()})); db.commit()
+            db.add(db_models.PaperTrade(symbol=item["symbol"], entry_date=date.today(), entry_timestamp=datetime.now(timezone.utc), entry_price=price * (1 + float(config.slippage_rate)), quantity=qty, stop_loss=item["stop"], take_profit=item["target"], score=item["score"], reason=item["reason"], run_key=run_key)); created += 1; used_cash += cost
+    db.add(db_models.PaperAuditEvent(event_type="run", payload={"run_key": run_key, "created": created})); db.commit()
     _paper_candidates_cache.clear()
     return {"status": "ok", "run_key": run_key, "created": created}
 

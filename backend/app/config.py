@@ -28,6 +28,7 @@ class Settings:
         self.max_context_symbols: int = int(os.environ.get("MAX_CONTEXT_SYMBOLS", "8"))
         self.paper_candidates_limit: int = int(os.environ.get("PAPER_CANDIDATES_LIMIT", "280"))
         self.paper_candidates_cache_seconds: float = float(os.environ.get("PAPER_CANDIDATES_CACHE_SECONDS", "15"))
+        self.paper_max_snapshot_age_seconds: int = int(os.environ.get("PAPER_MAX_SNAPSHOT_AGE_SECONDS", "900"))
         self.paper_universe: tuple[str, ...] = tuple(
             symbol.strip().upper() for symbol in os.environ.get("PAPER_UNIVERSE", "").split(",") if symbol.strip()
         )
