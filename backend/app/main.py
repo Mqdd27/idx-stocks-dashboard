@@ -183,10 +183,16 @@ def health(db: Session = Depends(get_db)):
 
 
 @app.get("/api/stocks")
-def list_stocks(db: Session = Depends(get_db)):
-    companies = db.execute(
-        select(db_models.Company).order_by(db_models.Company.symbol)
-    ).scalars().all()
+def list_stocks(
+    q: str | None = Query(None, min_length=1, max_length=100),
+    limit: int = Query(8, ge=1, le=1000),
+    db: Session = Depends(get_db),
+):
+    query = select(db_models.Company).order_by(db_models.Company.symbol)
+    if q and q.strip():
+        term = f"%{q.strip()}%"
+        query = query.where(db_models.Company.symbol.ilike(term) | db_models.Company.company_name.ilike(term))
+    companies = db.execute(query.limit(limit)).scalars().all()
     out = []
     for c in companies:
         price = _latest_price(db, c.id)

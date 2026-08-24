@@ -57,24 +57,22 @@ function SearchBox() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!q.trim()) {
+    const query = q.trim();
+    if (!query) {
       setResults([]);
+      setOpen(false);
       return;
     }
-    let alive = true;
+    const controller = new AbortController();
     const t = setTimeout(() => {
-      api.stocks().then((stocks) => {
-        const term = q.trim().toUpperCase();
-        const hits = stocks
-          .filter((s) => s.symbol.includes(term) || (s.company_name || "").toUpperCase().includes(term))
-          .slice(0, 8);
-        if (alive) {
-          setResults(hits);
-          setOpen(true);
-        }
-      }).catch(() => {});
-    }, 250);
-    return () => { alive = false; clearTimeout(t); };
+      api.stocks(query, controller.signal).then((hits) => {
+        setResults(hits);
+        setOpen(true);
+      }).catch((error) => {
+        if (error.name !== "AbortError") setResults([]);
+      });
+    }, 200);
+    return () => { clearTimeout(t); controller.abort(); };
   }, [q]);
 
   return (

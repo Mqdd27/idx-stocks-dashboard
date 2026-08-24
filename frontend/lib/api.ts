@@ -141,7 +141,12 @@ async function jfetch<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  stocks: () => jfetch<Stock[]>("/api/stocks"),
+  stocks: (query?: string, signal?: AbortSignal) => {
+    const params = new URLSearchParams();
+    if (query?.trim()) params.set("q", query.trim());
+    params.set("limit", "8");
+    return jfetch<Stock[]>(`/api/stocks?${params}`, { signal });
+  },
   stock: (symbol: string) => jfetch<Stock>(`/api/stocks/${symbol}`),
   prices: (symbol: string, range: string) =>
     jfetch<{ data: Array<{ time: string; open: number; high: number; low: number; close: number; volume: number }> }>(
