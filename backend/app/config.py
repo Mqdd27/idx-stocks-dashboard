@@ -26,6 +26,11 @@ class Settings:
         self.ai_rate_limit_per_minute: int = int(os.environ.get("AI_RATE_LIMIT_PER_MINUTE", "20"))
         self.max_chat_length: int = int(os.environ.get("MAX_CHAT_LENGTH", "4000"))
         self.max_context_symbols: int = int(os.environ.get("MAX_CONTEXT_SYMBOLS", "8"))
+        self.paper_candidates_limit: int = int(os.environ.get("PAPER_CANDIDATES_LIMIT", "280"))
+        self.paper_candidates_cache_seconds: float = float(os.environ.get("PAPER_CANDIDATES_CACHE_SECONDS", "15"))
+        self.paper_universe: tuple[str, ...] = tuple(
+            symbol.strip().upper() for symbol in os.environ.get("PAPER_UNIVERSE", "").split(",") if symbol.strip()
+        )
         self.timezone: str = os.environ.get("TZ", "Asia/Jakarta")
         self.log_dir: Path = Path(os.environ.get("LOG_DIR", "/opt/stocks-dashboard/logs"))
 

@@ -241,6 +241,22 @@ tr:hover td { background: rgba(22,28,41,.6); }
 
 .empty-state { color: var(--muted); text-align: center; padding: 36px 12px; }
 
+.auto-trade-head, .auto-actions { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+.auto-trade-head { margin-bottom: 14px; }
+.paper-label { color: var(--amber); border: 1px solid rgba(227,160,8,.45); border-radius: 6px; padding: 6px 9px; font-size: 10px; font-weight: 800; letter-spacing: .5px; }
+.paper-notice { display: flex; gap: 12px; margin-bottom: 12px; color: var(--amber); background: rgba(227,160,8,.08); }
+.paper-notice span { color: var(--muted); }
+.auto-actions { margin-bottom: 12px; }
+.auto-actions > div:first-child { display: flex; align-items: center; gap: 10px; }
+.status { font-size: 11px; font-weight: 700; }
+.status.on, .pos { color: var(--green); }
+.status.off, .neg { color: var(--red); }
+.action-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.auto-summary { margin-bottom: 12px; }
+.table-scroll { overflow-x: auto; }
+.candidate-note { margin-top: 10px; font-size: 11px; }
+@media (max-width: 720px) { .paper-notice { display: block; } .paper-notice span { display: block; margin-top: 4px; } }
+
 .spin {
   display: inline-block; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.3);
   border-top-color: #fff; border-radius: 50%; animation: sp 0.7s linear infinite; vertical-align: -2px;

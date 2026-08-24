@@ -47,6 +47,60 @@ export interface AIConfig {
   usable?: boolean;
 }
 
+export interface PaperSummary {
+  paper_only: true;
+  enabled: boolean;
+  cash: number;
+  equity: number;
+  unrealized_pnl: number;
+  open_positions: number;
+  exposure: number;
+  realized_pnl: number;
+  win_rate: number;
+  expectancy: number;
+}
+
+export interface PaperTrade {
+  id: number;
+  symbol: string;
+  entry_date: string;
+  entry_timestamp: string;
+  exit_date?: string | null;
+  exit_timestamp?: string | null;
+  status: string;
+  entry_price: number;
+  exit_price?: number | null;
+  quantity: number;
+  stop_loss: number;
+  take_profit: number;
+  score: number;
+  reason: string;
+  fees: number;
+  pnl?: number | null;
+  current_price?: number | null;
+  unrealized_pnl?: number | null;
+  unrealized_pnl_percent?: number | null;
+  confidence_score?: number | null;
+}
+
+export interface PaperLog {
+  id: number;
+  event_type: string;
+  symbol?: string | null;
+  payload: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface PaperCandidate {
+  symbol: string;
+  action: string;
+  score: number;
+  stop: number | null;
+  target: number | null;
+  rr: number;
+  reason: string;
+}
+
 export interface Technicals {
   last_price: number;
   previous_close: number;
@@ -99,6 +153,13 @@ export const api = {
   technicals: (symbol: string) => jfetch<{ technicals: Technicals | null }>(`/api/stocks/${symbol}/technicals`),
   news: (symbol: string) => jfetch<{ data: any[] }>(`/api/stocks/${symbol}/news`),
   overview: () => jfetch<any>("/api/market/overview"),
+  paperSummary: () => jfetch<PaperSummary>("/api/paper-trading/summary"),
+  paperPositions: () => jfetch<{ data: PaperTrade[] }>("/api/paper-trading/positions"),
+  paperHistory: () => jfetch<{ data: PaperTrade[] }>("/api/paper-trading/history"),
+  paperLogs: () => jfetch<{ data: PaperLog[] }>("/api/paper-trading/logs?limit=50"),
+  paperCandidates: () => jfetch<{ data: PaperCandidate[] }>("/api/paper-trading/candidates"),
+  paperToggle: (enabled: boolean) => jfetch<{ paper_only: true; enabled: boolean }>("/api/paper-trading/toggle", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ enabled }) }),
+  paperRun: () => jfetch<{ status: string; created?: number }>("/api/paper-trading/run", { method: "POST" }),
   screener: (params: URLSearchParams) => jfetch<{ data: any[] }>(`/api/screener?${params.toString()}`),
   watchlist: () => jfetch<{ data: any[] }>("/api/watchlist"),
   watchlistAdd: (symbol: string, note?: string) =>

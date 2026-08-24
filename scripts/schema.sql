@@ -29,6 +29,18 @@ CREATE TABLE IF NOT EXISTS daily_prices (
 );
 CREATE INDEX IF NOT EXISTS idx_daily_prices_company_date ON daily_prices (company_id, date DESC);
 
+CREATE TABLE IF NOT EXISTS paper_bot_configs (id SERIAL PRIMARY KEY, enabled BOOLEAN NOT NULL DEFAULT false, cash NUMERIC(20,2) NOT NULL DEFAULT 100000000, risk_per_trade NUMERIC(8,5) NOT NULL DEFAULT .01, fee_rate NUMERIC(8,5) NOT NULL DEFAULT .0015, slippage_rate NUMERIC(8,5) NOT NULL DEFAULT .001, min_score NUMERIC(5,2) NOT NULL DEFAULT 3, min_rr NUMERIC(5,2) NOT NULL DEFAULT 2, max_positions INTEGER NOT NULL DEFAULT 5, max_exposure NUMERIC(8,5) NOT NULL DEFAULT .5, max_holding_days INTEGER NOT NULL DEFAULT 20, updated_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS paper_trades (id BIGSERIAL PRIMARY KEY, symbol VARCHAR(16) NOT NULL, entry_date DATE NOT NULL, entry_timestamp TIMESTAMPTZ NOT NULL DEFAULT now(), exit_date DATE, exit_timestamp TIMESTAMPTZ, status VARCHAR(16) NOT NULL DEFAULT 'open', entry_price NUMERIC(18,4) NOT NULL, exit_price NUMERIC(18,4), quantity BIGINT NOT NULL, stop_loss NUMERIC(18,4) NOT NULL, take_profit NUMERIC(18,4) NOT NULL, score NUMERIC(6,2) NOT NULL, reason TEXT NOT NULL, fees NUMERIC(18,4) NOT NULL DEFAULT 0, pnl NUMERIC(18,4), run_key VARCHAR(64) NOT NULL, UNIQUE(symbol, entry_date));
+ALTER TABLE paper_trades ADD COLUMN IF NOT EXISTS entry_timestamp TIMESTAMPTZ;
+UPDATE paper_trades SET entry_timestamp = entry_date::timestamptz WHERE entry_timestamp IS NULL;
+ALTER TABLE paper_trades ALTER COLUMN entry_timestamp SET DEFAULT now();
+ALTER TABLE paper_trades ALTER COLUMN entry_timestamp SET NOT NULL;
+ALTER TABLE paper_trades ADD COLUMN IF NOT EXISTS exit_timestamp TIMESTAMPTZ;
+
+CREATE TABLE IF NOT EXISTS paper_trade_signals (id BIGSERIAL PRIMARY KEY, symbol VARCHAR(16) NOT NULL, signal_date DATE NOT NULL, action VARCHAR(16) NOT NULL, score NUMERIC(6,2) NOT NULL, risk_reward NUMERIC(8,2) NOT NULL, reason TEXT NOT NULL, run_key VARCHAR(64) NOT NULL);
+CREATE TABLE IF NOT EXISTS paper_audit_events (id BIGSERIAL PRIMARY KEY, event_type VARCHAR(32) NOT NULL, symbol VARCHAR(16), payload JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS paper_stop_changes (id BIGSERIAL PRIMARY KEY, trade_id BIGINT NOT NULL REFERENCES paper_trades(id) ON DELETE CASCADE, old_stop NUMERIC(18,4) NOT NULL, new_stop NUMERIC(18,4) NOT NULL, reason TEXT NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+
 CREATE TABLE IF NOT EXISTS intraday_prices (
     id BIGSERIAL PRIMARY KEY,
     company_id INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,

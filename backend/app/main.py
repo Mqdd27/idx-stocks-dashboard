@@ -17,8 +17,10 @@ from .ai_provider import AIError, _model_kind, complete, discover_models, get_qu
 from .config import get_settings
 from .db import get_db
 from .rate_limit import rate_limit
+from .paper_trading import check_exit, decide, setup_confidence, size_position, trade_metrics
 
 settings = get_settings()
+_paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
 
 app = FastAPI(title="Stocks Dashboard API", version="1.0.0")
 
@@ -1083,3 +1085,207 @@ async def watchlist_add(request: Request, db: Session = Depends(get_db)):
         db.commit()
         return {"status": "removed", "symbol": symbol}
     raise HTTPException(400, "Invalid action")
+
+
+def _paper_config(db: Session):
+    config = db.execute(select(db_models.PaperBotConfig).limit(1)).scalar_one_or_none()
+    if not config:
+        config = db_models.PaperBotConfig()
+        db.add(config)
+        db.flush()
+    marker = db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "quantity_units_migrated").limit(1)).scalar_one_or_none()
+    if not marker:
+        for trade in db.execute(select(db_models.PaperTrade)).scalars():
+            if trade.quantity >= 100 and trade.quantity % 100 == 0:
+                trade.quantity //= 100
+        db.add(db_models.PaperAuditEvent(event_type="quantity_units_migrated", payload={"unit": "lots"}))
+        db.flush()
+    return config
+
+
+def _latest_prices(db: Session, symbols: set[str] | None = None):
+    query = select(db_models.DailyPrice, db_models.Company).join(db_models.Company, db_models.Company.id == db_models.DailyPrice.company_id)
+    if symbols:
+        query = query.where(db_models.Company.symbol.in_(symbols))
+    rows = db.execute(query.order_by(db_models.DailyPrice.date.desc())).all()
+    prices = {}
+    for price, company in rows:
+        if (symbols is None or company.symbol in symbols) and company.symbol not in prices and price.close is not None:
+            prices[company.symbol] = (price.date, float(price.close))
+    return prices
+
+
+def _mark_and_close(db: Session, config):
+    trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    if not trades:
+        return trades, 0.0
+    prices = _latest_prices(db, {t.symbol for t in trades})
+    unrealized = 0.0
+    for trade in trades:
+        latest = prices.get(trade.symbol)
+        if not latest:
+            continue
+        _, price = latest
+        exit_decision = check_exit(trade.entry_date, date.today(), price, float(trade.stop_loss), float(trade.take_profit), int(config.max_holding_days))
+        if exit_decision.reason:
+            fill = exit_decision.price * (1 - float(config.slippage_rate))
+            shares = trade.quantity * 100
+            fees = (float(trade.entry_price) * shares + fill * shares) * float(config.fee_rate)
+            trade.exit_price, trade.exit_date, trade.exit_timestamp, trade.status = fill, date.today(), datetime.now(timezone.utc), "closed"
+            trade.fees, trade.pnl = fees, (fill - float(trade.entry_price)) * shares - fees
+        else:
+            unrealized += (price - float(trade.entry_price)) * trade.quantity * 100
+    return trades, unrealized
+
+
+@app.get("/api/paper-trading/summary")
+def paper_summary(db: Session = Depends(get_db)):
+    config = _paper_config(db)
+    _, unrealized = _mark_and_close(db, config)
+    db.commit()
+    open_trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    closed = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "closed")).scalars().all()
+    metrics = trade_metrics(closed)
+    exposure = sum(float(t.entry_price) * int(t.quantity) * 100 for t in open_trades)
+    cash = float(config.cash) + metrics["realized_pnl"] - exposure - sum(float(t.fees or 0) for t in open_trades)
+    return {"paper_only": True, "enabled": config.enabled, "cash": max(0.0, cash), "equity": max(0.0, cash + exposure + unrealized), "unrealized_pnl": unrealized, "open_positions": len(open_trades), "exposure": exposure, **metrics}
+
+
+@app.get("/api/paper-trading/positions")
+def paper_positions(db: Session = Depends(get_db)):
+    config = _paper_config(db)
+    trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    prices = _latest_prices(db, {t.symbol for t in trades})
+    data = []
+    for trade in trades:
+        current_price = prices.get(trade.symbol, (None, None))[1]
+        item = {k: v for k, v in trade.__dict__.items() if not k.startswith("_")}
+        item["current_price"] = current_price
+        item["unrealized_pnl"] = ((current_price - float(trade.entry_price)) * int(trade.quantity) * 100 if current_price is not None else None)
+        item["unrealized_pnl_percent"] = (item["unrealized_pnl"] / (float(trade.entry_price) * int(trade.quantity) * 100) * 100 if current_price is not None else None)
+        item["confidence_score"] = (setup_confidence(float(trade.score), current_price, float(trade.entry_price), float(trade.stop_loss), float(trade.take_profit)) if current_price is not None else float(trade.score))
+        data.append(_json_safe(item))
+    db.commit()
+    return {"data": data}
+
+
+@app.get("/api/paper-trading/history")
+def paper_history(db: Session = Depends(get_db)):
+    return {"data": [_json_safe(t.__dict__) for t in db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "closed").order_by(desc(db_models.PaperTrade.exit_date))).scalars()]}
+
+
+@app.get("/api/paper-trading/logs")
+def paper_logs(limit: int = Query(50, ge=1, le=200), db: Session = Depends(get_db)):
+    rows = db.execute(select(db_models.PaperAuditEvent).order_by(desc(db_models.PaperAuditEvent.created_at)).limit(limit)).scalars().all()
+    return {"data": [_json_safe({k: v for k, v in row.__dict__.items() if not k.startswith("_")}) for row in rows]}
+
+
+@app.get("/api/paper-trading/config")
+def paper_config(db: Session = Depends(get_db)):
+    config = _paper_config(db)
+    db.commit()
+    return _json_safe({k: v for k, v in config.__dict__.items() if not k.startswith("_")})
+
+
+@app.put("/api/paper-trading/config")
+async def paper_config_update(request: Request, db: Session = Depends(get_db)):
+    body = await request.json()
+    limits = {"cash": (0, 10**15), "risk_per_trade": (0, 1), "fee_rate": (0, 1), "slippage_rate": (0, 1), "min_score": (0, 100), "min_rr": (0, 100), "max_positions": (1, 10000), "max_exposure": (0, 1), "max_holding_days": (1, 10000)}
+    config = _paper_config(db)
+    for key, (low, high) in limits.items():
+        if key in body:
+            value = body[key]
+            if not isinstance(value, (int, float)) or isinstance(value, bool) or not low <= value <= high:
+                raise HTTPException(400, f"Invalid {key}")
+            setattr(config, key, value)
+    if "enabled" in body:
+        if not isinstance(body["enabled"], bool):
+            raise HTTPException(400, "Invalid enabled")
+        config.enabled = body["enabled"]
+    db.add(config)
+    db.commit()
+    db.refresh(config)
+    _paper_candidates_cache.clear()
+    return _json_safe({k: v for k, v in config.__dict__.items() if not k.startswith("_")})
+
+
+@app.post("/api/paper-trading/toggle")
+async def paper_toggle(request: Request, db: Session = Depends(get_db)):
+    config = db.execute(select(db_models.PaperBotConfig).limit(1)).scalar_one_or_none() or db_models.PaperBotConfig()
+    body = await request.json(); config.enabled = bool(body.get("enabled", not config.enabled));     db.add(config); db.add(db_models.PaperAuditEvent(event_type="toggle", payload={"enabled": config.enabled})); db.commit()
+    _paper_candidates_cache.clear()
+    return {"paper_only": True, "enabled": config.enabled}
+
+
+@app.get("/api/paper-trading/candidates")
+@app.get("/api/paper-trading/signals")
+def paper_candidates(
+    force: bool = Query(False),
+    limit: int | None = Query(None, ge=1, le=10000),
+    db: Session = Depends(get_db),
+):
+    config = _paper_config(db)
+    if not config.enabled and not force:
+        return {"data": []}
+    universe = settings.paper_universe
+    candidate_limit = limit or settings.paper_candidates_limit
+    cache_key = (tuple(universe), candidate_limit, float(config.min_score), float(config.min_rr))
+    cached = _paper_candidates_cache.get(cache_key)
+    now = time.monotonic()
+    if cached and now - cached[0] < settings.paper_candidates_cache_seconds:
+        return {"data": cached[1]}
+    query = select(db_models.Company).order_by(db_models.Company.symbol)
+    if universe:
+        query = query.where(db_models.Company.symbol.in_(universe))
+    companies = db.execute(query.limit(candidate_limit)).scalars()
+    rows = []
+    for company in companies:
+        prices = db.execute(
+            select(db_models.DailyPrice)
+            .where(db_models.DailyPrice.company_id == company.id, db_models.DailyPrice.close.is_not(None))
+            .order_by(db_models.DailyPrice.date.desc()).limit(settings.paper_candidates_limit)
+        ).scalars().all()[::-1]
+        indicators = analytics.technical_indicators([{"date": p.date, "open": p.open, "high": p.high, "low": p.low, "close": p.close, "volume": p.volume} for p in prices])
+        if indicators:
+            decision = decide(indicators, float(config.min_score), float(config.min_rr))
+            rows.append({"symbol": company.symbol, **decision.__dict__, "score_quality": "setup_score_0_4"})
+    _paper_candidates_cache.clear()
+    _paper_candidates_cache[cache_key] = (now, rows)
+    return {"data": rows}
+
+
+@app.post("/api/paper-trading/run")
+def paper_run(db: Session = Depends(get_db)):
+    config = _paper_config(db)
+    _mark_and_close(db, config)
+    if not config.enabled:
+        db.commit()
+        return {"status": "disabled", "created": 0}
+    run_key = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "run", db_models.PaperAuditEvent.payload["run_key"].as_string() == run_key)).scalar_one_or_none(): return {"status": "already_run", "run_key": run_key}
+    created = 0
+    open_trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    candidate_symbols = set(settings.paper_universe) if settings.paper_universe else None
+    prices = _latest_prices(db, candidate_symbols)
+    used_cash = sum(float(t.entry_price) * t.quantity * 100 for t in open_trades)
+    for item in paper_candidates(db)["data"]:
+        if item["action"] != "buy" or len(open_trades) + created >= config.max_positions:
+            continue
+        latest = prices.get(item["symbol"])
+        if not latest or latest[0] > date.today():
+            continue
+        price = latest[1]
+        qty = size_position(float(config.cash) - used_cash, price, item["stop"], float(config.risk_per_trade), float(config.fee_rate), float(config.slippage_rate), float(config.max_exposure))
+        cost = price * qty * 100 * (1 + float(config.fee_rate) + float(config.slippage_rate))
+        if qty and used_cash + cost <= float(config.cash) and db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.symbol == item["symbol"], db_models.PaperTrade.status == "open")).scalar_one_or_none() is None:
+            db.add(db_models.PaperTrade(symbol=item["symbol"], entry_date=date.today(), entry_timestamp=datetime.now(timezone.utc), entry_price=price * (1 + float(config.slippage_rate)), quantity=qty, stop_loss=item["stop"], take_profit=item["target"], score=item["score"], reason=item["reason"], run_key=run_key)); created += 1; used_cash += cost
+    db.add(db_models.PaperAuditEvent(event_type="run", payload={"run_key": run_key, "created": created})); db.commit()
+    _paper_candidates_cache.clear()
+    return {"status": "ok", "run_key": run_key, "created": created}
+
+
+@app.get("/api/paper-trading/trades/{trade_id}")
+def paper_trade_detail(trade_id: int, db: Session = Depends(get_db)):
+    trade = db.get(db_models.PaperTrade, trade_id)
+    if not trade: raise HTTPException(404, "Paper trade not found")
+    return _json_safe(trade.__dict__)

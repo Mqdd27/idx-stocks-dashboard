@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import Optional
 
 from sqlalchemy import (
@@ -18,6 +18,76 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
 from .db import Base
+
+
+class PaperBotConfig(Base):
+    __tablename__ = "paper_bot_configs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    cash: Mapped[float] = mapped_column(Numeric(20, 2), default=100000000, nullable=False)
+    risk_per_trade: Mapped[float] = mapped_column(Numeric(8, 5), default=0.01, nullable=False)
+    fee_rate: Mapped[float] = mapped_column(Numeric(8, 5), default=0.0015, nullable=False)
+    slippage_rate: Mapped[float] = mapped_column(Numeric(8, 5), default=0.001, nullable=False)
+    min_score: Mapped[float] = mapped_column(Numeric(5, 2), default=3, nullable=False)
+    min_rr: Mapped[float] = mapped_column(Numeric(5, 2), default=2, nullable=False)
+    max_positions: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
+    max_exposure: Mapped[float] = mapped_column(Numeric(8, 5), default=0.5, nullable=False)
+    max_holding_days: Mapped[int] = mapped_column(Integer, default=20, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class PaperTrade(Base):
+    __tablename__ = "paper_trades"
+    __table_args__ = (UniqueConstraint("symbol", "entry_date"),)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    symbol: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    entry_date: Mapped[date] = mapped_column(Date, nullable=False)
+    entry_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    exit_date: Mapped[Optional[date]] = mapped_column(Date)
+    exit_timestamp: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(16), default="open", nullable=False, index=True)
+    entry_price: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    exit_price: Mapped[Optional[float]] = mapped_column(Numeric(18, 4))
+    quantity: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    stop_loss: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    take_profit: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    score: Mapped[float] = mapped_column(Numeric(6, 2), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    fees: Mapped[float] = mapped_column(Numeric(18, 4), default=0, nullable=False)
+    pnl: Mapped[Optional[float]] = mapped_column(Numeric(18, 4))
+    run_key: Mapped[str] = mapped_column(String(64), nullable=False)
+
+
+class PaperTradeSignal(Base):
+    __tablename__ = "paper_trade_signals"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    symbol: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    signal_date: Mapped[date] = mapped_column(Date, nullable=False)
+    action: Mapped[str] = mapped_column(String(16), nullable=False)
+    score: Mapped[float] = mapped_column(Numeric(6, 2), nullable=False)
+    risk_reward: Mapped[float] = mapped_column(Numeric(8, 2), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    run_key: Mapped[str] = mapped_column(String(64), nullable=False)
+
+
+class PaperAuditEvent(Base):
+    __tablename__ = "paper_audit_events"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    event_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    symbol: Mapped[Optional[str]] = mapped_column(String(16))
+    payload: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class PaperStopChange(Base):
+    __tablename__ = "paper_stop_changes"
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    trade_id: Mapped[int] = mapped_column(ForeignKey("paper_trades.id", ondelete="CASCADE"), nullable=False)
+    old_stop: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    new_stop: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Company(Base):
