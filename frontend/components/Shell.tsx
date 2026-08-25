@@ -14,7 +14,6 @@ const NAV = [
   { href: "/news", icon: "☰", label: "News" },
   { href: "/ai", icon: "◉", label: "AI" },
   { href: "/auto-trade", icon: "↗", label: "Auto Trade" },
-  { href: "/ai-trading", icon: "◈", label: "AI Trading" },
   { href: "/settings", icon: "⚙", label: "Settings" },
 ];
 

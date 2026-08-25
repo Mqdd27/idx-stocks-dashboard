@@ -361,3 +361,9 @@ tr:hover td { background: rgba(22,28,41,.6); }
 .markdown-gap { height:5px; }
 
 .markdown-output p { margin: 6px 0; line-height: 1.7; white-space: pre-wrap; }
+
+.ai-select { appearance: none; min-height: 36px; max-width: 250px; padding: 0 32px 0 11px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel2); color: var(--text); outline: none; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.ai-select:hover, .ai-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.ai-select option { background: var(--panel); color: var(--text); }
+.ai-ticker { min-width: 260px; }
+@media (max-width: 720px) { .ai-select, .ai-ticker { width: 100%; max-width: none; } }
