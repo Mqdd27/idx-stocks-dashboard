@@ -121,7 +121,7 @@ export default function StockDetailPage() {
         </div>
       )}
 
-      <AIAssistPanel symbol={symbol} companyName={stock.company_name} drawer />
+
     </div>
   );
 }
@@ -436,14 +436,13 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
 
       {result && (
         <div className="analysis-box" style={{ marginTop: 14 }}>
-          {result.analysis}
+          <div className="markdown-output">{result.analysis.split("\n").map((line, i) => <p key={i}>{line}</p>)}</div>
           <div className="analysis-meta">
             Analyzed using: <strong>{result.model}</strong> ({result.provider === "ollama" ? "LOCAL" : "CLOUD via 9Router"})
             <br />
             Generated at: {new Date(result.generated_at).toLocaleString("id-ID")}
           </div>
         </div>
-      )}
-    </div>
+      )}    </div>
   );
 }

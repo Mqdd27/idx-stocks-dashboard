@@ -346,3 +346,11 @@ tr:hover td { background: rgba(22,28,41,.6); }
 
 .calendar-controls { display:flex; align-items:center; justify-content:center; gap:14px; }
 .calendar-controls strong { min-width:150px; text-align:center; font-size:18px; }
+
+.markdown-output { line-height:1.7; }
+.markdown-output h3 { margin:14px 0 6px; color:var(--accent); font-size:15px; }
+.markdown-output p { margin:5px 0; white-space:pre-wrap; }
+.markdown-item { margin:4px 0 4px 14px; }
+.markdown-gap { height:5px; }
+
+.markdown-output p { margin: 6px 0; line-height: 1.7; white-space: pre-wrap; }
