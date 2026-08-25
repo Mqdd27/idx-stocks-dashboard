@@ -367,3 +367,11 @@ tr:hover td { background: rgba(22,28,41,.6); }
 .ai-select option { background: var(--panel); color: var(--text); }
 .ai-ticker { min-width: 260px; }
 @media (max-width: 720px) { .ai-select, .ai-ticker { width: 100%; max-width: none; } }
+
+.ai-ticker-picker { position: relative; }
+.ai-ticker-results { position: absolute; z-index: 20; top: calc(100% + 5px); left: 0; right: 0; min-width: 280px; max-height: 260px; overflow-y: auto; padding: 4px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 12px 30px rgba(0,0,0,.28); }
+.ai-ticker-results button { display: flex; flex-direction: column; align-items: flex-start; width: 100%; gap: 2px; padding: 8px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--text); text-align: left; cursor: pointer; }
+.ai-ticker-results button:hover { background: var(--panel2); }
+.ai-ticker-results span { color: var(--muted); font-size: 11px; }
+.ai-searching { position: absolute; right: 10px; top: 10px; color: var(--muted); font-size: 11px; }
+@media (max-width: 720px) { .ai-ticker-picker { width: 100%; } .ai-ticker-results { min-width: 0; } }
