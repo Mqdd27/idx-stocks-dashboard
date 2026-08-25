@@ -13,6 +13,7 @@ const NAV = [
   { href: "/screener", icon: "⌕", label: "Screener" },
   { href: "/news", icon: "☰", label: "News" },
   { href: "/auto-trade", icon: "↗", label: "Auto Trade" },
+  { href: "/ai-trading", icon: "◈", label: "AI Trading" },
   { href: "/settings", icon: "⚙", label: "Settings" },
 ];
 
