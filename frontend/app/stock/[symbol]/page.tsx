@@ -436,7 +436,7 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
 
       {result && (
         <div className="analysis-box" style={{ marginTop: 14 }}>
-          <div className="markdown-output">{result.analysis.split("\n").map((line, i) => <p key={i}>{line}</p>)}</div>
+          <MarkdownOutput text={result.analysis} />
           <div className="analysis-meta">
             Analyzed using: <strong>{result.model}</strong> ({result.provider === "ollama" ? "LOCAL" : "CLOUD via 9Router"})
             <br />
@@ -445,4 +445,18 @@ function AnalyzeTab({ symbol }: { symbol: string }) {
         </div>
       )}    </div>
   );
+}
+
+function MarkdownOutput({ text }: { text: string }) {
+  return <div className="markdown-output">{text.split("\n").map((line, index) => {
+    const value = line.trim();
+    if (!value) return <div className="markdown-gap" key={index} />;
+    if (/^---+$/.test(value)) return <hr key={index} />;
+    if (/^#{1,6}\s/.test(value)) return <h3 key={index}>{inlineMarkdown(value.replace(/^#{1,6}\s/, ""))}</h3>;
+    if (/^[-*]\s/.test(value)) return <div className="markdown-item" key={index}>• {inlineMarkdown(value.slice(2))}</div>;
+    return <p key={index}>{inlineMarkdown(value)}</p>;
+  })}</div>;
+}
+function inlineMarkdown(value: string) {
+  return value.split(/(\*\*[^*]+\*\*)/g).map((part, index) => part.startsWith("**") && part.endsWith("**") ? <strong key={index}>{part.slice(2, -2)}</strong> : part);
 }
