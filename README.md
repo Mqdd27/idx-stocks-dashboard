@@ -149,3 +149,88 @@ sudo systemctl enable --now stocks-backend stocks-frontend stocks-collector stoc
 - Data harga dari **Yahoo Finance** (IDX resmi memblokir scraping); 429 di-backoff otomatis
 - Ticker IDX = `KODE.JK` (contoh `BBCA.JK`), indeks = `^JKSE`
 - Build frontend harus sebagai user pemilik (bukan `stocks`) lalu `chown -R stocks:stocks` sebelum restart service
+
+
+## IDX Market Calendar
+
+Dashboard menggunakan `Asia/Jakarta` dan calendar service sebagai single source of truth untuk status IDX:
+
+- `OPEN`, `CLOSED`, `PRE_OPEN`, `BREAK`, `POST_MARKET`
+- `WEEKEND`, `PUBLIC_HOLIDAY`, `EXCHANGE_HOLIDAY`
+- Collector intraday tidak melakukan polling saat tidak ada sesi perdagangan.
+- Price sync harian melewati hari non-trading; job background tetap dapat berjalan.
+- Harga API menyediakan `is_live`, `is_stale`, `last_updated`, dan `market_status`.
+
+### Calendar Data Priority
+
+1. Kalender atau pengumuman resmi IDX
+2. Manual override IDX
+3. Baseline hari libur nasional Indonesia
+4. Weekend rule
+
+File baseline/import manual:
+
+```text
+shared/market_calendar.json
+```
+
+Format:
+
+```json
+[
+  {
+    "date": "2027-08-17",
+    "name": "Hari Kemerdekaan Republik Indonesia",
+    "holiday_type": "PUBLIC_HOLIDAY",
+    "source": "Indonesia public holiday baseline",
+    "source_url": "https://example.invalid/source"
+  }
+]
+```
+
+Jangan gunakan URL contoh di atas sebagai source aktual. Isi `source_url` hanya jika tersedia sumber resmi.
+
+### API Calendar
+
+| Endpoint | Keterangan |
+|---|---|
+| `GET /api/market/status` | Status IDX saat ini, sesi dan next open |
+| `GET /api/market/calendar?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` | Trading/non-trading days |
+| `GET /api/market/holidays` | Holiday database |
+| `GET /api/market/events?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` | IPO/corporate actions yang tersedia di database |
+
+UI tersedia pada route:
+
+```text
+/calendar
+```
+
+### CLI Management
+
+```bash
+cd /opt/stocks-dashboard
+PYTHONPATH=backend:. backend/venv/bin/python -m app.cli market-status
+PYTHONPATH=backend:. backend/venv/bin/python -m app.cli market-calendar --month 2027-08
+PYTHONPATH=backend:. backend/venv/bin/python -m app.cli market-holiday add \
+  --date 2027-08-17 \
+  --name "Hari Kemerdekaan Republik Indonesia" \
+  --type PUBLIC_HOLIDAY
+PYTHONPATH=backend:. backend/venv/bin/python -m app.cli market-holiday remove --date 2027-08-17
+PYTHONPATH=backend:. backend/venv/bin/python -m app.cli market-override \
+  --date 2027-08-18 \
+  --trading-day \
+  --reason "IDX special trading session"
+PYTHONPATH=backend:. backend/venv/bin/python -m app.sync_calendar
+```
+
+### Calendar Scheduler
+
+`market-calendar-sync.timer` menjalankan sync setiap hari pukul **03:00 WIB** dari `shared/market_calendar.json`.
+
+```bash
+sudo systemctl enable --now market-calendar-sync.timer
+sudo systemctl list-timers market-calendar-sync.timer
+sudo systemctl start market-calendar-sync.service
+```
+
+Tanggal bergerak seperti Idulfitri, Nyepi, Waisak, Imlek, dan cuti bersama harus diperbarui dari sumber resmi pemerintah/IDX atau file JSON manual. Sistem tidak mengarang tanggal IPO atau holiday yang belum tersedia.
