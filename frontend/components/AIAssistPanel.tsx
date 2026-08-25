@@ -142,8 +142,8 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
 
   const header = (
     <div className="chat-head">
-      <strong>AI Assistant{companyName ? ` · ${companyName}` : ""}</strong>
-      <ModelSelector />
+      <div className="chat-title"><strong>Ask AI</strong>{companyName && <span title={companyName}>{companyName}</span>}</div>
+      <div className="chat-model"><span>Model</span><ModelSelector /></div>
     </div>
   );
 
@@ -171,7 +171,7 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
       {messages.map((m, i) => (
         <div key={i} className={`chat-msg ${m.role}`}>
           <div className="who">{m.role === "user" ? "You" : `AI${m.model ? " · " + m.model : ""}`}</div>
-          <div className="bubble">{m.content || (busy && i === messages.length - 1 ? "▍" : "")}</div>
+          <div className="bubble">{m.role === "assistant" ? <ChatMarkdown text={m.content || (busy && i === messages.length - 1 ? "▍" : "")} /> : m.content}</div>
         </div>
       ))}
       {busy && messages[messages.length - 1]?.role === "user" && <div className="typing">Menganalisis…</div>}
@@ -223,4 +223,18 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
       )}
     </>
   );
+}
+function ChatMarkdown({ text }: { text: string }) {
+  return <div className="chat-markdown">{text.split("\n").map((line, i) => {
+    const v = line.trim();
+    if (!v) return <div className="markdown-gap" key={i} />;
+    if (/^---+$/.test(v)) return <hr key={i} />;
+    if (/^#{1,6}\s/.test(v)) return <h3 key={i}>{chatInline(v.replace(/^#{1,6}\s/, ""))}</h3>;
+    if (/^[-*]\s/.test(v)) return <div className="markdown-item" key={i}>• {chatInline(v.slice(2))}</div>;
+    if (/^\d+\.\s/.test(v)) return <div className="markdown-item" key={i}>{chatInline(v)}</div>;
+    return <p key={i}>{chatInline(v)}</p>;
+  })}</div>;
+}
+function chatInline(value: string) {
+  return value.split(/(\*\*[^*]+\*\*)/g).map((part, i) => part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : part);
 }
