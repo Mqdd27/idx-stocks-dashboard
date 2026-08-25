@@ -233,4 +233,4 @@ sudo systemctl list-timers market-calendar-sync.timer
 sudo systemctl start market-calendar-sync.service
 ```
 
-Tanggal bergerak seperti Idulfitri, Nyepi, Waisak, Imlek, dan cuti bersama harus diperbarui dari sumber resmi pemerintah/IDX atau file JSON manual. Sistem tidak mengarang tanggal IPO atau holiday yang belum tersedia.
+Tanggal bergerak seperti Idulfitri, Nyepi, Waisak, Imlek, dan cuti bersama harus diperbarui dari sumber resmi pemerintah/IDX atau file JSON manual.
