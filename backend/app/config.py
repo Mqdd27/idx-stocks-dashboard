@@ -33,6 +33,9 @@ class Settings:
             symbol.strip().upper() for symbol in os.environ.get("PAPER_UNIVERSE", "").split(",") if symbol.strip()
         )
         self.timezone: str = os.environ.get("TZ", "Asia/Jakarta")
+        self.ai_trading_enabled = os.environ.get("AI_TRADING_ENABLED", "false").lower() in ("1", "true", "yes")
+        self.ai_trading_quick_model = os.environ.get("TRADINGAGENTS_QUICK_THINK_LLM", "cx/gpt-5.4-mini")
+        self.ai_trading_deep_model = os.environ.get("TRADINGAGENTS_DEEP_THINK_LLM", "cx/gpt-5.6-sol")
         self.log_dir: Path = Path(os.environ.get("LOG_DIR", "/opt/stocks-dashboard/logs"))
 
 

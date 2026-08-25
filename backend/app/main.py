@@ -19,11 +19,13 @@ from .db import get_db
 from .rate_limit import rate_limit
 from .market_calendar import get_market_status
 from .paper_trading import check_exit, decide, setup_confidence, size_position, trade_metrics
+from .ai_trading_routes import router as ai_trading_router
 
 settings = get_settings()
 _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
 
 app = FastAPI(title="Stocks Dashboard API", version="1.0.0")
+app.include_router(ai_trading_router)
 
 app.add_middleware(
     CORSMiddleware,

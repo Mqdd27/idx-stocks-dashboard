@@ -355,3 +355,5 @@ class MarketCalendarOverride(Base):
     source_url: Mapped[Optional[str]] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+from .ai_trading_model import AITradingAnalysis
