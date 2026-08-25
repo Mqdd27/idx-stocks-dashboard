@@ -17,6 +17,7 @@ from .ai_provider import AIError, _model_kind, complete, discover_models, get_qu
 from .config import get_settings
 from .db import get_db
 from .rate_limit import rate_limit
+from .market_calendar import get_market_status
 from .paper_trading import check_exit, decide, setup_confidence, size_position, trade_metrics
 
 settings = get_settings()
@@ -115,7 +116,7 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
             "volume": intraday.volume,
             "change": change,
             "change_pct": change_pct,
-            "live": fresh,
+            "live": fresh, "is_live": fresh, "last_updated": intraday.timestamp.isoformat(), "market_status": get_market_status().get("status"), "is_stale": not fresh,
         }
     if not prev:
         return None
@@ -130,7 +131,7 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
         "volume": prev.volume,
         "change": change,
         "change_pct": change_pct,
-        "live": False,
+        "live": False, "is_live": False, "last_updated": prev.date.isoformat(), "market_status": get_market_status().get("status"), "is_stale": True,
     }
 
 
@@ -450,6 +451,31 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
     return out[:limit]
 
 
+@app.get("/api/market/status")
+def market_status():
+    return get_market_status()
+
+@app.get("/api/market/holidays")
+def market_holidays(db: Session = Depends(get_db)):
+    rows = db.execute(select(db_models.MarketHoliday).where(db_models.MarketHoliday.market == "IDX").order_by(db_models.MarketHoliday.date)).scalars().all()
+    return {"data": [{"date": r.date.isoformat(), "name": r.name, "holiday_type": r.holiday_type, "source": r.source, "source_url": r.source_url, "is_trading_day": r.is_trading_day, "notes": r.notes} for r in rows]}
+
+@app.get("/api/market/calendar")
+def market_calendar(start_date: date = Query(...), end_date: date = Query(...)):
+    if end_date < start_date or (end_date - start_date).days > 366: raise HTTPException(400, "Invalid date range")
+    from .market_calendar import get_holiday, is_trading_day
+    out=[]; day=start_date
+    while day <= end_date:
+        h=get_holiday(day); out.append({"date":day.isoformat(),"is_trading_day":is_trading_day(day),"holiday":h.name if h else None,"holiday_type":h.holiday_type if h else None}); day += timedelta(days=1)
+    return {"market":"IDX","timezone":"Asia/Jakarta","data":out}
+
+@app.get("/api/market/events")
+def market_events(start_date: date = Query(...), end_date: date = Query(...), db: Session = Depends(get_db)):
+    if end_date < start_date or (end_date - start_date).days > 366:
+        raise HTTPException(400, "Invalid date range")
+    rows = db.execute(select(db_models.CorporateAction, db_models.Company.symbol).join(db_models.Company, db_models.Company.id == db_models.CorporateAction.company_id).where(db_models.CorporateAction.date >= start_date, db_models.CorporateAction.date <= end_date).order_by(db_models.CorporateAction.date)).all()
+    return {"data": [{"symbol": symbol, "date": action.date.isoformat(), "action_type": action.action_type, "description": action.description, "source": action.source} for action, symbol in rows]}
+
 @app.get("/api/market/overview")
 def market_overview(db: Session = Depends(get_db)):
     ihsg = _get_company(db, "IHSG")
@@ -679,7 +705,11 @@ def _build_context(db: Session, symbol: str, for_local: bool = False) -> dict:
         }
         for n in news_rows
     ]
+    from .market_calendar import get_market_status, previous_trading_day
+    market = get_market_status()
+    last_trading_day = previous_trading_day(datetime.fromisoformat(market["date"]).date()) if not market["is_trading_day"] else datetime.fromisoformat(market["date"]).date()
     return {
+        "market": {"status": market["status"], "is_trading_day": market["is_trading_day"], "last_trading_day": last_trading_day.isoformat(), "price_is_live": market["is_open"]},
         "company": {
             "symbol": company.symbol,
             "company_name": company.company_name,

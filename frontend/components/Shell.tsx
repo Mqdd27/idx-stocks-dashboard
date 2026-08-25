@@ -9,6 +9,7 @@ import { api } from "@/lib/api";
 const NAV = [
   { href: "/", icon: "◧", label: "Market" },
   { href: "/watchlist", icon: "★", label: "Watchlist" },
+  { href: "/calendar", icon: "▦", label: "Calendar" },
   { href: "/screener", icon: "⌕", label: "Screener" },
   { href: "/news", icon: "☰", label: "News" },
   { href: "/ai", icon: "◉", label: "AI" },
@@ -43,6 +44,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         <div className="topbar">
           <SearchBox />
           <MarketStatusChip />
+          <ThemeToggle />
           <ModelSelector />
         </div>
         <div className="content">{children}</div>
@@ -99,26 +101,26 @@ function SearchBox() {
 }
 
 function MarketStatusChip() {
-  const [open, setOpen] = useState<boolean | null>(null);
+  const [status, setStatus] = useState<any>(null);
+  useEffect(() => { const check = () => api.marketStatus().then(setStatus).catch(() => setStatus(null)); check(); const iv = setInterval(check, 60000); return () => clearInterval(iv); }, []);
+  const label = status?.status === "BREAK" ? "Market Break" : status?.status === "PUBLIC_HOLIDAY" || status?.status === "EXCHANGE_HOLIDAY" || status?.status === "WEEKEND" ? "Market Holiday" : status?.is_open ? "Market Open" : "Market Closed";
+  return <div className="market-status" title={status?.reason || "IDX market status"}><span className={`dot ${status?.is_open ? "" : "closed"}`} />{status ? label : "…"}</div>;
+}
+
+function ThemeToggle() {
+  const [light, setLight] = useState(false);
   useEffect(() => {
-    const check = () => {
-      const now = new Date();
-      const wib = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
-      const day = wib.getDay();
-      const h = wib.getHours();
-      const m = wib.getMinutes();
-      const t = h * 60 + m;
-      const inSession = day >= 1 && day <= 5 && ((t >= 9 * 60 && t < 11 * 60 + 30) || (t >= 13 * 60 + 30 && t <= 15 * 60 + 30));
-      setOpen(inSession);
-    };
-    check();
-    const iv = setInterval(check, 60000);
-    return () => clearInterval(iv);
+    const saved = localStorage.getItem("theme") || "dark";
+    setLight(saved === "light");
+    document.documentElement.classList.toggle("light-theme", saved === "light");
   }, []);
-  return (
-    <div className="market-status" title="IDX market status (Asia/Jakarta)">
-      <span className={`dot ${open ? "" : "closed"}`} />
-      {open === null ? "…" : open ? "Market Open" : "Market Closed"}
-    </div>
-  );
+  const toggle = (value: boolean) => {
+    setLight(value);
+    localStorage.setItem("theme", value ? "light" : "dark");
+    document.documentElement.classList.toggle("light-theme", value);
+  };
+  return <label className="theme-toggle" title={light ? "Light mode" : "Dark mode"}>
+    <span>{light ? "Light" : "Dark"}</span>
+    <input type="checkbox" checked={light} onChange={(e) => toggle(e.target.checked)} />
+  </label>;
 }

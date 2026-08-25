@@ -18,6 +18,8 @@ from shared.common import (  # noqa: E402
     SessionLocal,
     get_logger,
     is_market_hours,
+    get_market_status,
+    next_market_open,
     log_to_db,
     now_wib,
 )
@@ -148,6 +150,7 @@ async def run_forever() -> None:
     log_to_db("intraday", "info", f"started, interval={_POLL_INTERVAL}s")
     while True:
         now = now_wib()
+        market = get_market_status(now)
         if is_market_hours(now):
             try:
                 async with httpx.AsyncClient(timeout=30) as client:
@@ -156,9 +159,9 @@ async def run_forever() -> None:
                 logger.error("poll cycle failed: %s", exc)
                 log_to_db("intraday", "error", f"poll cycle failed: {exc}")
         else:
-            next_open = _next_open(now)
+            next_open = next_market_open(now)
             wait = max(15, (next_open - now).total_seconds())
-            logger.info("market closed, sleeping %.0fs until %s", wait, next_open)
+            logger.info("IDX market %s: %s; sleeping %.0fs until %s", market["status"], market.get("reason") or "outside session", wait, next_open)
             await asyncio.sleep(wait)
             continue
         await asyncio.sleep(_POLL_INTERVAL)

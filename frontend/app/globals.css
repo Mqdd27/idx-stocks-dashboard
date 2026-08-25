@@ -1,14 +1,14 @@
 :root {
-  --bg: #0b0e14;
-  --panel: #11151f;
-  --panel2: #161c29;
-  --border: #1e2636;
-  --text: #dde4ee;
-  --muted: #7d869a;
-  --green: #2fbf8f;
-  --red: #e5534b;
-  --amber: #e3a008;
-  --accent: #4c8dff;
+  --bg: #171827;
+  --panel: #202136;
+  --panel2: #292b45;
+  --border: #3b3d5c;
+  --text: #f1eafa;
+  --muted: #aaa7c4;
+  --green: #9bd8c3;
+  --red: #f0a6b5;
+  --amber: #f2d39b;
+  --accent: #b9b4f4;
   --mono: "SF Mono", "JetBrains Mono", "Cascadia Code", Consolas, monospace;
 }
 
@@ -310,3 +310,39 @@ tr:hover td { background: rgba(22,28,41,.6); }
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 .tv-badge:hover { background: #2663eb; }
+:root.light-theme { --bg:#f7f3f8; --panel:#fffafd; --panel2:#f0eaf4; --border:#ded5e4; --text:#302b3d; --muted:#766d82; --green:#438f76; --red:#c45f78; --amber:#a87925; --accent:#756fc2; }
+.theme-toggle { display:inline-flex; align-items:center; gap:7px; padding:5px 9px; border:1px solid var(--border); border-radius:20px; background:var(--panel2); color:var(--text); font-size:12px; }
+.theme-toggle input { appearance:none; width:28px; height:16px; border-radius:10px; background:var(--muted); position:relative; cursor:pointer; }
+.theme-toggle input::after { content:""; position:absolute; width:12px; height:12px; top:2px; left:2px; border-radius:50%; background:var(--panel); transition:transform .2s; }
+.theme-toggle input:checked { background:var(--accent); }
+.theme-toggle input:checked::after { transform:translateX(12px); }
+
+.calendar-heading { display:flex; justify-content:space-between; align-items:end; margin-bottom:16px; }
+.calendar-heading .page-title { margin-bottom:2px; }
+.calendar-month { background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:7px; padding:8px 10px; }
+.calendar-sheet { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px; }
+.calendar-sheet-title { text-align:center; font-size:24px; font-weight:700; margin-bottom:16px; color:var(--text); }
+.calendar-weekdays, .calendar-month-grid { display:grid; grid-template-columns:repeat(7,1fr); }
+.calendar-weekdays > div { text-align:center; padding:9px; color:var(--muted); font-weight:700; border-bottom:1px solid var(--border); }
+.calendar-weekdays .sunday, .calendar-cell.sunday .calendar-date { color:var(--red); }
+.calendar-cell { min-height:94px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); padding:9px; position:relative; cursor:default; }
+.calendar-cell:nth-child(7n) { border-right:0; }
+.calendar-cell.empty { background:var(--bg); }
+.calendar-cell.holiday { background:color-mix(in srgb, var(--red) 12%, var(--panel)); }
+.calendar-date { font-size:18px; font-weight:700; }
+.calendar-mark { font-size:10px; margin-top:8px; color:var(--muted); }
+.calendar-cell.holiday .calendar-mark { color:var(--red); font-weight:700; }
+.calendar-tooltip { display:none; position:absolute; z-index:5; left:8px; top:50px; min-width:170px; padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--panel2); box-shadow:0 8px 22px rgba(0,0,0,.35); font-size:11px; }
+.calendar-tooltip strong, .calendar-tooltip span { display:block; margin-top:4px; }
+.calendar-cell:hover .calendar-tooltip { display:block; }
+.calendar-legend { display:flex; gap:18px; flex-wrap:wrap; padding-top:14px; color:var(--muted); font-size:11px; }
+.legend-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; background:var(--green); }
+.legend-dot.red { background:var(--red); }.legend-dot.event { background:var(--accent); }
+.calendar-sessions { margin-top:14px; }
+@media (max-width:720px) { .calendar-sheet { padding:8px; overflow-x:auto; }.calendar-month-grid,.calendar-weekdays { min-width:560px; }.calendar-cell { min-height:76px; padding:6px; }.calendar-heading { align-items:start; gap:8px; flex-direction:column; } }
+
+.calendar-controls { display:flex; align-items:center; justify-content:center; gap:14px; }
+.calendar-controls strong { min-width:150px; text-align:center; font-size:18px; }
+
+.calendar-controls { display:flex; align-items:center; justify-content:center; gap:14px; }
+.calendar-controls strong { min-width:150px; text-align:center; font-size:18px; }

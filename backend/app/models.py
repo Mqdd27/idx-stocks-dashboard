@@ -325,3 +325,33 @@ class CollectorLog(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+class MarketHoliday(Base):
+    __tablename__ = "market_holidays"
+    __table_args__ = (UniqueConstraint("market", "date"),)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    market: Mapped[str] = mapped_column(String(16), default="IDX", nullable=False)
+    date: Mapped[date] = mapped_column(Date, nullable=False)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    holiday_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    source: Mapped[Optional[str]] = mapped_column(Text)
+    source_url: Mapped[Optional[str]] = mapped_column(Text)
+    is_trading_day: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    notes: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+class MarketCalendarOverride(Base):
+    __tablename__ = "market_calendar_overrides"
+    __table_args__ = (UniqueConstraint("market", "date"),)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    market: Mapped[str] = mapped_column(String(16), default="IDX", nullable=False)
+    date: Mapped[date] = mapped_column(Date, nullable=False)
+    is_trading_day: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    open_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
+    session_1_end: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
+    session_2_start: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
+    close_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
+    reason: Mapped[Optional[str]] = mapped_column(Text)
+    source_url: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

@@ -28,22 +28,7 @@ def now_wib() -> datetime:
     return datetime.now(TZ)
 
 
-def is_market_open(now: datetime | None = None) -> bool:
-    now = now or now_wib()
-    if now.weekday() >= 5:
-        return False
-    t = now.time()
-    return (PRE_OPEN_START <= t < MORNING_END) or (AFTERNOON_START <= t <= CLOSE_TIME)
-
-
-def is_market_hours(now: datetime | None = None) -> bool:
-    """True during regular trading sessions (no pre-open)."""
-    now = now or now_wib()
-    if now.weekday() >= 5:
-        return False
-    t = now.time()
-    return (dtime(9, 15) <= t < MORNING_END) or (AFTERNOON_START <= t < CLOSE_TIME)
-
+from app.market_calendar import is_market_open, is_market_hours, get_market_status, next_market_open
 
 def get_logger(name: str) -> logging.Logger:
     logger = logging.getLogger(name)

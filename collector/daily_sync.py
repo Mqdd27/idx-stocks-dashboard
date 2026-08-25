@@ -26,6 +26,7 @@ from shared.common import (  # noqa: E402
     log_to_db,
     now_wib,
     upsert_companies,
+    get_market_status,
 )
 from app import models as db_models  # noqa: E402
 from collector import yahoo  # noqa: E402
@@ -237,6 +238,10 @@ def compute_valuation(company_id: int, price: float) -> None:
 
 
 async def sync_prices(symbols: list[tuple[str, str]]) -> None:
+    market = get_market_status(now_wib())
+    if not market["is_trading_day"]:
+        logger.info("market data sync skipped: IDX %s (%s)", market["status"], market.get("reason") or "non-trading day")
+        return
     async with httpx.AsyncClient(timeout=30) as client:
         for i, (symbol, yahoo_symbol) in enumerate(symbols):
             try:
