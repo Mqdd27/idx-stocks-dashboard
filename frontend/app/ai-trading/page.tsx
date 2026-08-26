@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 
 export default function AITradingPage() {
-  const [status,setStatus]=useState<any>(null); const [history,setHistory]=useState<any[]>([]); const [jobs,setJobs]=useState<any[]>([]); const [ticker,setTicker]=useState("BBCA"); const [quick,setQuick]=useState(""); const [deep,setDeep]=useState(""); const [error,setError]=useState(""); const [matches,setMatches]=useState<any[]>([]); const [searching,setSearching]=useState(false);
+  const [status,setStatus]=useState<any>(null); const [history,setHistory]=useState<any[]>([]); const [jobs,setJobs]=useState<any[]>([]); const [ticker,setTicker]=useState(""); const [quick,setQuick]=useState(""); const [deep,setDeep]=useState(""); const [error,setError]=useState(""); const [matches,setMatches]=useState<any[]>([]); const [searching,setSearching]=useState(false);
   const load=()=>Promise.all([api.aiTradingStatus(),api.aiTradingHistory(),api.aiTradingJobs()]).then(([s,h,j])=>{setStatus(s);setQuick(q=>q||s.quick_model);setDeep(d=>d||s.deep_model);setHistory(h);setJobs(j)}).catch(e=>setError(e.message));
   useEffect(()=>{load();const t=setInterval(load,10000);return()=>clearInterval(t)},[]);
   useEffect(()=>{const query=ticker.trim();if(!query){setMatches([]);return}setSearching(true);const timer=setTimeout(()=>api.stocks(query).then(setMatches).catch(()=>setMatches([])).finally(()=>setSearching(false)),200);return()=>clearTimeout(timer)},[ticker]);
