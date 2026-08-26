@@ -420,3 +420,17 @@ tr:hover td { background: rgba(22,28,41,.6); }
 .ai-reasoning-body.markdown-body p { margin: 0 0 10px; }
 .ai-reasoning-body.markdown-body h2,
 .ai-reasoning-body.markdown-body h3 { margin: 16px 0 8px; }
+
+
+/* Compact AI reasoning prose; preserve whitespace only inside real code blocks. */
+.ai-reasoning-body { white-space: normal; }
+.ai-reasoning-body.markdown-body { line-height: 1.55; }
+.ai-reasoning-body.markdown-body p { margin: 0 0 7px; }
+.ai-reasoning-body.markdown-body p + p { margin-top: 4px; }
+.ai-reasoning-body.markdown-body ul,
+.ai-reasoning-body.markdown-body ol { margin-top: 5px; margin-bottom: 8px; }
+.ai-reasoning-body.markdown-body h1,
+.ai-reasoning-body.markdown-body h2,
+.ai-reasoning-body.markdown-body h3,
+.ai-reasoning-body.markdown-body h4 { margin-top: 12px; margin-bottom: 6px; }
+.ai-reasoning-body.markdown-body pre { white-space: pre-wrap; margin: 8px 0; padding: 9px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow-x: auto; }
