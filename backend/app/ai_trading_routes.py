@@ -28,7 +28,7 @@ def _atr_setup(db, symbol: str, action: str):
     atr = sum(trs) / len(trs) if trs else float(rows[-1].close) * 0.02
     entry = float(rows[-1].close)
     if action != 'BUY':
-        return {'action': action, 'note': 'No long setup generated for non-BUY signals.', 'entry': entry}
+        return {'action': action, 'note': 'Setup beli tidak dibuat untuk sinyal selain BUY.', 'entry': entry}
     stop = entry - 1.5 * atr
     target = entry + 3.0 * atr
     return {
@@ -38,7 +38,7 @@ def _atr_setup(db, symbol: str, action: str):
         'take_profit': round(target, 2),
         'risk_reward': 2.0,
         'atr': round(atr, 2),
-        'basis': 'entry=last close, SL=entry-1.5xATR(30d), TP=entry+3.0xATR (deterministic)',
+        'basis': 'entry=harga penutupan terakhir, SL=entry-1,5xATR(30h), TP=entry+3,0xATR (deterministik)',
     }
 
 
@@ -49,7 +49,30 @@ def _clean_report(text):
         return None
     cleaned = str(text).strip()
     cleaned = re.sub(r'^\[\d+\]\s*', '', cleaned)
-    cleaned = re.sub(r'^FINAL TRANSACTION PROPOSAL:\s*\*\*\w+\*\*\s*', '', cleaned)
+    cleaned = re.sub(
+        r'^(?:FINAL TRANSACTION PROPOSAL|PROPOSAL TRANSAKSI AKHIR):\s*\*\*[^*]+\*\*\s*',
+        '',
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    replacements = (
+        ('Strong Overweight', 'Sangat Di Atas Bobot Acuan'),
+        ('Strong Underweight', 'Sangat Di Bawah Bobot Acuan'),
+        ('Market Weight', 'Sesuai Bobot Pasar'),
+        ('Overweight', 'Di Atas Bobot Acuan'),
+        ('Underweight', 'Di Bawah Bobot Acuan'),
+        ('Executive Summary', 'Ringkasan Eksekutif'),
+        ('Investment Thesis', 'Tesis Investasi'),
+        ('Strategic Actions', 'Tindakan Strategis'),
+        ('Recommendation', 'Rekomendasi'),
+        ('Reasoning', 'Penalaran'),
+        ('Rationale', 'Alasan'),
+        ('Position Sizing', 'Ukuran Posisi'),
+        ('Stop Loss', 'Batas Rugi'),
+        ('Action', 'Tindakan'),
+    )
+    for english, indonesian in replacements:
+        cleaned = re.sub(re.escape(english), indonesian, cleaned, flags=re.IGNORECASE)
     return cleaned or None
 
 def _reasoning(result: dict | None):
@@ -78,15 +101,15 @@ def _reasoning(result: dict | None):
             judge_text = jd
 
     return [
-        {'agent': 'Market / Technical Analyst', 'content': _clean_report(reports.get('market_report_id') or reports.get('market_report'))},
-        {'agent': 'News Analyst', 'content': _clean_report(reports.get('news_report_id') or reports.get('news_report'))},
-        {'agent': 'Fundamentals Analyst', 'content': _clean_report(reports.get('fundamentals_report_id') or reports.get('fundamentals_report'))},
-        {'agent': 'Bull Researcher', 'content': _clean_report(bull_text)},
-        {'agent': 'Bear Researcher', 'content': _clean_report(bear_text)},
-        {'agent': 'Research Manager', 'content': _clean_report(reports.get('investment_plan_id') or reports.get('investment_plan'))},
-        {'agent': 'Trader Recommendation & Setup', 'content': _clean_report(reports.get('trader_investment_plan_id') or reports.get('trader_investment_plan'))},
-        {'agent': 'Risk Analysis (Judge)', 'content': _clean_report(judge_text)},
-        {'agent': 'Final Portfolio Decision', 'content': _clean_report(reports.get('final_trade_decision_id') or reports.get('final_trade_decision'))},
+        {'agent': 'Analis Pasar / Teknikal', 'content': _clean_report(reports.get('market_report_id') or reports.get('market_report'))},
+        {'agent': 'Analis Berita', 'content': _clean_report(reports.get('news_report_id') or reports.get('news_report'))},
+        {'agent': 'Analis Fundamental', 'content': _clean_report(reports.get('fundamentals_report_id') or reports.get('fundamentals_report'))},
+        {'agent': 'Peneliti Bullish', 'content': _clean_report(bull_text)},
+        {'agent': 'Peneliti Bearish', 'content': _clean_report(bear_text)},
+        {'agent': 'Manajer Riset', 'content': _clean_report(reports.get('investment_plan_id') or reports.get('investment_plan'))},
+        {'agent': 'Rekomendasi Trader & Setup', 'content': _clean_report(reports.get('trader_investment_plan_id') or reports.get('trader_investment_plan'))},
+        {'agent': 'Analisis Risiko', 'content': _clean_report(judge_text)},
+        {'agent': 'Keputusan Akhir Portofolio', 'content': _clean_report(reports.get('final_trade_decision_id') or reports.get('final_trade_decision'))},
     ]
 
 @router.get('/status')
