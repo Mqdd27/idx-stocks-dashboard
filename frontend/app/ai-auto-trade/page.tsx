@@ -28,7 +28,7 @@ export default function AIAutoTradePage() {
     catch (e: any) { setError(e.message); }
     finally { setBusy(false); }
   };
-  const choices = models.filter((m) => m.startsWith("cx/") || m.startsWith("gemini/") || m.startsWith("openai/"));
+  const choices = models.filter((m) => m === "Com" || m.startsWith("cx/") || m.startsWith("gemini/") || m.startsWith("openai/"));
   const canRun = status?.enabled && status?.ai_trading_enabled && status?.paper_trading_enabled && status?.market?.is_open && !status?.active_run_id;
 
   return <div>

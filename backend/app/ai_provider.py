@@ -25,6 +25,7 @@ _local_queued = 0
 
 _ollama_ids: set = set()
 _router_ids: set = set()
+_router_combo_ids: set = set()
 _registry_ts: float = 0.0
 _LOCAL_HEURISTIC_PREFIXES = ("qwen", "llama", "mistral", "gemma", "phi", "deepseek-r1", "granite")
 
@@ -37,7 +38,7 @@ class AIError(Exception):
 
 
 async def _refresh_registry() -> None:
-    global _ollama_ids, _router_ids, _registry_ts
+    global _ollama_ids, _router_ids, _router_combo_ids, _registry_ts
     now = time.time()
     if now - _registry_ts < 30:
         return
@@ -56,7 +57,9 @@ async def _refresh_registry() -> None:
         async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.get(f"{settings.nine_router_url}/models", headers=headers)
             if resp.status_code == 200:
-                _router_ids = {m["id"] for m in resp.json().get("data", [])}
+                models = resp.json().get("data", [])
+                _router_ids = {m["id"] for m in models}
+                _router_combo_ids = {m["id"] for m in models if m.get("owned_by") == "combo"}
     except Exception:
         pass
 
@@ -116,14 +119,14 @@ _probe_cache: dict[str, tuple[float, bool]] = {}
 async def _probe_router_model(model_id: str) -> bool:
     now = time.time()
     hit = _probe_cache.get(model_id)
-    if hit and now - hit[0] < _PROBE_TTL:
+    if hit and now - hit[0] < (_PROBE_TTL if hit[1] else 30):
         return hit[1]
     ok = False
     try:
         headers = {"Content-Type": "application/json"}
         if settings.nine_router_api_key:
             headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
-        probe_timeout = 180 if model_id.startswith("ollama") else 15
+        probe_timeout = 180 if model_id.startswith("ollama") else (60 if model_id in _router_combo_ids else 15)
         async with httpx.AsyncClient(timeout=probe_timeout) as client:
             resp = await client.post(
                 f"{settings.nine_router_url}/chat/completions",
