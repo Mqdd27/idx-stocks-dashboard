@@ -201,3 +201,27 @@ CREATE INDEX IF NOT EXISTS idx_collector_logs_ts ON collector_logs (created_at D
 
 CREATE TABLE IF NOT EXISTS market_holidays (id SERIAL PRIMARY KEY, market VARCHAR(16) NOT NULL DEFAULT 'IDX', date DATE NOT NULL, name TEXT NOT NULL, holiday_type VARCHAR(32) NOT NULL, source TEXT, source_url TEXT, is_trading_day BOOLEAN NOT NULL DEFAULT false, notes TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(market,date));
 CREATE TABLE IF NOT EXISTS market_calendar_overrides (id SERIAL PRIMARY KEY, market VARCHAR(16) NOT NULL DEFAULT 'IDX', date DATE NOT NULL, is_trading_day BOOLEAN NOT NULL, open_time TIME, session_1_end TIME, session_2_start TIME, close_time TIME, reason TEXT, source_url TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(market,date));
+
+
+-- TradingAgents-backed paper auto trading (separate from manual AI and paper bot UI)
+CREATE TABLE IF NOT EXISTS ai_auto_trade_configs (
+    id SERIAL PRIMARY KEY,
+    enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    max_candidates INTEGER NOT NULL DEFAULT 3 CHECK (max_candidates BETWEEN 1 AND 5),
+    quick_model VARCHAR(128) NOT NULL DEFAULT 'cx/gpt-5.4-mini',
+    deep_model VARCHAR(128) NOT NULL DEFAULT 'cx/gpt-5.5',
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ai_auto_trade_runs (
+    id BIGSERIAL PRIMARY KEY,
+    status VARCHAR(16) NOT NULL DEFAULT 'QUEUED',
+    candidates JSONB,
+    results JSONB,
+    trades_created INTEGER NOT NULL DEFAULT 0,
+    error_message TEXT,
+    started_at TIMESTAMPTZ,
+    finished_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS ix_ai_auto_trade_runs_status ON ai_auto_trade_runs(status);

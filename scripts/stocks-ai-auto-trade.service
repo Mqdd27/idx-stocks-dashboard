@@ -1,0 +1,14 @@
+[Unit]
+Description=Stocks Dashboard AI Auto Trade queue
+After=network.target stocks-backend.service
+
+[Service]
+Type=oneshot
+User=stocks
+Group=stocks
+WorkingDirectory=/opt/stocks-dashboard
+EnvironmentFile=/etc/stocks-dashboard/backend.env
+Environment=PYTHONPATH=/opt/stocks-dashboard/backend:/opt/stocks-dashboard
+ExecStart=/opt/stocks-dashboard/backend/venv/bin/python -m scripts.ai_auto_trade_autorun
+StandardOutput=append:/opt/stocks-dashboard/logs/ai_auto_trade.log
+StandardError=append:/opt/stocks-dashboard/logs/ai_auto_trade.log

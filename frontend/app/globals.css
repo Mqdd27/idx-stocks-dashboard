@@ -434,3 +434,10 @@ tr:hover td { background: rgba(22,28,41,.6); }
 .ai-reasoning-body.markdown-body h3,
 .ai-reasoning-body.markdown-body h4 { margin-top: 12px; margin-bottom: 6px; }
 .ai-reasoning-body.markdown-body pre { white-space: pre-wrap; margin: 8px 0; padding: 9px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; overflow-x: auto; }
+
+
+.ai-auto-config { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.ai-auto-config > div:first-child { margin-right: auto; }
+.ai-auto-config label { display: flex; flex-direction: column; gap: 5px; color: var(--muted); font-size: 11px; }
+.ai-auto-toggle { flex-direction: row !important; align-items: center; min-height: 36px; color: var(--text) !important; }
+@media (max-width: 720px) { .ai-auto-config > * { width: 100%; } }

@@ -1,0 +1,9 @@
+[Unit]
+Description=Queue AI Auto Trade after IDX market open
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 09:20:00 Asia/Jakarta
+Persistent=true
+
+[Install]
+WantedBy=timers.target
