@@ -42,24 +42,51 @@ def _atr_setup(db, symbol: str, action: str):
     }
 
 
+def _clean_report(text):
+    """Strip [N] translation markers and redundant FINAL TRANSACTION PROPOSAL prefix."""
+    import re
+    if not text:
+        return None
+    cleaned = str(text).strip()
+    cleaned = re.sub(r'^\[\d+\]\s*', '', cleaned)
+    cleaned = re.sub(r'^FINAL TRANSACTION PROPOSAL:\s*\*\*\w+\*\*\s*', '', cleaned)
+    return cleaned or None
+
 def _reasoning(result: dict | None):
     reports = (result or {}).get('reports') or {}
-    invest = reports.get('invest_debate_state') or {}
-    risk = reports.get('risk_debate_state') or {}
-    if isinstance(invest, str):
-        invest = {}
-    if isinstance(risk, str):
-        risk = {}
+    raw_state = (result or {}).get('_state') or {}
+    invest = raw_state.get('investment_debate_state') or {}
+    risk = raw_state.get('risk_debate_state') or {}
+
+    bull_text = None
+    bear_text = None
+    judge_text = None
+    if isinstance(invest, dict):
+        bh = invest.get('bull_history')
+        eh = invest.get('bear_history')
+        if isinstance(bh, list) and bh:
+            bull_text = str(bh[-1]) if len(bh) > 0 else None
+        elif isinstance(bh, str) and bh:
+            bull_text = bh
+        if isinstance(eh, list) and eh:
+            bear_text = str(eh[-1]) if len(eh) > 0 else None
+        elif isinstance(eh, str) and eh:
+            bear_text = eh
+    if isinstance(risk, dict):
+        jd = risk.get('judge_decision')
+        if isinstance(jd, str) and jd.strip():
+            judge_text = jd
+
     return [
-        {'agent': 'Market / Technical Analyst', 'content': reports.get('market_report_id') or reports.get('market_report')},
-        {'agent': 'News Analyst', 'content': reports.get('news_report_id') or reports.get('news_report')},
-        {'agent': 'Fundamentals Analyst', 'content': reports.get('fundamentals_report_id') or reports.get('fundamentals_report')},
-        {'agent': 'Bull Researcher', 'content': invest.get('bull_history') if isinstance(invest.get('bull_history'), str) else None},
-        {'agent': 'Bear Researcher', 'content': invest.get('bear_history') if isinstance(invest.get('bear_history'), str) else None},
-        {'agent': 'Research Manager (Bull vs Bear)', 'content': reports.get('investment_plan_id') or reports.get('investment_plan')},
-        {'agent': 'Trader Recommendation & Setup', 'content': reports.get('trader_investment_plan_id') or reports.get('trader_investment_plan')},
-        {'agent': 'Risk Analysis (Judge)', 'content': risk.get('judge_decision') if isinstance(risk, dict) else None},
-        {'agent': 'Final Portfolio Decision', 'content': reports.get('final_trade_decision_id') or reports.get('final_trade_decision')},
+        {'agent': 'Market / Technical Analyst', 'content': _clean_report(reports.get('market_report_id') or reports.get('market_report'))},
+        {'agent': 'News Analyst', 'content': _clean_report(reports.get('news_report_id') or reports.get('news_report'))},
+        {'agent': 'Fundamentals Analyst', 'content': _clean_report(reports.get('fundamentals_report_id') or reports.get('fundamentals_report'))},
+        {'agent': 'Bull Researcher', 'content': _clean_report(bull_text)},
+        {'agent': 'Bear Researcher', 'content': _clean_report(bear_text)},
+        {'agent': 'Research Manager', 'content': _clean_report(reports.get('investment_plan_id') or reports.get('investment_plan'))},
+        {'agent': 'Trader Recommendation & Setup', 'content': _clean_report(reports.get('trader_investment_plan_id') or reports.get('trader_investment_plan'))},
+        {'agent': 'Risk Analysis (Judge)', 'content': _clean_report(judge_text)},
+        {'agent': 'Final Portfolio Decision', 'content': _clean_report(reports.get('final_trade_decision_id') or reports.get('final_trade_decision'))},
     ]
 
 @router.get('/status')
