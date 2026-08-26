@@ -15,12 +15,12 @@ export default function AITradingPage() {
 }
 function Stat({label,value}:{label:string;value:string}){return <div className="stat"><div className="label">{label}</div><div className="value">{value}</div></div>}
 function Rows({rows,empty,onPick}:{rows:any[];empty:string;onPick:(sym:string)=>void}){return rows.length===0?<p className="muted">{empty}</p>:<div className="table-scroll"><table><thead><tr><th>Ticker</th><th>Decision</th><th>Signal</th><th>Status</th><th>Runtime</th><th>Date</th><th></th></tr></thead><tbody>{rows.map(r=><tr key={r.id}><td className="sym-badge">{r.symbol}</td><td>{r.decision||"-"}</td><td>{r.action||"-"}</td><td>{r.status}</td><td>{r.runtime_seconds?`${Number(r.runtime_seconds).toFixed(1)}s`:"-"}</td><td>{String(r.date||r.created_at||"").slice(0,10)}</td><td>{r.analysis_id?<button className="btn" onClick={()=>onPick(r.symbol)}>Detail</button>:<button className="btn" onClick={()=>onPick(r.symbol)}>Detail</button>}</td></tr>)}</tbody></table></div>}
-function DetailCard({d,onClose}:{d:any;onClose:()=>void}){
+function DetailCard({d,onClose}:{d:any;onClose:()=>void}){const agentOrder=["Market / Technical Analyst","News Analyst","Fundamentals Analyst","Research Manager","Trader Recommendation & Setup","Risk Analysis (Judge)","Final Portfolio Decision","Bull Researcher","Bear Researcher"];const ordered=(d.reasoning||[]).sort((a:any,b:any)=>{const ai=agentOrder.indexOf(a.agent);const bi=agentOrder.indexOf(b.agent);return(ai===-1?99:ai)-(bi===-1?99:bi)});
   const fmt=(v?:number|null)=>v==null?"-":v.toLocaleString("id-ID");
   const s=d.setup||{};
   return <div className="card ai-detail">
     <div className="auto-trade-head"><div><h2 className="section-title">{d.symbol} · {d.action} <span className="muted">({d.decision})</span></h2><p className="muted">{String(d.date||"").slice(0,10)} · {d.runtime_seconds?`${Number(d.runtime_seconds).toFixed(0)}s`:d.status}</p></div><button className="btn" onClick={onClose}>Tutup</button></div>
     {d.action==="BUY"&&<table className="ai-setup"><thead><tr><th>Entry</th><th>Stop Loss</th><th>Take Profit</th><th>R/R</th></tr></thead><tbody><tr><td className="num">{fmt(s.entry)}</td><td className="num neg">{fmt(s.stop_loss)}</td><td className="num pos">{fmt(s.take_profit)}</td><td className="num">2.0</td></tr></tbody></table>}
-    {(d.reasoning||[]).map((r:any)=><details key={r.agent} className="ai-reasoning"><summary>{r.agent}</summary><div className="ai-reasoning-body markdown-body"><ReactMarkdown remarkPlugins={[remarkGfm]}>{String(r.content)}</ReactMarkdown></div></details>)}
+    {ordered.map((r:any)=><details key={r.agent} open className="ai-reasoning"><summary>{r.agent}</summary><div className="ai-reasoning-body markdown-body"><ReactMarkdown remarkPlugins={[remarkGfm]}>{String(r.content||"")}</ReactMarkdown></div></details>)}
   </div>;
 }
