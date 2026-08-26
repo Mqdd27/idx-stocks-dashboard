@@ -17,6 +17,27 @@ def _models():
     s=get_settings(); headers={'Authorization':f'Bearer {s.nine_router_api_key}'} if s.nine_router_api_key else {}
     r=httpx.get(f'{s.nine_router_url}/models',headers=headers,timeout=10); r.raise_for_status(); return {x['id'] for x in r.json().get('data',[])}
 
+def _fetch_local_news(symbol: str) -> str:
+    """Fetch recent news from the app's own news table (Google News RSS)."""
+    from sqlalchemy import select, desc
+    from .models import Company, News
+    try:
+        with SessionLocal() as db:
+            company = db.execute(select(Company).where(Company.symbol == symbol)).scalar_one_or_none()
+            if not company: return ""
+            rows = db.execute(select(News).where(News.company_id == company.id).order_by(desc(News.published_at)).limit(15)).scalars().all()
+            if not rows: return ""
+            lines = []
+            for n in rows:
+                src = n.source or "unknown"
+                dt = str(n.published_at.date()) if n.published_at else "?"
+                title = (n.title or "").strip()[:200]
+                summary = (n.summary or "").strip()[:300]
+                lines.append(f"[{dt}] {title} ({src})\n  {summary}")
+            return "\n".join(lines)
+    except Exception:
+        return ""
+
 def _translate_to_indonesian(texts: list[str]) -> list[str]:
     """Batch-translate reasoning sections to Indonesian via 9Router. Returns translated list."""
     if not texts or not any(texts):
@@ -58,6 +79,15 @@ def analyze(symbol, quick_model=None, deep_model=None):
         from tradingagents.default_config import DEFAULT_CONFIG
         from tradingagents.graph.trading_graph import TradingAgentsGraph
         c=DEFAULT_CONFIG.copy(); c.update(llm_provider='openai_compatible',backend_url='http://127.0.0.1:20128/v1',quick_think_llm=quick,deep_think_llm=deep,max_debate_rounds=1,max_risk_discuss_rounds=1,llm_max_retries=0,request_timeout=60,max_recur_limit=40)
+        import tradingagents.dataflows.interface as _iface
+
+        def _local_news_getter(ticker, start_date, end_date):
+            news = _fetch_local_news(normalize_symbol(ticker))
+            if news:
+                return f"# News for {ticker} from local Google News RSS sources\n{news}"
+            return "No ticker-specific news found in local sources."
+
+        _iface.get_news_yfinance = _local_news_getter
         started=time.monotonic(); state,decision=TradingAgentsGraph(selected_analysts=('market','news','fundamentals'),config=c).propagate(f'{symbol}.JK',date.today()); runtime=time.monotonic()-started
         action=_normalize(decision); reports={k:state.get(k,'') for k in ('market_report','news_report','fundamentals_report','investment_plan','trader_investment_plan','final_trade_decision','risk_debate_state','invest_debate_state')}; _keys=[k for k in ('market_report','news_report','fundamentals_report','investment_plan','trader_investment_plan','final_trade_decision') if reports.get(k)]; _orig=[reports[k] for k in _keys]; _trans=_translate_to_indonesian(_orig); reports.update({k+'_id':t for k,t in zip(_keys,_trans)}); result={'ticker':symbol,'analysis_date':str(date.today()),'decision':str(decision),'action':action,'confidence':0,'runtime_seconds':runtime,'reports':reports,'final_reason':str(decision)}
         with SessionLocal() as db:
