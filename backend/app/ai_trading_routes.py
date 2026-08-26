@@ -51,15 +51,15 @@ def _reasoning(result: dict | None):
     if isinstance(risk, str):
         risk = {}
     return [
-        {'agent': 'Market / Technical Analyst', 'content': reports.get('market_report')},
-        {'agent': 'News Analyst', 'content': reports.get('news_report')},
-        {'agent': 'Fundamentals Analyst', 'content': reports.get('fundamentals_report')},
+        {'agent': 'Market / Technical Analyst', 'content': reports.get('market_report_id') or reports.get('market_report')},
+        {'agent': 'News Analyst', 'content': reports.get('news_report_id') or reports.get('news_report')},
+        {'agent': 'Fundamentals Analyst', 'content': reports.get('fundamentals_report_id') or reports.get('fundamentals_report')},
         {'agent': 'Bull Researcher', 'content': invest.get('bull_history') if isinstance(invest.get('bull_history'), str) else None},
         {'agent': 'Bear Researcher', 'content': invest.get('bear_history') if isinstance(invest.get('bear_history'), str) else None},
-        {'agent': 'Research Manager (Bull vs Bear)', 'content': reports.get('investment_plan')},
-        {'agent': 'Trader Recommendation & Setup', 'content': reports.get('trader_investment_plan')},
+        {'agent': 'Research Manager (Bull vs Bear)', 'content': reports.get('investment_plan_id') or reports.get('investment_plan')},
+        {'agent': 'Trader Recommendation & Setup', 'content': reports.get('trader_investment_plan_id') or reports.get('trader_investment_plan')},
         {'agent': 'Risk Analysis (Judge)', 'content': risk.get('judge_decision') if isinstance(risk, dict) else None},
-        {'agent': 'Final Portfolio Decision', 'content': reports.get('final_trade_decision')},
+        {'agent': 'Final Portfolio Decision', 'content': reports.get('final_trade_decision_id') or reports.get('final_trade_decision')},
     ]
 
 @router.get('/status')

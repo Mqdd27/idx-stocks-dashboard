@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import ReactMarkdown from "react-markdown";
 
 export default function AITradingPage() {
   const [status,setStatus]=useState<any>(null); const [history,setHistory]=useState<any[]>([]); const [jobs,setJobs]=useState<any[]>([]); const [ticker,setTicker]=useState(""); const [quick,setQuick]=useState(""); const [deep,setDeep]=useState(""); const [error,setError]=useState(""); const [matches,setMatches]=useState<any[]>([]); const [searching,setSearching]=useState(false); const [detail,setDetail]=useState<any>(null);
@@ -19,6 +20,6 @@ function DetailCard({d,onClose}:{d:any;onClose:()=>void}){
   return <div className="card ai-detail">
     <div className="auto-trade-head"><div><h2 className="section-title">{d.symbol} · {d.action} <span className="muted">({d.decision})</span></h2><p className="muted">{String(d.date||"").slice(0,10)} · {d.runtime_seconds?`${Number(d.runtime_seconds).toFixed(0)}s`:d.status}</p></div><button className="btn" onClick={onClose}>Tutup</button></div>
     {d.action==="BUY"&&<table className="ai-setup"><thead><tr><th>Entry</th><th>Stop Loss</th><th>Take Profit</th><th>R/R</th></tr></thead><tbody><tr><td className="num">{fmt(s.entry)}</td><td className="num neg">{fmt(s.stop_loss)}</td><td className="num pos">{fmt(s.take_profit)}</td><td className="num">2.0</td></tr></tbody></table>}
-    {(d.reasoning||[]).map((r:any)=><details key={r.agent} className="ai-reasoning"><summary>{r.agent}</summary><pre className="ai-reasoning-body">{String(r.content)}</pre></details>)}
+    {(d.reasoning||[]).map((r:any)=><details key={r.agent} className="ai-reasoning"><summary>{r.agent}</summary><div className="ai-reasoning-body markdown-body"><ReactMarkdown>{String(r.content)}</ReactMarkdown></div></details>)}
   </div>;
 }
