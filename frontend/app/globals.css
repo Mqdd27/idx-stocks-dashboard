@@ -375,3 +375,10 @@ tr:hover td { background: rgba(22,28,41,.6); }
 .ai-ticker-results span { color: var(--muted); font-size: 11px; }
 .ai-searching { position: absolute; right: 10px; top: 10px; color: var(--muted); font-size: 11px; }
 @media (max-width: 720px) { .ai-ticker-picker { width: 100%; } .ai-ticker-results { min-width: 0; } }
+
+.ai-detail { margin-top: 12px; }
+.ai-setup { width: 100%; margin-bottom: 10px; }
+.ai-setup th { text-align: left; color: var(--muted); font-size: 11px; padding: 4px 8px; }
+.ai-reasoning { border-top: 1px solid var(--border); padding: 8px 0; }
+.ai-reasoning summary { cursor: pointer; font-weight: 600; color: var(--text); padding: 6px 0; }
+.ai-reasoning-body { white-space: pre-wrap; word-break: break-word; background: var(--panel2); border-radius: 8px; padding: 10px; color: var(--text); max-height: 320px; overflow-y: auto; font-size: 12px; }

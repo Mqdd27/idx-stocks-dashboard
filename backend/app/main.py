@@ -106,7 +106,7 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
                 round(change_pct, 2) if change_pct is not None else None)
 
     if intraday:
-        change, change_pct = _change(float(intraday.price), float(prev.previous_close) if prev and prev.previous_close else None)
+        change, change_pct = _change(float(intraday.price), float(prev.close) if prev and prev.close is not None else None)
         fresh = (datetime.now(timezone.utc) - intraday.timestamp).total_seconds() <= 900
         return {
             "date": intraday.timestamp.isoformat(),
@@ -114,7 +114,7 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
             "high": float(intraday.high) if intraday.high is not None else None,
             "low": float(intraday.low) if intraday.low is not None else None,
             "close": float(intraday.price) if intraday.price is not None else None,
-            "previous_close": float(prev.previous_close) if prev and prev.previous_close else None,
+            "previous_close": float(prev.close) if prev and prev.close is not None else None,
             "volume": intraday.volume,
             "change": change,
             "change_pct": change_pct,
@@ -416,7 +416,7 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
     out = []
     for company, lp in rows:
         ir = intra_latest.get(company.id)
-        prev = float(lp.previous_close) if lp.previous_close else None
+        prev = float(lp.close) if ir and lp.close is not None else (float(lp.previous_close) if lp.previous_close else None)
         if not prev:
             continue
         if ir:
@@ -1322,7 +1322,7 @@ def paper_run(db: Session = Depends(get_db)):
     reasons = []
     open_trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
     used_cash = sum(float(t.entry_price) * t.quantity * 100 for t in open_trades)
-    for item in paper_candidates(db)["data"]:
+    for item in paper_candidates(force=False, limit=None, db=db)["data"]:
         if item["action"] != "buy" or len(open_trades) + created >= config.max_positions:
             continue
         company = db.execute(select(db_models.Company).where(db_models.Company.symbol == item["symbol"])).scalar_one()

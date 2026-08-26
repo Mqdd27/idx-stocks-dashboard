@@ -8,6 +8,60 @@ from .db import SessionLocal
 
 router = APIRouter(prefix='/api/ai-trading', tags=['ai-trading'])
 
+
+
+def _atr_setup(db, symbol: str, action: str):
+    """Deterministic entry/TP/SL/RR from daily prices (ATR-based). LLM prices are ignored."""
+    from .main import analytics
+    from .models import Company, DailyPrice
+    company = db.execute(select(Company).where(Company.symbol == symbol)).scalar_one_or_none()
+    if not company:
+        return None
+    rows = db.execute(select(DailyPrice).where(DailyPrice.company_id == company.id, DailyPrice.close.is_not(None)).order_by(desc(DailyPrice.date)).limit(30)).scalars().all()[::-1]
+    if len(rows) < 5:
+        return None
+    trs = []
+    for prev, cur in zip(rows, rows[1:]):
+        hi, lo = float(cur.high or cur.close), float(cur.low or cur.close)
+        cp = float(prev.close)
+        trs.append(max(hi - lo, abs(hi - cp), abs(lo - cp)))
+    atr = sum(trs) / len(trs) if trs else float(rows[-1].close) * 0.02
+    entry = float(rows[-1].close)
+    if action != 'BUY':
+        return {'action': action, 'note': 'No long setup generated for non-BUY signals.', 'entry': entry}
+    stop = entry - 1.5 * atr
+    target = entry + 3.0 * atr
+    return {
+        'action': action,
+        'entry': round(entry, 2),
+        'stop_loss': round(stop, 2),
+        'take_profit': round(target, 2),
+        'risk_reward': 2.0,
+        'atr': round(atr, 2),
+        'basis': 'entry=last close, SL=entry-1.5xATR(30d), TP=entry+3.0xATR (deterministic)',
+    }
+
+
+def _reasoning(result: dict | None):
+    reports = (result or {}).get('reports') or {}
+    invest = reports.get('invest_debate_state') or {}
+    risk = reports.get('risk_debate_state') or {}
+    if isinstance(invest, str):
+        invest = {}
+    if isinstance(risk, str):
+        risk = {}
+    return [
+        {'agent': 'Market / Technical Analyst', 'content': reports.get('market_report')},
+        {'agent': 'News Analyst', 'content': reports.get('news_report')},
+        {'agent': 'Fundamentals Analyst', 'content': reports.get('fundamentals_report')},
+        {'agent': 'Bull Researcher', 'content': invest.get('bull_history') if isinstance(invest.get('bull_history'), str) else None},
+        {'agent': 'Bear Researcher', 'content': invest.get('bear_history') if isinstance(invest.get('bear_history'), str) else None},
+        {'agent': 'Research Manager (Bull vs Bear)', 'content': reports.get('investment_plan')},
+        {'agent': 'Trader Recommendation & Setup', 'content': reports.get('trader_investment_plan')},
+        {'agent': 'Risk Analysis (Judge)', 'content': risk.get('judge_decision') if isinstance(risk, dict) else None},
+        {'agent': 'Final Portfolio Decision', 'content': reports.get('final_trade_decision')},
+    ]
+
 @router.get('/status')
 def status():
     settings = get_settings()
@@ -55,7 +109,9 @@ def latest(ticker: str):
         row = db.execute(select(AITradingAnalysis).where(AITradingAnalysis.symbol == symbol).order_by(desc(AITradingAnalysis.created_at)).limit(1)).scalar_one_or_none()
     if not row:
         raise HTTPException(404, 'Analysis not found')
-    return {'id': row.id, 'symbol': row.symbol, 'decision': row.decision, 'action': row.action, 'confidence': row.confidence, 'runtime_seconds': row.runtime_seconds, 'status': row.status, 'result': row.result}
+    with SessionLocal() as db:
+        setup = _atr_setup(db, row.symbol, row.action)
+    return {'id': row.id, 'symbol': row.symbol, 'decision': row.decision, 'action': row.action, 'confidence': row.confidence, 'runtime_seconds': row.runtime_seconds, 'status': row.status, 'setup': setup, 'reasoning': [r for r in _reasoning(row.result) if r['content']], 'result': row.result}
 
 @router.post('/analyze/{ticker}', status_code=202)
 async def request_analysis(ticker: str, request: Request):
