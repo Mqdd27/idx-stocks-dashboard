@@ -53,7 +53,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
   return <div className={`app-shell terminal-shell ${collapsed ? "nav-collapsed" : ""}`}>
     <aside className="sidebar terminal-sidebar">
-      <div className="sidebar-brand terminal-brand"><img className="brand-mark" src="/icon.svg" alt="STX Stocks IDX" /><div><h1>STOCKS IDX</h1><small>INDONESIA EQUITY TERMINAL</small></div></div>
+      <div className="sidebar-brand terminal-brand"><img className="brand-mark" src="/icon.svg" alt="STX Stocks IDX" /><div><h1>STOCKS IDX</h1><small>INDONESIA STOCKS</small></div></div>
       <button className="nav-collapse" onClick={() => setCollapsed((v) => !v)} aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}>{collapsed ? ">" : "<"}</button>
       <nav className="nav terminal-nav" aria-label="Primary">
         {NAV.map((item) => <Link key={item.href} href={item.href} title={item.label} className={pathname === item.href ? "active" : ""}>
