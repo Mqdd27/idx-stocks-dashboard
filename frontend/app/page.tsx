@@ -4,108 +4,40 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { fmtNum, fmtVol, pct, cls } from "@/lib/format";
+import { DataState, SectionHeading, TerminalMetric, TerminalPanel } from "@/components/Terminal";
 
 export default function MarketPage() {
-  const [data, setData] = useState<any>(null);
-  const [err, setErr] = useState(false);
-  const [ihsgFlash, setIhsgFlash] = useState<"up" | "down" | null>(null);
-  const [rowFlashes, setRowFlashes] = useState<Record<string, "up" | "down">>({});
-  const prevIhsg = useRef<number | null>(null);
-  const prevRows = useRef<Record<string, number>>({});
-
+  const [data, setData] = useState<any>(null); const [watchlist, setWatchlist] = useState<any[]>([]); const [status, setStatus] = useState<any>(null); const [err, setErr] = useState(""); const [updated, setUpdated] = useState<Date | null>(null);
+  const [flashes, setFlashes] = useState<Record<string, "up" | "down">>({}); const previous = useRef<Record<string, number>>({});
   useEffect(() => {
     let alive = true;
-    const load = () => {
-      api.overview().then((d) => {
-        const ihsgC = d.ihsg?.price?.close;
-        const prevI = prevIhsg.current;
-        if (ihsgC != null && prevI != null && ihsgC !== prevI) setIhsgFlash(ihsgC > prevI ? "up" : "down");
-        if (ihsgC != null) prevIhsg.current = ihsgC;
-        const newFlashes: Record<string, "up" | "down"> = {};
-        for (const list of [d.gainers, d.losers, d.most_active]) {
-          for (const r of list || []) {
-            const p = prevRows.current[r.symbol];
-            if (r.close != null && p != null && r.close !== p) newFlashes[r.symbol] = r.close > p ? "up" : "down";
-            if (r.close != null) prevRows.current[r.symbol] = r.close;
-          }
-        }
-        setRowFlashes(newFlashes);
-        alive && setData(d);
-      }).catch(() => alive && setErr(true));
-    };
-    load();
-    const iv = setInterval(load, 30000);
-    return () => { alive = false; clearInterval(iv); };
+    const load = () => Promise.all([api.overview(), api.watchlist(), api.marketStatus()]).then(([market, watch, marketStatus]) => {
+      const next: Record<string, "up" | "down"> = {};
+      for (const rows of [market.gainers, market.losers, market.most_active, watch.data]) for (const row of rows || []) { const price = row.close ?? row.price?.close; const prior = previous.current[row.symbol]; if (price != null && prior != null && price !== prior) next[row.symbol] = price > prior ? "up" : "down"; if (price != null) previous.current[row.symbol] = price; }
+      if (alive) { setData(market); setWatchlist(watch.data || []); setStatus(marketStatus); setFlashes(next); setUpdated(new Date()); setErr(""); }
+    }).catch((e) => alive && setErr(e.message || "MARKET DATA UNAVAILABLE"));
+    load(); const timer = setInterval(load, 30000); return () => { alive = false; clearInterval(timer); };
   }, []);
-
-  if (err) return <div className="empty-state">Gagal memuat data market.</div>;
-  if (!data) return <div className="empty-state"><span className="spin" /> Memuat…</div>;
-
-  const ihsg = data.ihsg?.price;
-
-  return (
-    <div>
-      <h1 className="page-title">Market Overview</h1>
-      <div className="grid grid-3" style={{ marginBottom: 14 }}>
-        <div className="card">
-          <div className="card-title">IHSG</div>
-          <div
-            className={`price-big ${ihsgFlash ? `flash-${ihsgFlash}` : ""}`}
-            onAnimationEnd={() => setIhsgFlash(null)}
-            style={{ color: ihsg?.change_pct != null && ihsg.change_pct >= 0 ? "var(--green)" : "var(--red)" }}
-          >
-            {ihsg ? fmtNum(ihsg.close) : "-"}
-          </div>
-          {ihsg && (
-            <div className={`price-change ${cls(ihsg.change_pct)}`}>
-              {ihsg.change != null && `${ihsg.change > 0 ? "+" : ""}${fmtNum(ihsg.change)}`} ({pct(ihsg.change_pct)})
-            </div>
-          )}
-        </div>
-        <div className="card">
-          <div className="card-title">Total Volume</div>
-          <div className="price-big">{fmtVol(data.total_volume)}</div>
-        </div>
-        <div className="card">
-          <div className="card-title">Tickers</div>
-          <div className="price-big">IDX</div>
-        </div>
-      </div>
-
-      <div className="grid grid-3">
-        <StockTable title="Top Gainers" rows={data.gainers} flashes={rowFlashes} />
-        <StockTable title="Top Losers" rows={data.losers} flashes={rowFlashes} />
-        <StockTable title="Most Active" rows={data.most_active} volume flashes={rowFlashes} />
-      </div>
+  if (err) return <div className="terminal-error"><strong>MARKET DATA UNAVAILABLE</strong><span>{err}</span><button className="btn" onClick={() => location.reload()}>RETRY</button></div>;
+  if (!data) return <div className="terminal-loading">LOADING MARKET DATA<span>...</span></div>;
+  const ihsg = data.ihsg?.price; const tone = ihsg?.change_pct > 0 ? "positive" : ihsg?.change_pct < 0 ? "negative" : "";
+  return <div className="market-terminal-page">
+    <SectionHeading eyebrow="IDX / MARKET MONITOR" title="INDONESIA EQUITY MARKET" meta={<><DataState state={status?.is_open ? "live" : "closed"}>{status?.is_open ? "LIVE" : status?.status || "CLOSED"}</DataState><span>LAST {updated?.toLocaleTimeString("id-ID", { hour12: false })}</span></>} />
+    <div className="market-summary-grid">
+      <TerminalPanel title="IHSG COMPOSITE" code="IDX"><div className="ihsg-monitor"><div><strong className={tone}>{ihsg ? fmtNum(ihsg.close) : "-"}</strong><span className={cls(ihsg?.change_pct)}>{ihsg?.change != null ? `${ihsg.change >= 0 ? "+" : ""}${fmtNum(ihsg.change)}` : "-"} &nbsp; {pct(ihsg?.change_pct)}</span></div><DataState state={ihsg?.is_live ? "live" : ihsg?.is_stale ? "delayed" : "closed"}>{ihsg?.is_live ? "LIVE PRICE" : ihsg?.is_stale ? "DELAYED" : "LAST CLOSE"}</DataState></div></TerminalPanel>
+      <div className="market-metric-strip"><TerminalMetric label="TOTAL VOLUME" value={fmtVol(data.total_volume)} /><TerminalMetric label="UNIVERSE" value="IDX" meta={`${(data.gainers?.length || 0) + (data.losers?.length || 0)} movers`} /><TerminalMetric label="SESSION" value={status?.current_session || status?.status || "-"} tone={status?.is_open ? "positive" : "warning"} /><TerminalMetric label="NEXT OPEN" value={status?.next_market_open ? new Date(status.next_market_open).toLocaleString("id-ID", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" }) : "-"} /></div>
     </div>
-  );
+    <div className="market-workspace">
+      <div className="market-main-panels">
+        <div className="market-table-grid"><MarketTable title="TOP GAINERS" code="UP" rows={data.gainers} flashes={flashes} /><MarketTable title="TOP LOSERS" code="DN" rows={data.losers} flashes={flashes} /></div>
+        <MarketTable title="MOST ACTIVE" code="VOL" rows={data.most_active} flashes={flashes} showVolume wide />
+      </div>
+      <TerminalPanel title="WATCHLIST MONITOR" code="MON"><WatchRows rows={watchlist} /></TerminalPanel>
+    </div>
+  </div>;
 }
 
-function StockTable({ title, rows, volume, flashes }: { title: string; rows: any[]; volume?: boolean; flashes?: Record<string, "up" | "down"> }) {
-  return (
-    <div className="card">
-      <div className="card-title">{title}</div>
-      <table>
-        <thead>
-          <tr><th>Symbol</th><th>Last</th><th>Chg %</th>{volume && <th>Volume</th>}</tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.symbol}>
-              <td><Link href={`/stock/${r.symbol}`} className="sym-badge">{r.symbol}</Link></td>
-              <td
-                className={`num ${flashes?.[r.symbol] ? `flash-${flashes[r.symbol]}` : ""}`}
-                onAnimationEnd={(e) => {
-                  const el = e.currentTarget;
-                  el.classList.remove("flash-up", "flash-down");
-                }}
-              >{fmtNum(r.close)}</td>
-              <td className={`num ${cls(r.change_pct)}`}>{pct(r.change_pct)}</td>
-              {volume && <td className="num">{fmtVol(r.volume)}</td>}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+function MarketTable({ title, code, rows, flashes, showVolume, wide }: { title: string; code: string; rows: any[]; flashes: Record<string, "up" | "down">; showVolume?: boolean; wide?: boolean }) {
+  return <TerminalPanel title={title} code={code} className={wide ? "wide-market-panel" : ""}><div className="table-scroll"><table className="dense-table"><thead><tr><th>CODE</th><th className="num">LAST</th><th className="num">CHG</th><th className="num">CHG%</th>{showVolume && <th className="num">VOLUME</th>}<th>TIME</th></tr></thead><tbody>{rows.map((r) => <tr key={r.symbol}><td><Link href={`/stock/${r.symbol}`} className="ticker-link">{r.symbol}</Link></td><td className={`num ${flashes[r.symbol] ? `flash-${flashes[r.symbol]}` : ""}`}>{fmtNum(r.close)}</td><td className={`num ${cls(r.change)}`}>{r.change == null ? "-" : `${r.change >= 0 ? "+" : ""}${fmtNum(r.change)}`}</td><td className={`num ${cls(r.change_pct)}`}>{pct(r.change_pct)}</td>{showVolume && <td className="num">{fmtVol(r.volume).replace(" lembar", "")}</td>}<td className="data-time">{r.date ? new Date(r.date).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }) : "-"}</td></tr>)}</tbody></table></div></TerminalPanel>;
 }
+function WatchRows({ rows }: { rows: any[] }) { return rows.length === 0 ? <div className="terminal-empty">NO WATCHLIST SYMBOLS</div> : <table className="dense-table watch-monitor"><thead><tr><th>CODE</th><th className="num">LAST</th><th className="num">%</th></tr></thead><tbody>{rows.slice(0, 12).map((r) => <tr key={r.symbol}><td><Link href={`/stock/${r.symbol}`} className="ticker-link">{r.symbol}</Link></td><td className="num">{fmtNum(r.price?.close)}</td><td className={`num ${cls(r.price?.change_pct)}`}>{pct(r.price?.change_pct)}</td></tr>)}</tbody></table>; }

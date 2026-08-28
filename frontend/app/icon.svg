@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">STX Stocks IDX</title>
+  <desc id="desc">Candlestick chart and rising market line</desc>
+  <rect width="64" height="64" fill="#080b12"/>
+  <path d="M1 1h62v62H1z" fill="none" stroke="#273149" stroke-width="2"/>
+  <path d="M10 48h44M10 34h44M10 20h44" fill="none" stroke="#1b2436" stroke-width="1"/>
+  <path d="M16 43V25m-4 5h8v9h-8v-9z" fill="#ff4d5e" stroke="#ff4d5e" stroke-width="2"/>
+  <path d="M32 46V18m-4 8h8v13h-8V26z" fill="#00c176" stroke="#00c176" stroke-width="2"/>
+  <path d="M48 37V11m-4 7h8v13h-8V18z" fill="#f6a623" stroke="#f6a623" stroke-width="2"/>
+  <path d="M9 46l12-10 10 3 11-14 13-8" fill="none" stroke="#e8ecf4" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M50 15h6v6" fill="none" stroke="#e8ecf4" stroke-width="2.5"/>
+</svg>
