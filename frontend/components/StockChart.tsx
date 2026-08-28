@@ -13,7 +13,7 @@ import {
 } from "lightweight-charts";
 import { api } from "@/lib/api";
 
-const RANGES = ["1M", "3M", "6M", "1Y", "3Y", "5Y"] as const;
+const RANGES = ["1D", "1W", "1M", "3M", "6M", "1Y", "3Y", "5Y"] as const;
 const INDICATORS = ["SMA20", "SMA50", "SMA200", "EMA", "RSI", "MACD", "BOLL"] as const;
 
 interface Props {
@@ -35,33 +35,33 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
     if (!containerRef.current) return;
     const chart = createChart(containerRef.current, {
       layout: {
-        background: { type: ColorType.Solid, color: "#11151f" },
-        textColor: "#7d869a",
+        background: { type: ColorType.Solid, color: "#0d121d" },
+        textColor: "#7d879c",
         fontSize: 11,
       },
       grid: {
-        vertLines: { color: "#161c29" },
-        horzLines: { color: "#161c29" },
+        vertLines: { color: "#1b2436" },
+        horzLines: { color: "#1b2436" },
       },
       width: containerRef.current.clientWidth,
       height: 380,
-      timeScale: { borderColor: "#1e2636", rightOffset: 6 },
-      rightPriceScale: { borderColor: "#1e2636" },
+      timeScale: { borderColor: "#273149", rightOffset: 6 },
+      rightPriceScale: { borderColor: "#273149" },
       crosshair: { mode: 0 },
     });
     chartRef.current = chart;
     const candles = chart.addSeries(CandlestickSeries, {
-      upColor: "#2fbf8f",
-      downColor: "#e5534b",
-      borderUpColor: "#2fbf8f",
-      borderDownColor: "#e5534b",
-      wickUpColor: "#2fbf8f",
-      wickDownColor: "#e5534b",
+      upColor: "#00c176",
+      downColor: "#ff4d5e",
+      borderUpColor: "#00c176",
+      borderDownColor: "#ff4d5e",
+      wickUpColor: "#00c176",
+      wickDownColor: "#ff4d5e",
     });
     const vol = chart.addSeries(HistogramSeries, {
       priceFormat: { type: "volume" },
       priceScaleId: "vol",
-      color: "#26314a",
+      color: "#273149",
     });
     chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
     candleRef.current = candles;
@@ -98,7 +98,7 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
         .map((d) => ({
           time: d.time,
           value: d.volume,
-          color: d.close >= (d.open ?? d.close) ? "rgba(47,191,143,.45)" : "rgba(229,83,75,.45)",
+          color: d.close >= (d.open ?? d.close) ? "rgba(0,193,118,.45)" : "rgba(255,77,94,.45)",
         }));
       candleRef.current.setData(candles);
       volRef.current?.setData(vols);
@@ -155,10 +155,10 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
         api.prices(symbol, range).then((pres) => {
           if (!aliveRef.current || !chartRef.current) return;
           const closes = pres.data.map((d) => ({ time: d.time, close: d.close }));
-          if (inds.includes("SMA20")) addLine(sma(closes, 20), "#e3a008", "SMA20");
-          if (inds.includes("SMA50")) addLine(sma(closes, 50), "#4c8dff", "SMA50");
-          if (inds.includes("SMA200")) addLine(sma(closes, 200), "#c678dd", "SMA200");
-          if (inds.includes("EMA")) addLine(ema(closes, 20), "#56b6c2", "EMA20");
+          if (inds.includes("SMA20")) addLine(sma(closes, 20), "#f6a623", "SMA20");
+          if (inds.includes("SMA50")) addLine(sma(closes, 50), "#3e9cff", "SMA50");
+          if (inds.includes("SMA200")) addLine(sma(closes, 200), "#27c2d1", "SMA200");
+          if (inds.includes("EMA")) addLine(ema(closes, 20), "#e8ecf4", "EMA20");
           overlayRef.current.push(...series);
         });
       } else if (inds.includes("BOLL")) {

@@ -442,7 +442,7 @@ tr:hover td { background: rgba(22,28,41,.6); }
 .ai-auto-toggle { flex-direction: row !important; align-items: center; min-height: 36px; color: var(--text) !important; }
 @media (max-width: 720px) { .ai-auto-config > * { width: 100%; } }
 
-/* STX TERMINAL V0 */
+
 /* ========================================================================== 
    STX TERMINAL DESIGN SYSTEM — Bloomberg-inspired, original implementation
    ========================================================================== */
@@ -547,3 +547,55 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 
 /* STX BRAND ICON */
 .terminal-brand .brand-mark { display: block; width: 34px; height: 27px; flex: 0 0 34px; object-fit: contain; background: #080b12; border: 0; }
+
+.stock-header { padding: 5px 7px 8px; border-bottom: 1px solid var(--border); align-items: end; }
+.stock-header h2 { font: 800 17px var(--mono); color: var(--amber); }
+.stock-header .name { color: var(--text); font: 11px var(--sans); }
+.stock-header .price-big { font: 800 22px var(--mono); }
+.price-big { font-variant-numeric: tabular-nums; }
+.tabs { gap: 0; margin: 5px 0; border-color: var(--border); }
+.tabs button { padding: 6px 10px; color: var(--muted); font: 800 9px var(--mono); text-transform: uppercase; border-bottom-width: 1px; }
+.tabs button.active { color: var(--amber); border-color: var(--amber); }
+.chart-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 0; padding: 7px; }
+.chart-toolbar { gap: 3px; margin-bottom: 5px; }
+.chart-toolbar button { border-radius: 0; padding: 4px 7px; font: 800 8px var(--mono); }
+.legend { gap: 10px; margin-bottom: 5px; font: 9px var(--mono); }
+.filter-grid { gap: 4px 8px; }
+.filter-field { gap: 5px; }
+.filter-field label { width: 68px; font: 8px var(--mono); }
+.filter-field input, .filter-field select { padding: 4px 6px; border-radius: 0; font: 10px var(--mono); }
+.analysis-box { padding: 10px; border-radius: 0; line-height: 1.55; }
+.chat-panel, .chat-drawer { border-radius: 0; box-shadow: none; }
+.chat-head { padding: 7px 9px; }
+.chat-body { padding: 9px; }
+.chat-msg .bubble { border-radius: 0; padding: 7px 9px; }
+.chat-input-row { padding: 7px; }
+.chat-input-row input { border-radius: 0; padding: 7px 9px; }
+.calendar-sheet { border-radius: 0; padding: 8px; }
+.calendar-sheet-title { font: 800 14px var(--mono); margin-bottom: 8px; }
+.calendar-cell { min-height: 72px; padding: 6px; border-color: var(--border); }
+.calendar-date { font: 800 13px var(--mono); }
+.calendar-mark { margin-top: 5px; font: 8px var(--mono); }
+.calendar-tooltip { border-radius: 0; box-shadow: none; }
+.paper-label { border-radius: 0; padding: 4px 6px; font: 800 8px var(--mono); }
+.paper-notice { border-radius: 0; }
+.auto-trade-head { margin-bottom: 7px; }
+.auto-trade-head .page-title { margin-bottom: 2px; }
+.auto-actions > div:first-child { gap: 7px; }
+.ai-detail { border-radius: 0; }
+.ai-reasoning { padding: 5px 0; }
+.ai-reasoning summary { padding: 5px 0; font: 800 10px var(--mono); }
+.ai-reasoning-body { border-radius: 0; padding: 8px; max-height: 360px; }
+.ai-auto-config { border-radius: 0; }
+.news-item { padding: 7px 8px; border-color: var(--border); }
+.news-item .t { font-size: 11px; }
+.news-item .m { font: 8px var(--mono); }
+@media (max-width: 760px) {
+  .stock-header { align-items: flex-start; }
+  .stock-header > div:last-child { text-align: left !important; }
+  .tabs button { padding: 7px 8px; }
+  .chart-wrap { overflow: hidden; }
+  .calendar-cell { min-height: 64px; }
+}
+:root.light-theme { --bg:#f2f4f7; --panel:#ffffff; --panel2:#e8edf2; --panel-hover:#dde5ec; --border:#c5cdd7; --border-strong:#9ca8b7; --text:#17202c; --muted:#536274; --green:#087f4e; --red:#c52235; --amber:#a65d00; --accent:#a65d00; --blue:#075ca8; --cyan:#087f8c; }
+.theme-toggle { display:inline-flex; border-radius:0; font:9px var(--mono); }
