@@ -28,7 +28,19 @@ def select_candidates(db, limit: int) -> list[dict]:
 
     rows = paper_candidates(force=True, limit=1000, db=db)["data"]
     eligible = [row for row in rows if row.get("action") == "buy"]
-    eligible.sort(key=lambda row: (float(row.get("score") or 0), float(row.get("risk_reward") or 0)), reverse=True)
+    latest = {}
+    for company in db.execute(select(Company).where(Company.symbol.in_([row["symbol"] for row in eligible]))).scalars():
+        price = db.execute(select(DailyPrice).where(DailyPrice.company_id == company.id).order_by(desc(DailyPrice.date)).limit(1)).scalar_one_or_none()
+        latest[company.symbol] = {
+            "volume": int(price.volume or 0) if price else 0,
+            "close": float(price.close or 0) if price else 0,
+        }
+    eligible.sort(key=lambda row: (
+        float(row.get("score") or 0),
+        float(row.get("risk_reward") or 0),
+        latest.get(row["symbol"], {}).get("volume", 0),
+        latest.get(row["symbol"], {}).get("close", 0),
+    ), reverse=True)
     return eligible[:limit]
 
 

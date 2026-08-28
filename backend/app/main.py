@@ -1288,7 +1288,7 @@ def paper_candidates(
     cache_key = (tuple(universe), candidate_limit, float(config.min_score), float(config.min_rr))
     cached = _paper_candidates_cache.get(cache_key)
     now = time.monotonic()
-    if cached and now - cached[0] < settings.paper_candidates_cache_seconds:
+    if cached and not force and now - cached[0] < settings.paper_candidates_cache_seconds:
         return {"data": cached[1]}
     query = select(db_models.Company).order_by(db_models.Company.symbol)
     if universe:
