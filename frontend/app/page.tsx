@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/api";
 import { fmtNum, fmtVol, pct, cls } from "@/lib/format";
 import { DataState, SectionHeading, TerminalMetric, TerminalPanel } from "@/components/Terminal";
+import RecommendationBoard, { AIWatchlistWidget } from "@/components/RecommendationBoard";
 
 export default function MarketPage() {
   const [data, setData] = useState<any>(null); const [watchlist, setWatchlist] = useState<any[]>([]); const [status, setStatus] = useState<any>(null); const [err, setErr] = useState(""); const [updated, setUpdated] = useState<Date | null>(null);

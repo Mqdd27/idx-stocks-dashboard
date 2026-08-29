@@ -1,0 +1,10 @@
+[Unit]
+Description=Run daily IDX recommendation windows
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 09:20:00 Asia/Jakarta
+OnCalendar=Mon..Fri *-*-* 15:05:00 Asia/Jakarta
+Persistent=true
+
+[Install]
+WantedBy=timers.target

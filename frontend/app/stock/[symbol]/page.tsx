@@ -10,7 +10,7 @@ import AIAssistPanel from "@/components/AIAssistPanel";
 import ModelSelector from "@/components/ModelSelector";
 import { getModel } from "@/lib/store";
 
-type Tab = "overview" | "chart" | "financials" | "valuation" | "news" | "ai";
+type Tab = "overview" | "chart" | "financials" | "valuation" | "news" | "ai" | "trade";
 
 export default function StockDetailPage() {
   const { symbol } = useParams() as { symbol: string };
@@ -98,9 +98,9 @@ export default function StockDetailPage() {
       </div>
 
       <div className="tabs">
-        {(["overview", "chart", "financials", "valuation", "news", "ai"] as Tab[]).map((t) => (
+        {(["overview", "chart", "financials", "valuation", "news", "ai", "trade"] as Tab[]).map((t) => (
           <button key={t} className={tab === t ? "active" : ""} onClick={() => setTab(t)}>
-            {t === "ai" ? "AI Analysis" : t.charAt(0).toUpperCase() + t.slice(1)}
+            {t === "ai" ? "AI Analysis" : t === "trade" ? "Trade Ideas" : t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
@@ -110,6 +110,7 @@ export default function StockDetailPage() {
       {tab === "financials" && <FinancialsTab symbol={symbol} />}
       {tab === "valuation" && <ValuationTab symbol={symbol} />}
       {tab === "news" && <NewsTab symbol={symbol} />}
+      {tab === "trade" && <TradeIdeasTab symbol={symbol} />}
       {tab === "ai" && (
         <div className="grid" style={{ gridTemplateColumns: "1fr 400px", gap: 14, alignItems: "start" }}>
           <div>
@@ -125,6 +126,15 @@ export default function StockDetailPage() {
     </div>
   );
 }
+
+
+function TradeIdeasTab({ symbol }: { symbol: string }) {
+  const [data, setData] = useState<any>(null);
+  useEffect(() => { api.stockTradeIdeas(symbol).then(setData).catch(() => setData({ data: [] })); }, [symbol]);
+  if (!data) return <div className="terminal-loading">LOADING TRADE IDEAS...</div>;
+  return <div className="trade-ideas-detail"><div className="terminal-page-meta"><span>DATA AS OF {data.market?.current_time ? new Date(data.market.current_time).toLocaleString("id-ID") : "-"}</span><span>MARKET {data.market?.status || "-"}</span></div>{data.data?.length ? <div className="trade-idea-detail-grid">{data.data.map((idea:any) => <div className="terminal-panel" key={idea.id}><header className="terminal-panel-head"><div><span className="terminal-panel-code">{idea.method === "TRADING_AGENTS" ? "TA" : "QNT"}</span><h2>{idea.strategy} · {idea.action}</h2></div></header><div className="trade-idea-detail-body"><div className="stat-strip"><Stat label="Entry Zone" value={`${fmtNum(idea.entry_low)}–${fmtNum(idea.entry_high)}`} /><Stat label="TP1" value={fmtNum(idea.tp1)} /><Stat label="TP2" value={fmtNum(idea.tp2)} /><Stat label="Stop Loss" value={fmtNum(idea.stop_loss)} /><Stat label="R/R" value={idea.risk_reward ? Number(idea.risk_reward).toFixed(2) : "-"} /><Stat label="Score" value={idea.score ?? "-"} /></div><h3 className="card-title">WHY THIS IDEA</h3><div className="trade-reason-list">{(idea.reasons?.positive || []).map((x:string)=><div className="positive" key={x}>+ {x}</div>)}{(idea.reasons?.negative || []).map((x:string)=><div className="negative" key={x}>− {x}</div>)}{idea.reasons?.decision && <p>{idea.reasons.decision}</p>}</div><p className="muted">Valid until: {idea.valid_until ? new Date(idea.valid_until).toLocaleString("id-ID") : "-"}</p></div></div>)}</div> : <div className="terminal-empty">NO TRADE IDEAS FOR {symbol}</div>}</div>;
+}
+
 
 function OverviewTab({ stock, tech, onWatchlist, inWatchlist }: { stock: Stock; tech: Technicals | null; onWatchlist: () => void; inWatchlist: boolean }) {
   const p = stock.price;

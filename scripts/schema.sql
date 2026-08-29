@@ -225,3 +225,29 @@ CREATE TABLE IF NOT EXISTS ai_auto_trade_runs (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS ix_ai_auto_trade_runs_status ON ai_auto_trade_runs(status);
+
+
+CREATE TABLE IF NOT EXISTS trade_recommendations (
+ id BIGSERIAL PRIMARY KEY, trading_date DATE NOT NULL, symbol VARCHAR(16) NOT NULL,
+ method VARCHAR(32) NOT NULL, strategy VARCHAR(16) NOT NULL, cycle VARCHAR(32) NOT NULL DEFAULT 'daily',
+ generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), data_timestamp TIMESTAMPTZ,
+ market_status VARCHAR(32) NOT NULL, action VARCHAR(16) NOT NULL, status VARCHAR(16) NOT NULL DEFAULT 'ACTIVE',
+ current_price DOUBLE PRECISION, entry_price DOUBLE PRECISION, entry_low DOUBLE PRECISION, entry_high DOUBLE PRECISION,
+ tp1 DOUBLE PRECISION, tp2 DOUBLE PRECISION, stop_loss DOUBLE PRECISION, risk_reward DOUBLE PRECISION,
+ score DOUBLE PRECISION, confidence_label VARCHAR(16), valid_until TIMESTAMPTZ,
+ reasons JSONB NOT NULL DEFAULT '{}'::jsonb, signals JSONB NOT NULL DEFAULT '{}'::jsonb,
+ risks JSONB NOT NULL DEFAULT '{}'::jsonb, outcome JSONB NOT NULL DEFAULT '{}'::jsonb,
+ UNIQUE (trading_date, symbol, method, strategy, cycle)
+);
+CREATE INDEX IF NOT EXISTS ix_trade_recommendations_date ON trade_recommendations(trading_date);
+
+
+CREATE TABLE IF NOT EXISTS ai_watchlist (
+ id BIGSERIAL PRIMARY KEY, trading_date DATE NOT NULL, symbol VARCHAR(16) NOT NULL, method VARCHAR(32) NOT NULL,
+ status VARCHAR(24) NOT NULL DEFAULT 'WATCH', score DOUBLE PRECISION, confidence VARCHAR(16), last_price DOUBLE PRECISION,
+ entry_price DOUBLE PRECISION, entry_low DOUBLE PRECISION, entry_high DOUBLE PRECISION, tp1 DOUBLE PRECISION, tp2 DOUBLE PRECISION, stop_loss DOUBLE PRECISION, risk_reward DOUBLE PRECISION,
+ generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), data_timestamp TIMESTAMPTZ, valid_until TIMESTAMPTZ,
+ reasons JSONB NOT NULL DEFAULT '{}'::jsonb, signals JSONB NOT NULL DEFAULT '{}'::jsonb, risks JSONB NOT NULL DEFAULT '{}'::jsonb, outcome JSONB NOT NULL DEFAULT '{}'::jsonb,
+ UNIQUE (trading_date, symbol, method)
+);
+CREATE INDEX IF NOT EXISTS ix_ai_watchlist_date ON ai_watchlist(trading_date);

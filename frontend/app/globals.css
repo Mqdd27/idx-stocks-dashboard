@@ -624,3 +624,35 @@ img, svg, canvas { max-width: 100%; }
   .action-buttons, .chart-toolbar, .filter-grid { min-width: 0; max-width: 100%; }
   .action-buttons > * { max-width: 100%; }
 }
+
+.recommendation-board { margin-bottom: 5px; background: var(--panel); border: 1px solid var(--border); padding: 7px; }
+.recommendation-head { display:flex; align-items:end; justify-content:space-between; gap:10px; padding: 2px 2px 7px; border-bottom: 1px solid var(--border); }
+.recommendation-head h2 { margin-top:2px; color:var(--text); font:800 13px var(--mono); }
+.recommendation-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; margin-top:5px; }
+.recommendation-list { min-width:0; }
+.recommendation-row { display:grid; grid-template-columns:70px 75px 1fr; gap:8px; padding:7px; border-bottom:1px solid var(--border); }
+.recommendation-row:last-child { border-bottom:0; }
+.recommendation-symbol span, .recommendation-price span, .recommendation-levels span { display:block; color:var(--muted); font:8px var(--mono); }
+.recommendation-symbol span { margin-top:3px; }
+.recommendation-price strong { display:block; color:var(--text); font:800 11px var(--mono); margin:2px 0; }
+.recommendation-levels { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px 8px; }
+.recommendation-levels b { color:var(--text); font:800 9px var(--mono); }
+.recommendation-why { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:3px 10px; padding-top:4px; font:8px var(--mono); }
+@media (max-width:760px) { .recommendation-head { align-items:flex-start; flex-direction:column; }.recommendation-grid { grid-template-columns:1fr; }.recommendation-row { grid-template-columns:65px 65px 1fr; gap:5px; }.recommendation-levels { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.strategy-tabs { display:flex; gap:2px; overflow-x:auto; border-bottom:1px solid var(--border); margin-bottom:5px; }
+.strategy-tabs button { flex:0 0 auto; min-height:28px; padding:0 8px; background:var(--panel); border:0; border-bottom:2px solid transparent; color:var(--muted); font:800 8px var(--mono); white-space:nowrap; }
+.strategy-tabs button.active, .strategy-tabs button:hover { color:var(--amber); border-bottom-color:var(--amber); }
+.terminal-page-head { padding-bottom:5px; }
+
+.method-tabs { display:flex; gap:2px; margin-bottom:5px; }
+.method-tabs button { min-height:26px; padding:0 8px; background:var(--panel); border:1px solid var(--border); color:var(--muted); font:800 8px var(--mono); }
+.method-tabs button.active, .method-tabs button:hover { color:var(--amber); border-color:var(--amber); }
+.trade-ideas-detail { display:grid; gap:6px; }
+.trade-idea-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; }
+.trade-idea-detail-body { padding:7px; }
+.trade-reason-list { display:grid; gap:3px; margin-bottom:9px; font:10px var(--mono); }
+@media (max-width:760px) { .trade-idea-detail-grid { grid-template-columns:1fr; } }
+
+.watchlist-overview { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; margin-bottom:5px; }
+.watch-section { margin-bottom:5px; }
+@media (max-width:760px) { .watchlist-overview { grid-template-columns:1fr; } }

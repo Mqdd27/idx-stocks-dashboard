@@ -21,6 +21,8 @@ from .market_calendar import get_market_status
 from .paper_trading import check_exit, decide, setup_confidence, size_position, trade_metrics
 from .ai_trading_routes import router as ai_trading_router
 from .ai_auto_trade_routes import router as ai_auto_trade_router
+from .recommendation_routes import router as recommendation_router, screener_router, trade_ideas_router
+from .watchlist_routes import router as watchlist_router
 
 settings = get_settings()
 _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
@@ -28,6 +30,10 @@ _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
 app = FastAPI(title="Stocks Dashboard API", version="1.0.0")
 app.include_router(ai_trading_router)
 app.include_router(ai_auto_trade_router)
+app.include_router(recommendation_router)
+app.include_router(screener_router)
+app.include_router(trade_ideas_router)
+app.include_router(watchlist_router)
 
 app.add_middleware(
     CORSMiddleware,
