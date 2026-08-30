@@ -19,8 +19,17 @@ def _stored(strategy, method=None, symbol=None):
         query = select(TradeRecommendation).where(TradeRecommendation.trading_date == today, TradeRecommendation.strategy == strategy)
         if method: query = query.where(TradeRecommendation.method == method)
         if symbol: query = query.where(TradeRecommendation.symbol == symbol.upper())
-        rows = db.execute(query.order_by(desc(TradeRecommendation.score))).scalars().all()
-    return [_row(r) for r in rows]
+        rows = db.execute(query.order_by(desc(TradeRecommendation.generated_at), desc(TradeRecommendation.id))).scalars().all()
+        if not rows and strategy == "BPJS":
+            now = datetime.now(timezone.utc)
+            query = select(TradeRecommendation).where(TradeRecommendation.trading_date < today, TradeRecommendation.strategy == strategy, TradeRecommendation.valid_until >= now, TradeRecommendation.status.in_(["ACTIVE", "PREVIEW"]))
+            if method: query = query.where(TradeRecommendation.method == method)
+            if symbol: query = query.where(TradeRecommendation.symbol == symbol.upper())
+            rows = db.execute(query.order_by(desc(TradeRecommendation.trading_date), desc(TradeRecommendation.score))).scalars().all()
+    latest = {}
+    for record in rows:
+        latest.setdefault(record.symbol, record)
+    return [_row(record) for record in sorted(latest.values(), key=lambda item: (float(item.score or 0), item.generated_at), reverse=True)]
 
 @router.get('/strategy/{strategy}')
 def strategy(strategy: str, method: str | None = None):
