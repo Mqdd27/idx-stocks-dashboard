@@ -115,7 +115,16 @@ def generate_quant(strategy="GENERAL",cycle="daily",now=None,preview=False):
             candidates.append((score,c,setup,signals,risks,ts,live,ind))
         candidates.sort(key=lambda x:x[0],reverse=True)
         for score,c,setup,signals,risks,ts,live,ind in candidates[:SHORTLIST]:
-            rec=TradeRecommendation(trading_date=now.date(),symbol=c.symbol,method="PAPER_TRADE",strategy=strategy,cycle=cycle,generated_at=now.astimezone(timezone.utc),data_timestamp=ts,market_status=market["status"],action="BUY",status="PREVIEW" if preview else "ACTIVE",current_price=setup["entry"],entry_price=setup["entry"],entry_low=setup["low"],entry_high=setup["high"],tp1=setup["tp1"],tp2=setup["tp2"],stop_loss=setup["stop"],risk_reward=setup["rr"],score=score,confidence_label="HIGH" if score>=85 else "MEDIUM",valid_until=_valid_until(strategy, now).astimezone(timezone.utc),reasons={"positive":[x for x in ["Harga di atas SMA20" if ind.get("sma20") and setup["entry"]>ind["sma20"] else None,"Harga di atas SMA50" if ind.get("sma50") and setup["entry"]>ind["sma50"] else None,f"Relative volume {signals['relative_volume']}x",f"R/R {setup['rr']:.2f}"] if x],"negative":risks},signals=signals,risks={"items":risks+["Harga terakhir bukan harga live; tunggu market buka" ] if preview else risks,"price_live":live,"stale_preview":preview},outcome={})
+            rec=TradeRecommendation(trading_date=now.date(),symbol=c.symbol,method="PAPER_TRADE",strategy=strategy,cycle=cycle,generated_at=now.astimezone(timezone.utc),data_timestamp=ts,market_status=market["status"],action="BUY",status="PREVIEW" if preview else "ACTIVE",current_price=setup["entry"],entry_price=setup["entry"],entry_low=setup["low"],entry_high=setup["high"],tp1=setup["tp1"],tp2=setup["tp2"],stop_loss=setup["stop"],risk_reward=setup["rr"],score=score,confidence_label="HIGH" if score>=85 else "MEDIUM",valid_until=_valid_until(strategy, now).astimezone(timezone.utc),reasons={"positive":[x for x in [
+                "Harga di atas SMA20" if ind.get("sma20") and setup["entry"]>ind["sma20"] else None,
+                "Harga di atas SMA50" if ind.get("sma50") and setup["entry"]>ind["sma50"] else None,
+                f"RSI {ind['rsi14']:.2f}: momentum bullish, belum overbought" if ind.get("rsi14") is not None and 50 <= ind["rsi14"] <= 68 else None,
+                "MACD histogram positif" if ind.get("macd") and ind["macd"].get("histogram",0)>0 else None,
+                f"Relative volume {signals['relative_volume']}x dari rata-rata 20 hari",
+                "Harga dekat resistance 20 hari" if signals.get("near_resistance") else None,
+                f"Nilai transaksi rata-rata {signals['liquidity_value']:,.0f} IDR" if signals.get("liquidity_value") else None,
+                f"R/R {setup['rr']:.2f} memenuhi minimum {MIN_RR:.2f}",
+            ] if x],"negative":risks},signals=signals,risks={"items":risks+["Harga terakhir bukan harga live; tunggu market buka" ] if preview else risks,"price_live":live,"stale_preview":preview},outcome={})
             db.add(rec)
             try:db.commit();generated+=1
             except IntegrityError:db.rollback()
