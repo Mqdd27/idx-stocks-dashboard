@@ -130,10 +130,10 @@ def generate_quant(strategy="GENERAL",cycle="daily",now=None,preview=False):
             except IntegrityError:db.rollback()
     return {"generated":generated,"status":"OK" if generated else "NO_TRADE","reason":None if generated else "NO_QUALIFIED_SETUP","market":market}
 
-def import_tradingagents(strategy="GENERAL", cycle="daily",now=None):
+def import_tradingagents(strategy="GENERAL", cycle="daily",now=None, limit=None):
     now=(now or datetime.now(TZ)).astimezone(TZ); market=get_market_status(now); generated=0
     with SessionLocal() as db:
-        rows=db.execute(select(AITradingAnalysis).where(AITradingAnalysis.analysis_date==now.date(),AITradingAnalysis.status=="COMPLETED").order_by(desc(AITradingAnalysis.id)).limit(TA_MAX)).scalars().all()
+        rows=db.execute(select(AITradingAnalysis).where(AITradingAnalysis.analysis_date==now.date(),AITradingAnalysis.status=="COMPLETED").order_by(desc(AITradingAnalysis.id)).limit(limit or TA_MAX)).scalars().all()
         seen=set()
         for a in rows:
             if a.symbol in seen:continue

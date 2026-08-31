@@ -108,7 +108,7 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
         const prev = res.data[res.data.length - 2];
         const chg = prev ? last.close - prev.close : 0;
         const pct = prev ? (chg / prev.close) * 100 : 0;
-        setLegend([`${symbol} ${last.close.toLocaleString("id-ID")}`, `${chg > 0 ? "+" : ""}${chg.toFixed(2)} (${pct > 0 ? "+" : ""}${pct.toFixed(2)}%)`]);
+        setLegend([`${symbol} ${Math.round(last.close).toLocaleString("id-ID")}`, `${chg > 0 ? "+" : ""}${chg.toFixed(2)} (${pct > 0 ? "+" : ""}${pct.toFixed(2)}%)`]);
       }
     }).catch(() => {});
     return () => { alive = false; };

@@ -363,3 +363,5 @@ from .ai_auto_trade_model import AIAutoTradeConfig, AIAutoTradeRun
 from .recommendation_model import TradeRecommendation
 
 from .watchlist_model import AIWatchlist
+
+from .batch_model import AITradingBatch, AITradingBatchItem

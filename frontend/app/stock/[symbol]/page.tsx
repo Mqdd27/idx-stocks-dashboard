@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { api, type Stock, type Technicals } from "@/lib/api";
-import { fmtNum, fmtVol, pct, cls, fmtBig } from "@/lib/format";
+import { fmtNum, fmtPrice, fmtVol, pct, cls, fmtBig } from "@/lib/format";
 import StockChart from "@/components/StockChart";
 import AIAssistPanel from "@/components/AIAssistPanel";
 import ModelSelector from "@/components/ModelSelector";
@@ -85,10 +85,10 @@ export default function StockDetailPage() {
               onAnimationEnd={() => setFlashDir(null)}
               style={{ color: changeColor }}
             >
-              {p.live && <span className="live-dot" title="Harga realtime (intraday)" />} {fmtNum(p.close)}
+              {p.live && <span className="live-dot" title="Harga realtime (intraday)" />} {fmtPrice(p.close)}
             </div>
               <div className={`price-change ${cls(changePct)}`}>
-                {p.change != null && `${p.change > 0 ? "+" : ""}${fmtNum(p.change)}`} ({pct(changePct)})
+                {p.change != null && `${p.change > 0 ? "+" : ""}${fmtPrice(p.change)}`} ({pct(changePct)})
               </div>
             </>
           ) : (
@@ -132,7 +132,7 @@ function TradeIdeasTab({ symbol }: { symbol: string }) {
   const [data, setData] = useState<any>(null);
   useEffect(() => { api.stockTradeIdeas(symbol).then(setData).catch(() => setData({ data: [] })); }, [symbol]);
   if (!data) return <div className="terminal-loading">LOADING TRADE IDEAS...</div>;
-  return <div className="trade-ideas-detail"><div className="terminal-page-meta"><span>DATA AS OF {data.market?.current_time ? new Date(data.market.current_time).toLocaleString("id-ID") : "-"}</span><span>MARKET {data.market?.status || "-"}</span></div>{data.data?.length ? <div className="trade-idea-detail-grid">{data.data.map((idea:any) => <div className="terminal-panel" key={idea.id}><header className="terminal-panel-head"><div><span className="terminal-panel-code">{idea.method === "TRADING_AGENTS" ? "TA" : "QNT"}</span><h2>{idea.strategy} · {idea.action}</h2></div></header><div className="trade-idea-detail-body"><div className="stat-strip"><Stat label="Entry Zone" value={`${fmtNum(idea.entry_low)}–${fmtNum(idea.entry_high)}`} /><Stat label="TP1" value={fmtNum(idea.tp1)} /><Stat label="TP2" value={fmtNum(idea.tp2)} /><Stat label="Stop Loss" value={fmtNum(idea.stop_loss)} /><Stat label="R/R" value={idea.risk_reward ? Number(idea.risk_reward).toFixed(2) : "-"} /><Stat label="Score" value={idea.score ?? "-"} /></div><h3 className="card-title">WHY THIS IDEA</h3><div className="trade-reason-list">{(idea.reasons?.positive || []).map((x:string)=><div className="positive" key={x}>+ {x}</div>)}{(idea.reasons?.negative || []).map((x:string)=><div className="negative" key={x}>− {x}</div>)}{idea.reasons?.decision && <p>{idea.reasons.decision}</p>}</div><p className="muted">Valid until: {idea.valid_until ? new Date(idea.valid_until).toLocaleString("id-ID") : "-"}</p></div></div>)}</div> : <div className="terminal-empty">NO TRADE IDEAS FOR {symbol}</div>}</div>;
+  return <div className="trade-ideas-detail"><div className="terminal-page-meta"><span>DATA AS OF {data.market?.current_time ? new Date(data.market.current_time).toLocaleString("id-ID") : "-"}</span><span>MARKET {data.market?.status || "-"}</span></div>{data.data?.length ? <div className="trade-idea-detail-grid">{data.data.map((idea:any) => <div className="terminal-panel" key={idea.id}><header className="terminal-panel-head"><div><span className="terminal-panel-code">{idea.method === "TRADING_AGENTS" ? "TA" : "QNT"}</span><h2>{idea.strategy} · {idea.action}</h2></div></header><div className="trade-idea-detail-body"><div className="stat-strip"><Stat label="Entry Zone" value={`${fmtPrice(idea.entry_low)}–${fmtPrice(idea.entry_high)}`} /><Stat label="TP1" value={fmtPrice(idea.tp1)} /><Stat label="TP2" value={fmtPrice(idea.tp2)} /><Stat label="Stop Loss" value={fmtPrice(idea.stop_loss)} /><Stat label="R/R" value={idea.risk_reward ? Number(idea.risk_reward).toFixed(2) : "-"} /><Stat label="Score" value={idea.score ?? "-"} /></div><h3 className="card-title">WHY THIS IDEA</h3><div className="trade-reason-list">{(idea.reasons?.positive || []).map((x:string)=><div className="positive" key={x}>+ {x}</div>)}{(idea.reasons?.negative || []).map((x:string)=><div className="negative" key={x}>− {x}</div>)}{idea.reasons?.decision && <p>{idea.reasons.decision}</p>}</div><p className="muted">Valid until: {idea.valid_until ? new Date(idea.valid_until).toLocaleString("id-ID") : "-"}</p></div></div>)}</div> : <div className="terminal-empty">NO TRADE IDEAS FOR {symbol}</div>}</div>;
 }
 
 
@@ -148,11 +148,11 @@ function OverviewTab({ stock, tech, onWatchlist, inWatchlist }: { stock: Stock; 
       <div className="stat-strip">
         <Stat label="Last Price" value={p ? fmtNum(p.close) : "-"} />
         <Stat label="Change" value={p ? pct(p.change_pct) : "-"} color={cls(p?.change_pct)} />
-        <Stat label="Open" value={p ? fmtNum(p.open) : "-"} />
-        <Stat label="High" value={p ? fmtNum(p.high) : "-"} />
-        <Stat label="Low" value={p ? fmtNum(p.low) : "-"} />
+        <Stat label="Open" value={p ? fmtPrice(p.open) : "-"} />
+        <Stat label="High" value={p ? fmtPrice(p.high) : "-"} />
+        <Stat label="Low" value={p ? fmtPrice(p.low) : "-"} />
         <Stat label="Volume" value={p ? fmtVol(p.volume) : "-"} />
-        <Stat label="Prev Close" value={p ? fmtNum(p.previous_close) : "-"} />
+        <Stat label="Prev Close" value={p ? fmtPrice(p.previous_close) : "-"} />
         <Stat label="Date" value={p?.date || "-"} />
       </div>
       <h3 className="card-title" style={{ margin: "20px 0 10px" }}>Technicals</h3>

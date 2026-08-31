@@ -5,6 +5,11 @@ export function fmtNum(n: number | null | undefined, digits = 2): string {
   return n.toLocaleString("id-ID", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }
 
+export function fmtPrice(n: number | null | undefined): string {
+  if (n === null || n === undefined || isNaN(n)) return "-";
+  return Math.round(n).toLocaleString("id-ID");
+}
+
 export function fmtBig(n: number | null | undefined): string {
   if (n === null || n === undefined || isNaN(n)) return "-";
   const abs = Math.abs(n);
