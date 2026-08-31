@@ -10,7 +10,6 @@ from app.watchlist_service import generate_watchlist, refresh_status
 from app.market_calendar import get_market_status
 from app.db import SessionLocal
 from app.recommendation_model import TradeRecommendation
-from scripts.telegram_recommendation import send_report
 from sqlalchemy import select, desc
 
 
@@ -43,7 +42,5 @@ if now.hour == 9:
 elif now.hour == 15:
     print("PAPER_BSJP", generate_quant("BSJP"), flush=True)
 print("TA_SHORTLIST", generate_tradingagents_shortlist("GENERAL" if now.hour == 9 else "BSJP"), flush=True)
-if now.hour == 15:
-    send_report("BSJP")
 print("WATCHLIST_GENERATE", generate_watchlist(now), flush=True)
 print("WATCHLIST_STATUS", refresh_status(now), flush=True)
