@@ -37,3 +37,4 @@ Thumbs.db
 # Graphify
 graphify-out/
 .graphify/
+frontend/tsconfig.tsbuildinfo
