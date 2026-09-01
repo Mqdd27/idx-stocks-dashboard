@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import BigInteger, DateTime, Integer, JSON, String, Text
+from sqlalchemy import BigInteger, DateTime, Integer, JSON, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 from .db import Base
@@ -17,6 +17,7 @@ class AITradingBatch(Base):
 
 class AITradingBatchItem(Base):
     __tablename__ = "ai_trading_batch_items"
+    __table_args__ = (UniqueConstraint("batch_id", "symbol", name="uq_ai_trading_batch_item_symbol"),)
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     batch_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
     symbol: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
@@ -24,5 +25,9 @@ class AITradingBatchItem(Base):
     analysis_id: Mapped[int | None] = mapped_column(BigInteger)
     error_message: Mapped[str | None] = mapped_column(Text)
     result: Mapped[dict | None] = mapped_column(JSON)
+    attempt_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    claimed_by: Mapped[str | None] = mapped_column(String(96))
+    claimed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

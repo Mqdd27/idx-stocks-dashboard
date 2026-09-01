@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import desc, select
 from .config import get_settings
 from .db import SessionLocal
-from .market_calendar import get_market_status
+from .market_calendar import TZ, get_market_status
 from .recommendation_model import TradeRecommendation
 from .recommendation_service import generate_quant, historical_stats, import_tradingagents, update_outcomes
 
@@ -14,7 +14,7 @@ trade_ideas_router = APIRouter(prefix="/api/stocks", tags=["recommendations"])
 
 
 def _stored(strategy, method=None, symbol=None):
-    today = datetime.now(timezone.utc).astimezone().date()
+    today = datetime.now(TZ).date()
     with SessionLocal() as db:
         query = select(TradeRecommendation).where(TradeRecommendation.trading_date == today, TradeRecommendation.strategy == strategy)
         if method: query = query.where(TradeRecommendation.method == method)
@@ -41,7 +41,7 @@ def strategy(strategy: str, method: str | None = None):
 
 @router.get("/today")
 def today(trading_date: str | None = None):
-    d = trading_date or datetime.now(timezone.utc).astimezone().date().isoformat()
+    d = trading_date or datetime.now(TZ).date().isoformat()
     with SessionLocal() as db:
         rows = db.execute(select(TradeRecommendation).where(TradeRecommendation.trading_date == d, TradeRecommendation.action != "NO_TRADE").order_by(desc(TradeRecommendation.score))).scalars().all()
         market = get_market_status()
@@ -62,14 +62,14 @@ def today(trading_date: str | None = None):
 
 @router.get("/trading-agents")
 def ta_picks(trading_date: str | None = None):
-    d = trading_date or datetime.now(timezone.utc).astimezone().date().isoformat()
+    d = trading_date or datetime.now(TZ).date().isoformat()
     with SessionLocal() as db:
         rows = db.execute(select(TradeRecommendation).where(TradeRecommendation.trading_date == d, TradeRecommendation.method == "TRADING_AGENTS").order_by(desc(TradeRecommendation.score))).scalars().all()
     return {"trading_date": d, "data": [_row(r) for r in rows], "generated_at": datetime.now(timezone.utc).isoformat()}
 
 @router.get("/paper")
 def paper_picks(trading_date: str | None = None):
-    d = trading_date or datetime.now(timezone.utc).astimezone().date().isoformat()
+    d = trading_date or datetime.now(TZ).date().isoformat()
     with SessionLocal() as db:
         rows = db.execute(select(TradeRecommendation).where(TradeRecommendation.trading_date == d, TradeRecommendation.method == "PAPER_TRADE").order_by(desc(TradeRecommendation.score))).scalars().all()
     return {"trading_date": d, "data": [_row(r) for r in rows], "generated_at": datetime.now(timezone.utc).isoformat()}

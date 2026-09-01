@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from .db import SessionLocal
 from .recommendation_model import TradeRecommendation
 from .watchlist_model import AIWatchlist
-from .market_calendar import get_market_status
+from .market_calendar import TZ, get_market_status
 
 
 def _status(row, now):
@@ -16,7 +16,7 @@ def _status(row, now):
 
 
 def generate_watchlist(now=None):
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(TZ)
     market = get_market_status(now)
     created = 0
     with SessionLocal() as db:
@@ -34,7 +34,7 @@ def generate_watchlist(now=None):
 
 
 def refresh_status(now=None):
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(TZ)
     updated = 0
     with SessionLocal() as db:
         items = db.execute(select(AIWatchlist).where(AIWatchlist.status.in_(["WATCH", "WAIT_ENTRY", "NEAR_ENTRY", "READY"]))).scalars().all()

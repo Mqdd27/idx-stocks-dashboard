@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import desc, select
 from .db import SessionLocal
-from .market_calendar import get_market_status
+from .market_calendar import TZ, get_market_status
 from .watchlist_model import AIWatchlist
 from .watchlist_service import generate_watchlist, refresh_status
 
@@ -13,7 +13,7 @@ def row(item):
 
 @router.get("/today")
 def today():
-    d=datetime.now(timezone.utc).astimezone().date()
+    d=datetime.now(TZ).date()
     with SessionLocal() as db:
         items=db.execute(select(AIWatchlist).where(AIWatchlist.trading_date==d).order_by(desc(AIWatchlist.score))).scalars().all()
     return {"trading_date":str(d),"market":get_market_status(),"generated_at":datetime.now(timezone.utc).isoformat(),"data":[row(x) for x in items],"status":"OK" if items else "NO_TRADE","reason":None if items else "NO_QUALIFIED_WATCHLIST_CANDIDATES_TODAY"}
@@ -43,6 +43,6 @@ def refresh():
     return {"generation":generate_watchlist(),"status":refresh_status()}
 
 def _items(method):
-    d=datetime.now(timezone.utc).astimezone().date()
+    d=datetime.now(TZ).date()
     with SessionLocal() as db:
         return db.execute(select(AIWatchlist).where(AIWatchlist.trading_date==d,AIWatchlist.method==method).order_by(desc(AIWatchlist.score))).scalars().all()
