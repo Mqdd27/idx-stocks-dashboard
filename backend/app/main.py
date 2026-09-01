@@ -7,7 +7,7 @@ from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy import desc, func, select, text
 from sqlalchemy.orm import Session, aliased
 
@@ -17,7 +17,8 @@ from .ai_provider import AIError, _model_kind, complete, discover_models, get_qu
 from .config import get_settings
 from .db import get_db
 from .rate_limit import rate_limit
-from .market_calendar import get_market_status
+from .security import admin_token_valid, request_admin_token
+from .market_calendar import get_market_status, today_jakarta
 from .paper_trading import check_exit, decide, setup_confidence, size_position, trade_metrics
 from .ai_trading_routes import router as ai_trading_router
 from .ai_auto_trade_routes import router as ai_auto_trade_router
@@ -29,6 +30,37 @@ settings = get_settings()
 _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
 
 app = FastAPI(title="Stocks Dashboard API", version="1.0.0")
+
+@app.middleware("http")
+async def protect_mutations(request: Request, call_next):
+    if request.method in ("POST", "PUT", "PATCH", "DELETE") and request.url.path.startswith("/api/") and request.url.path not in ("/api/admin/login",):
+        if not admin_token_valid(request_admin_token(request), settings.admin_api_token):
+            return JSONResponse({"detail": "Authentication required"}, status_code=401)
+    return await call_next(request)
+
+@app.post("/api/admin/login")
+async def admin_login(request: Request):
+    if not settings.admin_api_token:
+        return JSONResponse({"detail": "Admin authentication is not configured"}, status_code=503)
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    if not admin_token_valid(body.get("token"), settings.admin_api_token):
+        return JSONResponse({"detail": "Invalid credentials"}, status_code=401)
+    response = JSONResponse({"authenticated": True})
+    response.set_cookie("stx_admin", body["token"], httponly=True, secure=settings.admin_cookie_secure, samesite="strict", max_age=28800)
+    return response
+
+@app.post("/api/admin/logout")
+def admin_logout():
+    response = JSONResponse({"authenticated": False})
+    response.delete_cookie("stx_admin")
+    return response
+
+@app.get("/api/admin/status")
+def admin_status(request: Request):
+    return {"authenticated": admin_token_valid(request_admin_token(request), settings.admin_api_token), "configured": bool(settings.admin_api_token)}
 app.include_router(ai_trading_router)
 app.include_router(ai_auto_trade_router)
 app.include_router(recommendation_router)
@@ -39,9 +71,9 @@ app.include_router(batch_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=settings.cors_allowed_origins,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 SYSTEM_PROMPT = (
@@ -248,7 +280,7 @@ def stock_prices(
 ):
     company = _get_company(db, symbol)
     days = {"1d": 1, "1w": 7, "1m": 31, "3m": 92, "6m": 184, "1y": 366, "3y": 1100, "5y": 1830}[range]
-    since = date.today() - timedelta(days=days)
+    since = today_jakarta() - timedelta(days=days)
     rows = db.execute(
         select(db_models.DailyPrice)
         .where(db_models.DailyPrice.company_id == company.id, db_models.DailyPrice.date >= since)
@@ -717,7 +749,7 @@ def _build_context(db: Session, symbol: str, for_local: bool = False) -> dict:
         }
         for n in news_rows
     ]
-    from .market_calendar import get_market_status, previous_trading_day
+    from .market_calendar import get_market_status, today_jakarta, previous_trading_day
     market = get_market_status()
     last_trading_day = previous_trading_day(datetime.fromisoformat(market["date"]).date()) if not market["is_trading_day"] else datetime.fromisoformat(market["date"]).date()
     return {
@@ -1190,12 +1222,12 @@ def _mark_and_close(db: Session, config):
         if not latest:
             continue
         price = latest["price"]
-        exit_decision = check_exit(trade.entry_date, date.today(), price, float(trade.stop_loss), float(trade.take_profit), int(config.max_holding_days))
+        exit_decision = check_exit(trade.entry_date, today_jakarta(), price, float(trade.stop_loss), float(trade.take_profit), int(config.max_holding_days))
         if exit_decision.reason:
             fill = exit_decision.price * (1 - float(config.slippage_rate))
             shares = trade.quantity * 100
             fees = (float(trade.entry_price) * shares + fill * shares) * float(config.fee_rate)
-            trade.exit_price, trade.exit_date, trade.exit_timestamp, trade.status = fill, date.today(), datetime.now(timezone.utc), "closed"
+            trade.exit_price, trade.exit_date, trade.exit_timestamp, trade.status = fill, today_jakarta(), datetime.now(timezone.utc), "closed"
             trade.fees, trade.pnl = fees, (fill - float(trade.entry_price)) * shares - fees
         else:
             unrealized += (price - float(trade.entry_price)) * trade.quantity * 100

@@ -4,6 +4,7 @@ from threading import Lock
 import httpx
 from sqlalchemy import select
 from .config import get_settings
+from .market_calendar import today_jakarta
 from .db import SessionLocal
 from .ai_trading_model import AITradingAnalysis
 
@@ -90,10 +91,10 @@ def analyze(symbol, quick_model=None, deep_model=None):
             return _orig_news(ticker, start_date, end_date)
 
         _iface.get_news_yfinance = _hybrid_news_getter
-        started=time.monotonic(); state,decision=TradingAgentsGraph(selected_analysts=('market','news','fundamentals'),config=c).propagate(f'{symbol}.JK',date.today()); runtime=time.monotonic()-started
-        action=_normalize(decision); reports={k:state.get(k,'') for k in ('market_report','news_report','fundamentals_report','investment_plan','trader_investment_plan','final_trade_decision','risk_debate_state','invest_debate_state')}; _keys=[k for k in ('market_report','news_report','fundamentals_report','investment_plan','trader_investment_plan','final_trade_decision') if reports.get(k)]; _orig=[reports[k] for k in _keys]; _trans=_translate_to_indonesian(_orig); reports.update({k+'_id':t for k,t in zip(_keys,_trans)}); result={'ticker':symbol,'analysis_date':str(date.today()),'decision':str(decision),'action':action,'confidence':0,'runtime_seconds':runtime,'reports':reports,'final_reason':str(decision)}
+        started=time.monotonic(); state,decision=TradingAgentsGraph(selected_analysts=('market','news','fundamentals'),config=c).propagate(f'{symbol}.JK',today_jakarta()); runtime=time.monotonic()-started
+        action=_normalize(decision); reports={k:state.get(k,'') for k in ('market_report','news_report','fundamentals_report','investment_plan','trader_investment_plan','final_trade_decision','risk_debate_state','invest_debate_state')}; _keys=[k for k in ('market_report','news_report','fundamentals_report','investment_plan','trader_investment_plan','final_trade_decision') if reports.get(k)]; _orig=[reports[k] for k in _keys]; _trans=_translate_to_indonesian(_orig); reports.update({k+'_id':t for k,t in zip(_keys,_trans)}); result={'ticker':symbol,'analysis_date':str(today_jakarta()),'decision':str(decision),'action':action,'confidence':0,'runtime_seconds':runtime,'reports':reports,'final_reason':str(decision)}
         with SessionLocal() as db:
-            row=AITradingAnalysis(symbol=symbol,analysis_date=date.today(),decision=str(decision),action=action,confidence=0,runtime_seconds=runtime,result=result,raw_result=json.loads(json.dumps({'decision':decision,'state':state},default=str))); db.add(row); db.commit(); db.refresh(row); result['id']=row.id
+            row=AITradingAnalysis(symbol=symbol,analysis_date=today_jakarta(),decision=str(decision),action=action,confidence=0,runtime_seconds=runtime,result=result,raw_result=json.loads(json.dumps({'decision':decision,'state':state},default=str))); db.add(row); db.commit(); db.refresh(row); result['id']=row.id
         return result
 
 def queue_analysis(symbol): return asyncio.to_thread(analyze,symbol)

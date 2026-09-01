@@ -7,7 +7,7 @@ from . import analytics
 from .ai_auto_trade_model import AIAutoTradeConfig, AIAutoTradeRun
 from .ai_trading import analyze
 from .db import SessionLocal
-from .market_calendar import get_market_status
+from .market_calendar import get_market_status, today_jakarta
 from .models import Company, DailyPrice, PaperAuditEvent, PaperBotConfig, PaperTrade
 from .paper_trading import decide, size_position
 
@@ -55,7 +55,7 @@ def _open_paper_trade(db, run_id: int, symbol: str, analysis: dict) -> tuple[boo
     if db.execute(select(PaperTrade).where(PaperTrade.symbol == symbol, PaperTrade.status == "open")).scalar_one_or_none():
         return False, "DUPLICATE_OPEN_POSITION"
 
-    if db.execute(select(PaperTrade).where(PaperTrade.symbol == symbol, PaperTrade.entry_date == date.today())).scalar_one_or_none():
+    if db.execute(select(PaperTrade).where(PaperTrade.symbol == symbol, PaperTrade.entry_date == today_jakarta())).scalar_one_or_none():
         return False, "DUPLICATE_TODAY"
 
     open_trades = db.execute(select(PaperTrade).where(PaperTrade.status == "open")).scalars().all()
@@ -91,7 +91,7 @@ def _open_paper_trade(db, run_id: int, symbol: str, analysis: dict) -> tuple[boo
     if quantity <= 0:
         return False, "POSITION_SIZE_ZERO"
 
-    run_key = f"ai-auto-{date.today().isoformat()}-{run_id}"
+    run_key = f"ai-auto-{today_jakarta().isoformat()}-{run_id}"
     fill = snapshot["price"] * (1 + float(paper.slippage_rate))
     trade = PaperTrade(
         symbol=symbol, entry_date=snapshot["date"], entry_timestamp=now,

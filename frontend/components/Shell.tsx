@@ -70,6 +70,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         <MarketStatusChip />
         <span className="terminal-clock" aria-label="Waktu Jakarta">JKT {clock || "--:--:--"}</span>
         <span className={`connection-state ${health?.status === "ok" ? "ok" : "error"}`} title="Backend / database / 9Router status">{health?.status === "ok" ? "SYS OK" : "SYS --"}</span>
+        <AdminUnlock />
         <ModelSelector />
       </header>
       <main className="content terminal-content">{children}</main>
@@ -96,3 +97,19 @@ function MarketStatusChip() {
   const state = status?.is_open ? "open" : status?.status === "BREAK" ? "break" : ["PUBLIC_HOLIDAY", "EXCHANGE_HOLIDAY", "WEEKEND"].includes(status?.status) ? "holiday" : "closed";
   return <span className={`terminal-market-badge ${state}`} title={status?.reason || "IDX market status"}>IDX {status?.status || "--"}</span>;
 }
+
+
+function AdminUnlock() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [configured, setConfigured] = useState(false);
+  useEffect(() => { fetch("/api/admin/status").then((response) => response.json()).then((data) => { setAuthenticated(Boolean(data.authenticated)); setConfigured(Boolean(data.configured)); }).catch(() => {}); }, []);
+  async function unlock() {
+    const token = window.prompt("Admin token");
+    if (!token) return;
+    const response = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) });
+    if (response.ok) setAuthenticated(true);
+  }
+  if (!configured) return null;
+  return <button className="admin-unlock" onClick={authenticated ? undefined : unlock} title={authenticated ? "Admin session active" : "Unlock protected actions"}>{authenticated ? "AUTH OK" : "UNLOCK"}</button>;
+}
+

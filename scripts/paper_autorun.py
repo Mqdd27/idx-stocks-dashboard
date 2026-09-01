@@ -34,7 +34,7 @@ def main() -> int:
         if not config.get("enabled"):
             logger.info("paper bot disabled; skipping autorun")
             return 0
-        resp = client.post(f"{base}/api/paper-trading/run")
+        resp = client.post(f"{base}/api/paper-trading/run", headers={"Authorization": f"Bearer {settings.admin_api_token}"})
         resp.raise_for_status()
         payload = resp.json()
     logger.info("autorun result: %s", payload)

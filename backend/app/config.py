@@ -37,6 +37,9 @@ class Settings:
         self.ai_trading_quick_model = os.environ.get("TRADINGAGENTS_QUICK_THINK_LLM", "cx/gpt-5.4-mini")
         self.ai_trading_deep_model = os.environ.get("TRADINGAGENTS_DEEP_THINK_LLM", "cx/gpt-5.6-sol")
         self.log_dir: Path = Path(os.environ.get("LOG_DIR", "/opt/stocks-dashboard/logs"))
+        self.admin_api_token = os.environ.get("ADMIN_API_TOKEN", "")
+        self.cors_allowed_origins = [item.strip() for item in os.environ.get("CORS_ALLOWED_ORIGINS", "https://stocks.mqdd.my.id,http://localhost:3100,http://127.0.0.1:3100").split(",") if item.strip()]
+        self.admin_cookie_secure = os.environ.get("ADMIN_COOKIE_SECURE", "true").lower() in ("1", "true", "yes")
 
 
 @lru_cache

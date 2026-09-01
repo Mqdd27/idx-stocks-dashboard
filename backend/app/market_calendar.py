@@ -17,6 +17,8 @@ class SessionWindow:
 # IDX regular equity sessions; update here when IDX publishes a new schedule.
 SESSIONS=(SessionWindow("PRE_OPEN",time(8,45),time(9,0)),SessionWindow("SESSION_1",time(9,0),time(12,0)),SessionWindow("BREAK",time(12,0),time(13,30)),SessionWindow("SESSION_2",time(13,30),time(15,50)),SessionWindow("POST_MARKET",time(15,50),time(16,0)))
 
+def today_jakarta(): return datetime.now(TZ).date()
+
 def localize(value):
     if value is None: return datetime.now(TZ)
     return value.astimezone(TZ) if value.tzinfo else value.replace(tzinfo=TZ)

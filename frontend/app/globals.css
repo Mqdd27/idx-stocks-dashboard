@@ -672,3 +672,9 @@ img, svg, canvas { max-width: 100%; }
 .screener-signal-grid span { color:var(--muted); font:8px var(--mono); text-transform:uppercase; }
 .screener-signal-grid b { color:var(--text); font:9px var(--mono); overflow-wrap:anywhere; }
 @media (max-width:760px) { .screener-signal-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.admin-unlock { height:28px; padding:0 7px; border:1px solid var(--border); background:var(--panel); color:var(--amber); font:800 8px var(--mono); white-space:nowrap; }
+.admin-unlock:hover { border-color:var(--amber); }
+
+.admin-unlock { height:28px; padding:0 7px; border:1px solid var(--border); background:var(--panel); color:var(--amber); font:800 8px var(--mono); white-space:nowrap; }
+.admin-unlock:hover { border-color:var(--amber); }
