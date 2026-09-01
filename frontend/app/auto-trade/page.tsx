@@ -31,7 +31,7 @@ export default function AutoTradePage() {
   };
   useEffect(() => {
     load(false);
-    const timer = window.setInterval(() => load(false), 30000);
+    const timer = window.setInterval(() => { if (!document.hidden) load(false); }, 30000);
     return () => window.clearInterval(timer);
   }, []);
 

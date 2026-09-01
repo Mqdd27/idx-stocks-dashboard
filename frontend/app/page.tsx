@@ -17,7 +17,7 @@ export default function MarketPage() {
       for (const rows of [market.gainers, market.losers, market.most_active, watch.data]) for (const row of rows || []) { const price = row.close ?? row.price?.close; const prior = previous.current[row.symbol]; if (price != null && prior != null && price !== prior) next[row.symbol] = price > prior ? "up" : "down"; if (price != null) previous.current[row.symbol] = price; }
       if (alive) { setData(market); setWatchlist(watch.data || []); setStatus(marketStatus); setFlashes(next); setUpdated(new Date()); setErr(""); }
     }).catch((e) => alive && setErr(e.message || "MARKET DATA UNAVAILABLE"));
-    load(); const timer = setInterval(load, 30000); return () => { alive = false; clearInterval(timer); };
+    load(); const timer = setInterval(() => { if (!document.hidden) load(); }, 30000); return () => { alive = false; clearInterval(timer); };
   }, []);
   if (err) return <div className="terminal-error"><strong>MARKET DATA UNAVAILABLE</strong><span>{err}</span><button className="btn" onClick={() => location.reload()}>RETRY</button></div>;
   if (!data) return <div className="terminal-loading">LOADING MARKET DATA<span>...</span></div>;

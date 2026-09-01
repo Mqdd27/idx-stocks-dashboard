@@ -678,3 +678,6 @@ img, svg, canvas { max-width: 100%; }
 
 .admin-unlock { height:28px; padding:0 7px; border:1px solid var(--border); background:var(--panel); color:var(--amber); font:800 8px var(--mono); white-space:nowrap; }
 .admin-unlock:hover { border-color:var(--amber); }
+
+.screener-status { padding: 4px 2px; margin-bottom: 4px; font: 8px var(--mono); }
+.screener-generated { color: var(--muted); font: 8px var(--mono); margin-left: 8px; }

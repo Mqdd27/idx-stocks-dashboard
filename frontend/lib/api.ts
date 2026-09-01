@@ -125,8 +125,47 @@ export interface Technicals {
   above_sma200: boolean | null;
 }
 
+const GET_CACHE = new Map<string, { expires: number; value: unknown }>();
+const GET_INFLIGHT = new Map<string, Promise<unknown>>();
+const GET_CHANNEL = typeof window !== "undefined" && "BroadcastChannel" in window ? new BroadcastChannel("stocks-api-cache") : null;
+GET_CHANNEL?.addEventListener("message", (event) => {
+  const { url, value, expires } = event.data || {};
+  if (url && expires && value !== undefined) GET_CACHE.set(url, { expires, value });
+});
+
 async function jfetch<T>(url: string, init?: RequestInit): Promise<T> {
-  const resp = await fetch(url, init);
+  if (!init?.method || init.method === "GET") {
+    const cached = GET_CACHE.get(url);
+    if (cached && cached.expires > Date.now()) return cached.value as T;
+    if (typeof window !== "undefined") {
+      try {
+        const shared = JSON.parse(localStorage.getItem(`stocks.api.${url}`) || "null");
+        if (shared?.expires > Date.now()) { GET_CACHE.set(url, shared); return shared.value as T; }
+      } catch {}
+    }
+    const pending = GET_INFLIGHT.get(url);
+    if (pending) return pending as Promise<T>;
+    const request = fetch(url, init).then(async (resp) => {
+      if (!resp.ok) throw new Error(`${resp.status}`);
+      const value = await resp.json();
+      const cached = { expires: Date.now() + 5000, value };
+      GET_CACHE.set(url, cached);
+      if (typeof window !== "undefined") { try { localStorage.setItem(`stocks.api.${url}`, JSON.stringify(cached)); } catch {} }
+      GET_CHANNEL?.postMessage({ url, ...cached });
+      GET_INFLIGHT.delete(url);
+      return value;
+    }).catch((error) => { GET_INFLIGHT.delete(url); throw error; });
+    GET_INFLIGHT.set(url, request);
+    return request as Promise<T>;
+  }
+  let resp = await fetch(url, init);
+  if (resp.status === 401 && typeof window !== "undefined" && !url.includes("/api/admin/login")) {
+    const token = window.prompt("Admin token diperlukan untuk aksi ini");
+    if (token) {
+      const login = await fetch("/api/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) });
+      if (login.ok) resp = await fetch(url, init);
+    }
+  }
   if (!resp.ok) {
     let detail = "";
     try {
@@ -190,7 +229,7 @@ export const api = {
   paperCandidates: () => jfetch<{ data: PaperCandidate[] }>("/api/paper-trading/candidates"),
   paperToggle: (enabled: boolean) => jfetch<{ paper_only: true; enabled: boolean }>("/api/paper-trading/toggle", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ enabled }) }),
   paperRun: () => jfetch<{ status: string; created?: number }>("/api/paper-trading/run", { method: "POST" }),
-  screener: (params: URLSearchParams) => jfetch<{ data: any[] }>(`/api/screener?${params.toString()}`),
+  screener: (params: URLSearchParams) => jfetch<{ data: any[]; generated_at?: string; market?: any }>(`/api/screener?${params.toString()}`),
   watchlist: () => jfetch<{ data: any[] }>("/api/watchlist"),
   watchlistAdd: (symbol: string, note?: string) =>
     jfetch("/api/watchlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "add", symbol, note }) }),

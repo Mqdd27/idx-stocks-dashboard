@@ -20,6 +20,7 @@ export default function StockDetailPage() {
   const [inWatchlist, setInWatchlist] = useState(false);
   const [err, setErr] = useState(false);
   const [flashDir, setFlashDir] = useState<"up" | "down" | null>(null);
+  const [watchlistError, setWatchlistError] = useState("");
   const prevClose = useRef<number | null>(null);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function StockDetailPage() {
 
   useEffect(() => {
     const iv = setInterval(() => {
+      if (document.hidden) return;
       api.stock(symbol).then((s) => {
         const c = s.price?.close;
         const p = prevClose.current;
@@ -56,6 +58,7 @@ export default function StockDetailPage() {
   const changeColor = changePct != null ? (changePct >= 0 ? "var(--green)" : "var(--red)") : "var(--text)";
 
   async function toggleWatchlist() {
+    setWatchlistError("");
     try {
       if (inWatchlist) {
         await api.watchlistRemove(symbol);
@@ -63,8 +66,8 @@ export default function StockDetailPage() {
         await api.watchlistAdd(symbol);
       }
       setInWatchlist(!inWatchlist);
-    } catch {
-      /* ignore */
+    } catch (error: any) {
+      setWatchlistError(error.message || "Gagal mengubah watchlist");
     }
   }
 
@@ -105,6 +108,7 @@ export default function StockDetailPage() {
         ))}
       </div>
 
+      {watchlistError && <div className="analysis-err" role="alert">{watchlistError}</div>}
       {tab === "overview" && <OverviewTab stock={stock} tech={tech} onWatchlist={toggleWatchlist} inWatchlist={inWatchlist} />}
       {tab === "chart" && <StockChart symbol={symbol} />}
       {tab === "financials" && <FinancialsTab symbol={symbol} />}

@@ -28,7 +28,7 @@ async def start_batch(request: Request):
         raise HTTPException(503, "AI trading disabled")
     try:
         body = await request.json()
-    except Exception:
+    except (json.JSONDecodeError, ValueError, TypeError):
         body = {}
     batch_id = create_batch(body.get("batch_size", 5))
     return {"id": batch_id, "status": "QUEUED"}

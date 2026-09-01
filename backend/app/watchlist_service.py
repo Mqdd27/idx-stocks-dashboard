@@ -9,6 +9,7 @@ from .market_calendar import TZ, get_market_status
 
 def _status(row, now):
     if row.status in ("EXPIRED", "SL_HIT", "TP2_HIT"): return "EXPIRED"
+    if row.status == "PREVIEW": return "PREVIEW"
     if row.entry_low is None or row.entry_high is None: return "WATCH"
     if row.current_price is not None and row.current_price <= row.entry_high:
         return "NEAR_ENTRY"

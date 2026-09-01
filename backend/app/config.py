@@ -40,6 +40,8 @@ class Settings:
         self.admin_api_token = os.environ.get("ADMIN_API_TOKEN", "")
         self.cors_allowed_origins = [item.strip() for item in os.environ.get("CORS_ALLOWED_ORIGINS", "https://stocks.mqdd.my.id,http://localhost:3100,http://127.0.0.1:3100").split(",") if item.strip()]
         self.admin_cookie_secure = os.environ.get("ADMIN_COOKIE_SECURE", "true").lower() in ("1", "true", "yes")
+        self.enable_fred_enrichment = os.environ.get("ENABLE_FRED_ENRICHMENT", "false").lower() in ("1", "true", "yes")
+        self.enable_polymarket_enrichment = os.environ.get("ENABLE_POLYMARKET_ENRICHMENT", "false").lower() in ("1", "true", "yes")
 
 
 @lru_cache

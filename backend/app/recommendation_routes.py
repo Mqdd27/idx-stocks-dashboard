@@ -13,8 +13,19 @@ trade_ideas_router = APIRouter(prefix="/api/stocks", tags=["recommendations"])
 
 
 
-def _stored(strategy, method=None, symbol=None):
-    today = datetime.now(TZ).date()
+
+
+def _latest_records(records):
+    latest = {}
+    for record in records:
+        key = (record.symbol, record.method, record.strategy)
+        current = latest.get(key)
+        if current is None or (record.generated_at, record.id) > (current.generated_at, current.id):
+            latest[key] = record
+    return list(latest.values())
+
+def _stored(strategy, method=None, symbol=None, trading_date=None):
+    today = trading_date or datetime.now(TZ).date()
     with SessionLocal() as db:
         query = select(TradeRecommendation).where(TradeRecommendation.trading_date == today, TradeRecommendation.strategy == strategy)
         if method: query = query.where(TradeRecommendation.method == method)
@@ -32,10 +43,10 @@ def _stored(strategy, method=None, symbol=None):
     return [_row(record) for record in sorted(latest.values(), key=lambda item: (float(item.score or 0), item.generated_at), reverse=True)]
 
 @router.get('/strategy/{strategy}')
-def strategy(strategy: str, method: str | None = None):
+def strategy(strategy: str, method: str | None = None, trading_date: str | None = None):
     if strategy not in ('GENERAL', 'BSJP', 'BPJS'):
         raise HTTPException(400, 'Invalid strategy')
-    data = _stored(strategy, method)
+    data = _stored(strategy, method, trading_date=trading_date)
     market = get_market_status()
     return {'strategy': strategy, 'method': method, 'data': data, 'market': market, 'generated_at': datetime.now(timezone.utc).isoformat(), 'status': 'OK' if data else 'NO_TRADE', 'reason': None if data else 'NO_QUALIFIED_SETUP'}
 
@@ -43,7 +54,8 @@ def strategy(strategy: str, method: str | None = None):
 def today(trading_date: str | None = None):
     d = trading_date or datetime.now(TZ).date().isoformat()
     with SessionLocal() as db:
-        rows = db.execute(select(TradeRecommendation).where(TradeRecommendation.trading_date == d, TradeRecommendation.action != "NO_TRADE").order_by(desc(TradeRecommendation.score))).scalars().all()
+        rows = db.execute(select(TradeRecommendation).where(TradeRecommendation.trading_date == d, TradeRecommendation.action != "NO_TRADE").order_by(desc(TradeRecommendation.generated_at), desc(TradeRecommendation.id))).scalars().all()
+        rows = _latest_records(rows)
         market = get_market_status()
         ta = [_row(r) for r in rows if r.method == "TRADING_AGENTS"]
         paper = [_row(r) for r in rows if r.method == "PAPER_TRADE"]
@@ -63,16 +75,12 @@ def today(trading_date: str | None = None):
 @router.get("/trading-agents")
 def ta_picks(trading_date: str | None = None):
     d = trading_date or datetime.now(TZ).date().isoformat()
-    with SessionLocal() as db:
-        rows = db.execute(select(TradeRecommendation).where(TradeRecommendation.trading_date == d, TradeRecommendation.method == "TRADING_AGENTS").order_by(desc(TradeRecommendation.score))).scalars().all()
-    return {"trading_date": d, "data": [_row(r) for r in rows], "generated_at": datetime.now(timezone.utc).isoformat()}
+    return {"trading_date": d, "data": _stored("GENERAL", "TRADING_AGENTS", trading_date=d), "generated_at": datetime.now(timezone.utc).isoformat()}
 
 @router.get("/paper")
 def paper_picks(trading_date: str | None = None):
     d = trading_date or datetime.now(TZ).date().isoformat()
-    with SessionLocal() as db:
-        rows = db.execute(select(TradeRecommendation).where(TradeRecommendation.trading_date == d, TradeRecommendation.method == "PAPER_TRADE").order_by(desc(TradeRecommendation.score))).scalars().all()
-    return {"trading_date": d, "data": [_row(r) for r in rows], "generated_at": datetime.now(timezone.utc).isoformat()}
+    return {"trading_date": d, "data": _stored("GENERAL", "PAPER_TRADE", trading_date=d), "generated_at": datetime.now(timezone.utc).isoformat()}
 
 @router.post("/generate/paper", status_code=202)
 def gen_paper(strategy: str = Query("GENERAL"), preview: bool = Query(False)):
@@ -112,7 +120,7 @@ def stock_trade_ideas_alias(symbol: str):
     return {'symbol': symbol.upper(), 'data': data, 'market': get_market_status()}
 
 def _row(r):
-    return {"id": r.id, "trading_date": str(r.trading_date), "symbol": r.symbol, "method": r.method, "strategy": r.strategy, "action": r.action, "status": r.status, "current_price": r.current_price, "entry_price": r.entry_price, "entry_low": r.entry_low, "entry_high": r.entry_high, "tp1": r.tp1, "tp2": r.tp2, "stop_loss": r.stop_loss, "risk_reward": r.risk_reward, "score": r.score, "confidence": r.confidence_label, "valid_until": r.valid_until.isoformat() if r.valid_until else None, "reasons": r.reasons, "signals": r.signals, "risks": r.risks, "outcome": r.outcome, "generated_at": r.generated_at.isoformat() if r.generated_at else None, "data_timestamp": r.data_timestamp.isoformat() if r.data_timestamp else None, "market_status": r.market_status}
+    return {"id": r.id, "trading_date": str(r.trading_date), "symbol": r.symbol, "method": r.method, "strategy": r.strategy, "mode": "PREVIEW" if r.status == "PREVIEW" or (r.strategy == "BPJS" and "preview" in (r.cycle or "").lower()) else "LIVE", "action": r.action, "status": r.status, "current_price": r.current_price, "entry_price": r.entry_price, "entry_low": r.entry_low, "entry_high": r.entry_high, "tp1": r.tp1, "tp2": r.tp2, "stop_loss": r.stop_loss, "risk_reward": r.risk_reward, "score": r.score, "confidence": r.confidence_label, "valid_until": r.valid_until.isoformat() if r.valid_until else None, "reasons": r.reasons, "signals": r.signals, "risks": r.risks, "outcome": r.outcome, "generated_at": r.generated_at.isoformat() if r.generated_at else None, "data_timestamp": r.data_timestamp.isoformat() if r.data_timestamp else None, "market_status": r.market_status}
 
 
 @router.get('/screener/{strategy}')
@@ -121,4 +129,17 @@ def screener_strategy(strategy: str, method: str | None = None):
         raise HTTPException(400, 'Invalid strategy')
     data = _stored(strategy, method)
     market = get_market_status()
-    return {'strategy': strategy, 'data': data, 'market': market, 'status': 'OK' if data else 'NO_TRADE', 'reason': None if data else 'OUTSIDE_STRATEGY_WINDOW_OR_NO_QUALIFIED_SETUP', 'generated_at': datetime.now(timezone.utc).isoformat()}
+    result_status = 'OK' if data else 'NO_TRADE'
+    reason = None if data else 'NO_QUALIFIED_SETUP'
+    if not data and method == 'TRADING_AGENTS':
+        paper = _stored(strategy, 'PAPER_TRADE')
+        if paper:
+            result_status = 'PENDING_ANALYSIS'
+            reason = 'PAPER_SHORTLIST_READY_TRADINGAGENTS_PENDING'
+        elif not get_settings().ai_trading_enabled:
+            result_status = 'DISABLED'
+            reason = 'AI_TRADING_DISABLED'
+        else:
+            result_status = 'NO_ANALYSIS'
+            reason = 'NO_PAPER_SHORTLIST'
+    return {'strategy': strategy, 'method': method, 'data': data, 'market': market, 'status': result_status, 'reason': reason, 'generated_at': datetime.now(timezone.utc).isoformat()}
