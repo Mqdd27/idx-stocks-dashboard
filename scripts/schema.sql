@@ -251,3 +251,12 @@ CREATE TABLE IF NOT EXISTS ai_watchlist (
  UNIQUE (trading_date, symbol, method)
 );
 CREATE INDEX IF NOT EXISTS ix_ai_watchlist_date ON ai_watchlist(trading_date);
+
+CREATE TABLE IF NOT EXISTS telegram_deliveries (
+ id BIGSERIAL PRIMARY KEY, message_type VARCHAR(64) NOT NULL, target_date DATE NOT NULL,
+ cycle VARCHAR(64) NOT NULL, content_hash VARCHAR(128) NOT NULL, status VARCHAR(16) NOT NULL DEFAULT 'PENDING',
+ telegram_message_id VARCHAR(64), attempt_count INTEGER NOT NULL DEFAULT 0, last_error VARCHAR(500),
+ generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), sent_at TIMESTAMPTZ,
+ UNIQUE(message_type, target_date, cycle)
+);
+CREATE INDEX IF NOT EXISTS ix_telegram_deliveries_status ON telegram_deliveries(status);

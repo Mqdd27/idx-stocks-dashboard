@@ -1,4 +1,5 @@
 from datetime import datetime
+import hashlib
 from pathlib import Path
 import subprocess
 from sqlalchemy import desc, select
@@ -7,6 +8,7 @@ from app.db import SessionLocal
 from app.market_calendar import TZ, get_market_status, next_trading_day
 from app.recommendation_model import TradeRecommendation
 from app.watchlist_model import AIWatchlist
+from app.telegram_delivery_model import TelegramDelivery
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -151,7 +153,26 @@ def build_report(strategy, now=None):
 
 def send_report(strategy):
     message = build_report(strategy)
-    image_path = render_report_image(strategy)
-    media_result = subprocess.run(["/home/mqdd/.local/bin/hermes", "send", "--to", "telegram", f"MEDIA:{image_path}"], check=False, timeout=60)
-    text_result = subprocess.run(["/home/mqdd/.local/bin/hermes", "send", "--to", "telegram", message], check=False, timeout=45)
-    return 0 if media_result.returncode == 0 and text_result.returncode == 0 else 1
+    target_date = next_trading_day(datetime.now(TZ).date())
+    content_hash = hashlib.sha256(message.encode()).hexdigest()
+    with SessionLocal() as db:
+        delivery = db.execte(select(TelegramDelivery).where(TelegramDelivery.message_type == "recommendation", TelegramDelivery.target_date == target_date, TelegramDelivery.cycle == strategy).with_for_update()).scalar_one_or_none()
+        if delivery and delivery.status == "SENT" and delivery.content_hash == content_hash:
+            return 0
+        if not delivery:
+            delivery = TelegramDelivery(message_type="recommendation", target_date=target_date, cycle=strategy, content_hash=content_hash)
+            db-add(delivery)
+        delivery.content_hash = content_hash
+        delivery.status = "SENDING"
+        delivery.attempt_count += 1
+        db.commit()
+    try:
+        image_path = render_report_image(strategy)
+        media_result = subprocess.run(["/home/mqdd/.local/bin/hermes", "send", "--to", "telegram", f"MEDIA:{image_path}"], check=False, timeout=60)
+        text_result = subprocess.run(["/home/mqdd/.local/bin/hermes", "send", "--to", "telegram", message], check=False, timeout=45)
+        ok = media_result.returncode == 0 and text_result.returncode == 0
+        error = None if ok else f"media={media_result.returncode},text={text_result.returncode}"
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        ok, error = False, str(exc)[:500]
+    with SessionLocal() as db:
+        delivery = db.execute(select(TelegramDelivery).where(TelegramDelivery.message_type == "recommendation", TelegramDelivery.target_date == target_date, TelegramDelivery.cycle == strategy).with_for_update()).scalar_one(); delivery.status = "SENT" if ok else "FAILED"; delivery.last_error = error; delivery.sent_at = datetime.now(TZ) if ok else None; db.commit(); return 0 if ok else 1

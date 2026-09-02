@@ -6,6 +6,7 @@ from .db import SessionLocal
 from .market_calendar import TZ, get_market_status
 from .recommendation_model import TradeRecommendation
 from .recommendation_service import generate_quant, historical_stats, import_tradingagents, update_outcomes
+from .telegram_delivery_model import TelegramDelivery
 
 router = APIRouter(prefix="/api/recommendations", tags=["recommendations"])
 screener_router = APIRouter(prefix="/api/screener", tags=["recommendations"])
@@ -24,6 +25,18 @@ def _latest_records(records):
             latest[key] = record
     return list(latest.values())
 
+def _current_records(records):
+    current = {}
+    for record in records:
+        key = (record.symbol, record.method, record.strategy)
+        preview = record.status == "PREVIEW" or "preview" in (record.cycle or "").lower()
+        existing = current.get(key)
+        rank = (0 if preview else 1, record.generated_at, record.id)
+        existing_rank = (-1, None, -1) if existing is None else (0 if existing.status == "PREVIEW" or "preview" in (existing.cycle or "").lower() else 1, existing.generated_at, existing.id)
+        if existing is None or rank > existing_rank:
+            current[key] = record
+    return list(current.values())
+
 def _stored(strategy, method=None, symbol=None, trading_date=None):
     today = trading_date or datetime.now(TZ).date()
     with SessionLocal() as db:
@@ -37,10 +50,8 @@ def _stored(strategy, method=None, symbol=None, trading_date=None):
             if method: query = query.where(TradeRecommendation.method == method)
             if symbol: query = query.where(TradeRecommendation.symbol == symbol.upper())
             rows = db.execute(query.order_by(desc(TradeRecommendation.trading_date), desc(TradeRecommendation.score))).scalars().all()
-    latest = {}
-    for record in rows:
-        latest.setdefault(record.symbol, record)
-    return [_row(record) for record in sorted(latest.values(), key=lambda item: (float(item.score or 0), item.generated_at), reverse=True)]
+    latest = _current_records(rows)
+    return [_row(record) for record in sorted(latest, key=lambda item: (float(item.score or 0), item.generated_at), reverse=True)]
 
 @router.get('/strategy/{strategy}')
 def strategy(strategy: str, method: str | None = None, trading_date: str | None = None):
@@ -95,6 +106,12 @@ def gen_ta():
 @router.post("/outcomes/update")
 def outcomes_update():
     return update_outcomes()
+
+@router.get("/notifications/status")
+def notification_status():
+    with SessionLocal() as db:
+        rows = db.execute(select(TelegramDelivery).order_by(desc(TelegramDelivery.generated_at)).limit(20)).scalars().all()
+    return {"owner": "Hermes", "data": [{"id": r.id, "message_type": r.message_type, "target_date": r.target_date, "cycle": r.cycle, "status": r.status, "attempt_count": r.attempt_count, "telegram_message_id": r.telegram_message_id, "last_error": r.last_error, "generated_at": r.generated_at, "sent_at": r.sent_at} for r in rows]}
 
 @router.get("/performance")
 def perf(strategy: str = Query("GENERAL")):

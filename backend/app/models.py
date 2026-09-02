@@ -365,3 +365,5 @@ from .recommendation_model import TradeRecommendation
 from .watchlist_model import AIWatchlist
 
 from .batch_model import AITradingBatch, AITradingBatchItem
+
+from .telegram_delivery_model import TelegramDelivery
