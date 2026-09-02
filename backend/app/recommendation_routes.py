@@ -7,6 +7,7 @@ from .market_calendar import TZ, get_market_status
 from .recommendation_model import TradeRecommendation
 from .recommendation_service import generate_quant, historical_stats, import_tradingagents, update_outcomes
 from .telegram_delivery_model import TelegramDelivery
+from .performance_service import get_performance
 
 router = APIRouter(prefix="/api/recommendations", tags=["recommendations"])
 screener_router = APIRouter(prefix="/api/screener", tags=["recommendations"])
@@ -113,10 +114,11 @@ def notification_status():
         rows = db.execute(select(TelegramDelivery).order_by(desc(TelegramDelivery.generated_at)).limit(20)).scalars().all()
     return {"owner": "Hermes", "data": [{"id": r.id, "message_type": r.message_type, "target_date": r.target_date, "cycle": r.cycle, "status": r.status, "attempt_count": r.attempt_count, "telegram_message_id": r.telegram_message_id, "last_error": r.last_error, "generated_at": r.generated_at, "sent_at": r.sent_at} for r in rows]}
 
-@router.get("/performance")
-def perf(strategy: str = Query("GENERAL")):
+@router.get("/strategy-performance/{strategy}")
+def strategy_performance(strategy: str, period: str = Query("daily"), method: str | None = None, date: str | None = None):
+    from datetime import date as date_type
     with SessionLocal() as db:
-        return historical_stats(db, strategy)
+        return get_performance(db, strategy.upper(), period, date_type.fromisoformat(date) if date else None, method)
 
 @router.get('/stocks/{symbol}/trade-ideas')
 def stock_trade_ideas(symbol: str):

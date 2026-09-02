@@ -15,6 +15,7 @@ const NAV = [
   { href: "/auto-trade", key: "SIM", label: "Paper Trade" },
   { href: "/ai-trading", key: "AIR", label: "AI Research" },
   { href: "/ai-watchlist", key: "WCH", label: "AI Watchlist" },
+  { href: "/performance", key: "PERF", label: "Performance" },
   { href: "/ai-auto-trade", key: "AAT", label: "AI Auto" },
   { href: "/settings", key: "CFG", label: "Settings" },
 ];

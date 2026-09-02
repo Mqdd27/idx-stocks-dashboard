@@ -202,6 +202,7 @@ export const api = {
   aiWatchlistHistory: () => jfetch<any>("/api/ai-watchlist/history"),
   aiWatchlistRefresh: () => jfetch<any>("/api/ai-watchlist/refresh", { method: "POST" }),
   notificationStatus: () => jfetch<any>("/api/recommendations/notifications/status"),
+  strategyPerformance: (strategy: string, period: string, method?: string) => jfetch<any>(`/api/recommendations/strategy-performance/${strategy}?period=${period}${method ? `&method=${method}` : ""}`),
   recommendationsToday: () => jfetch<any>("/api/recommendations/today"),
   recommendationsScreener: (strategy: string, method?: string) => jfetch<any>(`/api/recommendations/screener/${strategy}${method ? `?method=${method}` : ""}`),
   recommendationsStrategy: (strategy: string, method?: string) => jfetch<any>(`/api/recommendations/strategy/${strategy}${method ? `?method=${method}` : ""}`),

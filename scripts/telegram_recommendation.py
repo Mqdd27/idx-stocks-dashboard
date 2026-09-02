@@ -156,12 +156,12 @@ def send_report(strategy):
     target_date = next_trading_day(datetime.now(TZ).date())
     content_hash = hashlib.sha256(message.encode()).hexdigest()
     with SessionLocal() as db:
-        delivery = db.execte(select(TelegramDelivery).where(TelegramDelivery.message_type == "recommendation", TelegramDelivery.target_date == target_date, TelegramDelivery.cycle == strategy).with_for_update()).scalar_one_or_none()
+        delivery = db.execute(select(TelegramDelivery).where(TelegramDelivery.message_type == "recommendation", TelegramDelivery.target_date == target_date, TelegramDelivery.cycle == strategy).with_for_update()).scalar_one_or_none()
         if delivery and delivery.status == "SENT" and delivery.content_hash == content_hash:
             return 0
         if not delivery:
             delivery = TelegramDelivery(message_type="recommendation", target_date=target_date, cycle=strategy, content_hash=content_hash)
-            db-add(delivery)
+            db.add(delivery)
         delivery.content_hash = content_hash
         delivery.status = "SENDING"
         delivery.attempt_count += 1
