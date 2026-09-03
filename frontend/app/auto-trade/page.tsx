@@ -38,7 +38,7 @@ export default function AutoTradePage() {
   const toggle = async () => {
     if (!summary) return;
     setBusy(true); setError("");
-    try { await api.paperToggle(!summary.enabled); await load(); } catch { setError("Gagal mengubah status bot."); } finally { setBusy(false); }
+    try { const result = await api.paperToggle(!summary.enabled); setSummary((current) => current ? { ...current, enabled: result.enabled } : current); await load(); } catch { setError("Gagal mengubah status bot."); } finally { setBusy(false); }
   };
   const run = async () => {
     setBusy(true); setError("");

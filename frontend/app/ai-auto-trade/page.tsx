@@ -18,7 +18,7 @@ export default function AIAutoTradePage() {
 
   const update = async (patch: Record<string, unknown>) => {
     setBusy(true); setError("");
-    try { await api.aiAutoTradeConfig(patch); await load(); }
+    try { const result = await api.aiAutoTradeConfig(patch); setStatus((current: any) => current ? { ...current, ...result } : current); await load(); }
     catch (e: any) { setError(e.message); }
     finally { setBusy(false); }
   };

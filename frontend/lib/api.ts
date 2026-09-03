@@ -176,7 +176,16 @@ async function jfetch<T>(url: string, init?: RequestInit): Promise<T> {
     }
     throw new Error(`${resp.status} ${detail}`.trim());
   }
-  return resp.json();
+  const value = await resp.json();
+  GET_CACHE.clear();
+  GET_INFLIGHT.clear();
+  if (typeof window !== "undefined") {
+    for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+      const key = localStorage.key(index);
+      if (key?.startsWith("stocks.api.")) localStorage.removeItem(key);
+    }
+  }
+  return value;
 }
 
 export const api = {
