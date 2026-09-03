@@ -5,6 +5,7 @@ from .ai_trading import analyze, normalize_symbol
 from .ai_trading_model import AITradingAnalysis, AITradingJob
 from .config import get_settings
 from .db import SessionLocal
+from .quant_setup import build_quant_setup
 
 router = APIRouter(prefix='/api/ai-trading', tags=['ai-trading'])
 
@@ -29,14 +30,15 @@ def _atr_setup(db, symbol: str, action: str):
     entry = float(rows[-1].close)
     if action != 'BUY':
         return {'action': action, 'note': 'Setup beli tidak dibuat untuk sinyal selain BUY.', 'entry': entry}
-    stop = entry - 1.5 * atr
-    target = entry + 3.0 * atr
+    setup = build_quant_setup(entry, atr, entry - 1.5 * atr, None, min_rr=2.0, target_rr=3.0, zone_atr=0)
+    if not setup:
+        return None
     return {
         'action': action,
-        'entry': round(entry, 2),
-        'stop_loss': round(stop, 2),
-        'take_profit': round(target, 2),
-        'risk_reward': 2.0,
+        'entry': round(setup['entry'], 2),
+        'stop_loss': round(setup['stop'], 2),
+        'take_profit': round(setup['tp2'], 2),
+        'risk_reward': round((setup['tp2'] - setup['entry']) / (setup['entry'] - setup['stop']), 2),
         'atr': round(atr, 2),
         'basis': 'entry=harga penutupan terakhir, SL=entry-1,5xATR(30h), TP=entry+3,0xATR (deterministik)',
     }

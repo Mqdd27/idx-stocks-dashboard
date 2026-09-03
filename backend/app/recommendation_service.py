@@ -9,6 +9,7 @@ from .db import SessionLocal
 from .market_calendar import TZ, get_market_status, get_trading_sessions, next_trading_day
 from .models import Company, DailyPrice, IntradayPrice, PaperTrade
 from .recommendation_model import TradeRecommendation
+from .quant_setup import build_quant_setup
 from .ai_trading_model import AITradingAnalysis
 
 MIN_RR=float(os.environ.get("RECOMMENDATION_MIN_RR","1.5"))
@@ -36,16 +37,8 @@ def _data(db, company):
     support=min(float(r.low or r.close) for r in rows[-20:])
     return rows,ind,price,ts,live,avg_value,rel_vol,resistance,support
 
-def _setup(price,atr,resistance,support):
-    if not atr or atr<=0:return None
-    stop=max(support,price-1.5*atr)
-    if stop>=price:stop=price-atr
-    risk=price-stop
-    tp1=resistance if resistance>price and (resistance-price)/risk>=MIN_RR else price+MIN_RR*risk
-    tp2=max(tp1,price+2*risk)
-    rr=(tp1-price)/risk if risk else 0
-    if rr<MIN_RR:return None
-    return {"entry":price,"low":max(stop,price-.25*atr),"high":price+.25*atr,"stop":stop,"tp1":tp1,"tp2":tp2,"rr":rr}
+def _setup(price, atr, resistance, support):
+    return build_quant_setup(price, atr, support, resistance, MIN_RR)
 
 def _valid_until(strategy, now):
     if strategy == "BSJP":
