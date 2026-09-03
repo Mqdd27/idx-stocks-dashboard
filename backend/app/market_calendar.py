@@ -68,9 +68,10 @@ def get_market_status(value=None):
         status,reason=MarketStatus.CLOSED,"Outside trading session"
         for s in sessions:
             if s.start<=now.time()<s.end: status=s.name; reason=""
-    nxt=day if is_trading_day(day) and now.time()<sessions[-1].end else _next(day)
+    next_session = next((session for session in sessions if now.time() < session.start), None)
+    nxt = day if next_session else _next(day)
     next_sessions=get_trading_sessions(nxt)
-    opening=datetime.combine(nxt,next_sessions[0].start,tzinfo=TZ)
+    opening=datetime.combine(nxt, (next_session or next_sessions[0]).start, tzinfo=TZ)
     status_value = status.value if isinstance(status, MarketStatus) else status
     return {"market":"IDX","status":status_value,"is_open":status_value in ("OPEN","SESSION_1","SESSION_2"),"is_trading_day":is_trading_day(day),"timezone":"Asia/Jakarta","current_session":status_value if status_value in ("PRE_OPEN","SESSION_1","BREAK","SESSION_2","POST_MARKET") else None,"reason":reason,"date":day.isoformat(),"current_time":now.isoformat(),"next_trading_day":nxt.isoformat(),"next_market_open":opening.isoformat(),"next_event_time":opening.isoformat()}
 def is_market_open(value=None): return get_market_status(value)["is_open"]

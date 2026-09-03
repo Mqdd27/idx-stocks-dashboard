@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from . import analytics
 from .db import SessionLocal
 from .market_calendar import TZ, get_market_status, get_trading_sessions, next_trading_day
+from .calendar_sync_service import calendar_fresh
 from .models import Company, DailyPrice, IntradayPrice, PaperTrade
 from .recommendation_model import TradeRecommendation
 from .quant_setup import build_quant_setup
@@ -67,6 +68,7 @@ def _score(ind,avg_value,rel_vol,price,resistance,strategy):
 
 def _valid_strategy(strategy,now):
     status=get_market_status(now)
+    if not calendar_fresh():return False,"CALENDAR_STALE",status
     if not status["is_trading_day"]:return False,"NON_TRADING_DAY",status
     sessions=get_trading_sessions(now.date()); regular=[x for x in sessions if x.name in ("SESSION_1","SESSION_2")]
     if not regular:return False,"NO_SESSION",status
