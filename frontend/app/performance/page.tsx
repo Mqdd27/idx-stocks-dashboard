@@ -12,13 +12,14 @@ export default function PerformancePage() {
   const [strategy, setStrategy] = useState("BSJP");
   const [period, setPeriod] = useState("daily");
   const [method, setMethod] = useState("");
+  const [asOf, setAsOf] = useState(() => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(new Date()));
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     setData(null); setError("");
-    api.strategyPerformance(strategy, period, method || undefined).then(setData).catch(() => setError("Performance API unavailable."));
-  }, [strategy, period, method]);
+    api.strategyPerformance(strategy, period, method || undefined, asOf).then(setData).catch(() => setError("Performance API unavailable."));
+  }, [strategy, period, method, asOf]);
 
   const combined = data?.combined || {};
   const rows = data?.data || [];
@@ -29,6 +30,7 @@ export default function PerformancePage() {
     <div className="tabs">{["BSJP", "BPJS"].map((item) => <button className={strategy === item ? "active" : ""} onClick={() => setStrategy(item)} key={item}>{item}</button>)}</div>
     <div className="tabs">{periods.map(([id, label]) => <button className={period === id ? "active" : ""} onClick={() => setPeriod(id)} key={id}>{label}</button>)}</div>
     <div className="tabs">{methods.map(([id, label]) => <button className={method === id ? "active" : ""} onClick={() => setMethod(id)} key={id}>{label}</button>)}</div>
+    <div className="card" style={{ padding: 8, marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}><span className="data-time">REFERENCE DATE</span><input aria-label="Performance reference date" type="date" value={asOf} onChange={(event) => setAsOf(event.target.value)} style={{ background: "var(--panel2)", border: "1px solid var(--border)", color: "var(--text)", padding: "5px 7px", borderRadius: 4, fontFamily: "var(--mono)" }} /><span className="data-time">Period updates using Asia/Jakarta calendar.</span></div>
     {error && <div className="terminal-error">{error}</div>}
     {!data && !error && <div className="terminal-loading"><span>LOADING PERFORMANCE DATA</span></div>}
     {data && <>
