@@ -219,6 +219,8 @@ export const api = {
   overview: () => jfetch<any>("/api/market/overview"),
   marketStatus: () => jfetch<any>("/api/market/status"),
   marketCalendarStatus: () => jfetch<any>("/api/market/calendar/status"),
+  operationsHealth: () => jfetch<any>("/api/operations/health"),
+  strategyPerformanceTrades: (strategy: string, period: string, method?: string, date?: string) => jfetch<any>(`/api/recommendations/strategy-performance/${strategy}/trades?period=${period}${method ? `&method=${method}` : ""}${date ? `&date=${date}` : ""}`),
   marketCalendar: (start: string, end: string) => jfetch<any>(`/api/market/calendar?start_date=${start}&end_date=${end}`),
   marketHolidays: () => jfetch<any>("/api/market/holidays"),
   marketEvents: (start: string, end: string) => jfetch<any>(`/api/market/events?start_date=${start}&end_date=${end}`),

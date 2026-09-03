@@ -15,10 +15,11 @@ export default function PerformancePage() {
   const [asOf, setAsOf] = useState(() => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta" }).format(new Date()));
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState("");
+  const [trades, setTrades] = useState<any[]>([]);
 
   useEffect(() => {
     setData(null); setError("");
-    api.strategyPerformance(strategy, period, method || undefined, asOf).then(setData).catch(() => setError("Performance API unavailable."));
+    Promise.all([api.strategyPerformance(strategy, period, method || undefined, asOf), api.strategyPerformanceTrades(strategy, period, method || undefined, asOf)]).then(([summary, drilldown]) => { setData(summary); setTrades(drilldown.trades || []); }).catch(() => setError("Performance API unavailable."));
   }, [strategy, period, method, asOf]);
 
   const combined = data?.combined || {};
@@ -54,6 +55,7 @@ export default function PerformancePage() {
           <TableRow label="Best / Worst" rows={activeRows} format={(v: any, row: any) => `${percent(row.best_trade_pct)} / ${percent(row.worst_trade_pct)}`} />
         </tbody></table></div>
       </div>
+      <div className="card"><div className="card-title">PERFORMANCE TRADE DRILLDOWN · NORMALIZED EQUITY INDEX</div><div className="table-scroll"><table className="dense-table"><thead><tr><th>DATE</th><th>CODE</th><th>METHOD</th><th className="num">ENTRY</th><th className="num">EXIT</th><th className="num">RETURN</th><th>RESULT</th><th>EXIT REASON</th><th className="num">EQUITY</th></tr></thead><tbody>{trades.length ? trades.map((row:any) => <tr key={row.id}><td>{row.strategy_date}</td><td className="ticker-link">{row.symbol}</td><td>{row.method === "TRADING_AGENTS" ? "TA" : "PAPER"}</td><td className="num">{row.entry ?? "—"}</td><td className="num">{row.exit ?? "—"}</td><td className={`num ${row.return_pct >= 0 ? "pos" : "neg"}`}>{percent(row.return_pct)}</td><td>{row.result}</td><td>{row.exit_reason}</td><td className="num">{row.equity_index}</td></tr>) : <tr><td colSpan={9} className="terminal-empty">NO COMPLETED TRADES FOR THIS PERIOD</td></tr>}</tbody></table></div></div>
       <div className="card">
         <div className="card-title">EXECUTION SUMMARY</div>
         <div className="table-scroll"><table className="dense-table"><thead><tr><th>METHOD</th><th className="num">SIGNALS</th><th className="num">TRIGGERED</th><th className="num">WINS</th><th className="num">LOSSES</th><th className="num">BREAKEVEN</th><th className="num">OPEN</th><th className="num">NOT TRIGGERED</th>{strategy === "BPJS" && <th className="num">ANOMALIES</th>}</tr></thead><tbody>{activeRows.map((row: any) => <tr key={row.method}><td>{row.method === "TRADING_AGENTS" ? "TRADINGAGENTS" : "PAPER TRADE"}</td><td className="num">{value(row, "signals")}</td><td className="num">{value(row, "triggered")}</td><td className="num pos">{value(row, "winning_trades")}</td><td className="num neg">{value(row, "losing_trades")}</td><td className="num">{value(row, "breakeven_trades")}</td><td className="num">{value(row, "open_positions")}</td><td className="num">{value(row, "not_triggered")}</td>{strategy === "BPJS" && <td className="num neg">{value(row, "anomalies")}</td>}</tr>)}</tbody></table></div>

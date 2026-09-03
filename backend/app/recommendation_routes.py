@@ -7,7 +7,7 @@ from .market_calendar import TZ, get_market_status
 from .recommendation_model import TradeRecommendation
 from .recommendation_service import generate_quant, historical_stats, import_tradingagents, update_outcomes
 from .telegram_delivery_model import TelegramDelivery
-from .performance_service import get_performance
+from .performance_service import get_performance, get_trade_drilldown
 
 router = APIRouter(prefix="/api/recommendations", tags=["recommendations"])
 screener_router = APIRouter(prefix="/api/screener", tags=["recommendations"])
@@ -119,6 +119,12 @@ def strategy_performance(strategy: str, period: str = Query("daily"), method: st
     from datetime import date as date_type
     with SessionLocal() as db:
         return get_performance(db, strategy.upper(), period, date_type.fromisoformat(date) if date else None, method)
+
+@router.get("/strategy-performance/{strategy}/trades")
+def strategy_performance_trades(strategy: str, period: str = Query("monthly"), method: str | None = None, date: str | None = None):
+    from datetime import date as date_type
+    with SessionLocal() as db:
+        return get_trade_drilldown(db, strategy.upper(), period, date_type.fromisoformat(date) if date else None, method)
 
 @router.get('/stocks/{symbol}/trade-ideas')
 def stock_trade_ideas(symbol: str):

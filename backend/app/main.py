@@ -12,6 +12,7 @@ from sqlalchemy import desc, func, select, text
 from sqlalchemy.orm import Session, aliased
 
 from . import analytics, security
+from .operations_service import operations_health
 from . import models as db_models
 from .ai_provider import AIError, _model_kind, complete, discover_models, get_queue_status
 from .config import get_settings
@@ -494,6 +495,10 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
         return pool[:limit]
     return out[:limit]
 
+
+@app.get("/api/operations/health")
+def operational_health(db: Session = Depends(get_db)):
+    return operations_health(db)
 
 @app.get("/api/market/status")
 def market_status():
