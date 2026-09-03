@@ -33,7 +33,7 @@ def _current_records(records):
         preview = record.status == "PREVIEW" or "preview" in (record.cycle or "").lower()
         existing = current.get(key)
         rank = (0 if preview else 1, record.generated_at, record.id)
-        existing_rank = (-1, None, -1) if existing is None else (0 if existing.status == "PREVIEW" or "preview" in (existing.cycle or "").lower() else 1, existing.generated_at, existing.id)
+        existing_rank = (-1, datetime.min, -1) if existing is None else (0 if existing.status == "PREVIEW" or "preview" in (existing.cycle or "").lower() else 1, existing.generated_at, existing.id)
         if existing is None or rank > existing_rank:
             current[key] = record
     return list(current.values())

@@ -23,7 +23,7 @@ def _metrics(rows, strategy, method, period, start, end):
         if strategy == "BPJS" and entered and exit_date and str(exit_date) != str(row.trading_date):
             anomalies += 1; continue
         if not entered: not_triggered += int(status == "EXPIRED"); continue
-        if status in {"ACTIVE", "TP1_HIT", "PREVIEW"}: open_positions += 1; continue
+        if status in {"ACTIVE", "PREVIEW"}: open_positions += 1; continue
         if value is not None: returns.append(float(value))
     wins=[x for x in returns if x > 0]; losses=[x for x in returns if x < 0]; factor=sum(wins)/abs(sum(losses)) if losses else ("INF" if wins else None); compounded=1
     for value in returns: compounded *= 1 + value / 100
