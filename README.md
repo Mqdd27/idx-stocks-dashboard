@@ -168,11 +168,13 @@ Dashboard menggunakan `Asia/Jakarta` dan calendar service sebagai single source 
 3. Baseline hari libur nasional Indonesia
 4. Weekend rule
 
-File baseline/import manual:
+Dynamic source priority:
 
-```text
-shared/market_calendar.json
-```
+1. `IDX_CALENDAR_URL` machine-readable official IDX calendar endpoint when configured.
+2. Nager.Date Indonesia public-holiday fallback.
+3. Admin-reviewed IDX overrides through `market-override` CLI.
+
+The fallback does not guarantee IDX-specific closures or cuti bersama. Add an official IDX override when an announcement differs.
 
 Format:
 
@@ -225,7 +227,7 @@ PYTHONPATH=backend:. backend/venv/bin/python -m app.sync_calendar
 
 ### Calendar Scheduler
 
-`market-calendar-sync.timer` menjalankan sync setiap hari pukul **03:00 WIB** dari `shared/market_calendar.json`.
+`market-calendar-sync.timer` menjalankan sync setiap hari pukul **03:00 WIB** from `IDX_CALENDAR_URL` when configured, otherwise Nager.Date Indonesia fallback. Check freshness/source with `GET /api/market/calendar/status`.
 
 ```bash
 sudo systemctl enable --now market-calendar-sync.timer

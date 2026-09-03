@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { usePolling } from "@/lib/usePolling";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export default function AITradingPage() {
   const [status,setStatus]=useState<any>(null); const [batches,setBatches]=useState<any[]>([]); const [batchSize,setBatchSize]=useState(5); const [batchBusy,setBatchBusy]=useState(false); const [history,setHistory]=useState<any[]>([]); const [jobs,setJobs]=useState<any[]>([]); const [ticker,setTicker]=useState(""); const [quick,setQuick]=useState(""); const [deep,setDeep]=useState(""); const [error,setError]=useState(""); const [matches,setMatches]=useState<any[]>([]); const [searching,setSearching]=useState(false); const [detail,setDetail]=useState<any>(null);
   const load=()=>Promise.all([api.aiTradingStatus(),api.aiTradingHistory(),api.aiTradingJobs(),api.aiTradingBatches()]).then(([s,h,j,b])=>{setStatus(s);setBatches(b);setQuick(q=>q||s.quick_model);setDeep(d=>d||s.deep_model);setHistory(h);setJobs(j)}).catch(e=>setError(e.message));
-  useEffect(()=>{load();const t=setInterval(() => { if (!document.hidden) load(); },10000);return()=>clearInterval(t)},[]);
+  usePolling(load, 10000);
   useEffect(()=>{const query=ticker.trim();if(!query){setMatches([]);return}setSearching(true);const timer=setTimeout(()=>api.stocks(query).then(setMatches).catch(()=>setMatches([])).finally(()=>setSearching(false)),200);return()=>clearTimeout(timer)},[ticker]);
   const startBatch=async()=>{setBatchBusy(true);setError("");try{await api.aiTradingBatchStart(batchSize);load()}catch(e:any){setError(e.message)}finally{setBatchBusy(false)}};
   const run=async()=>{try{await api.aiTradingAnalyze(ticker,quick,deep);load()}catch(e:any){setError(e.message)}};

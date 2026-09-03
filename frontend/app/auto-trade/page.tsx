@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api, PaperCandidate, PaperLog, PaperSummary, PaperTrade } from "@/lib/api";
+import { usePolling } from "@/lib/usePolling";
 
 const money = (value?: number | null) => value == null ? "-" : `Rp ${value.toLocaleString("id-ID", { maximumFractionDigits: 0 })}`;
 const number = (value?: number | null) => value == null ? "-" : value.toLocaleString("id-ID", { maximumFractionDigits: 2 });
@@ -29,11 +30,7 @@ export default function AutoTradePage() {
       } catch { setError("Signal kandidat belum tersedia; portfolio tetap dapat digunakan."); }
     }
   };
-  useEffect(() => {
-    load(false);
-    const timer = window.setInterval(() => { if (!document.hidden) load(false); }, 30000);
-    return () => window.clearInterval(timer);
-  }, []);
+  usePolling(() => { void load(false); }, 30000);
 
   const toggle = async () => {
     if (!summary) return;

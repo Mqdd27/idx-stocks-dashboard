@@ -499,6 +499,15 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
 def market_status():
     return get_market_status()
 
+@app.get("/api/market/calendar/status")
+def market_calendar_status(db: Session = Depends(get_db)):
+    from .calendar_sync_service import calendar_fresh
+    sync = db.execute(select(db_models.CollectorLog).where(db_models.CollectorLog.collector == "market_calendar", db_models.CollectorLog.message == "CALENDAR_SYNC_OK").order_by(desc(db_models.CollectorLog.created_at)).limit(1)).scalar_one_or_none()
+    today = today_jakarta()
+    upcoming = db.execute(select(db_models.MarketHoliday).where(db_models.MarketHoliday.market == "IDX", db_models.MarketHoliday.date >= today, db_models.MarketHoliday.is_trading_day == False).order_by(db_models.MarketHoliday.date).limit(10)).scalars().all()
+    details = sync.details or {} if sync else {}
+    return {"fresh": calendar_fresh(), "last_sync": sync.created_at if sync else None, "source": details.get("source"), "mode": "IDX" if details.get("source") == "IDX" else "FALLBACK", "upcoming_holidays": [{"date": row.date, "name": row.name, "source": row.source} for row in upcoming]}
+
 @app.get("/api/market/holidays")
 def market_holidays(db: Session = Depends(get_db)):
     rows = db.execute(select(db_models.MarketHoliday).where(db_models.MarketHoliday.market == "IDX").order_by(db_models.MarketHoliday.date)).scalars().all()

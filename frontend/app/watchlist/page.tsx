@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { usePolling } from "@/lib/usePolling";
 import { fmtNum, fmtVol, pct, cls } from "@/lib/format";
 
 export default function WatchlistPage() {
@@ -26,11 +27,7 @@ export default function WatchlistPage() {
     }).catch(() => setLoaded(true));
   }, []);
 
-  useEffect(() => {
-    load();
-    const iv = setInterval(load, 10000);
-    return () => clearInterval(iv);
-  }, [load]);
+  usePolling(load, 10000);
 
   async function remove(symbol: string) {
     await api.watchlistRemove(symbol);

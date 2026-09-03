@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { usePolling } from "@/lib/usePolling";
 
 export default function AIAutoTradePage() {
   const [status, setStatus] = useState<any>(null);
@@ -14,7 +15,7 @@ export default function AIAutoTradePage() {
     .then(([s, r, ai]) => { setStatus(s); setRuns(r); setModels(ai.available_models || []); })
     .catch((e) => setError(e.message));
 
-  useEffect(() => { load(); const timer = setInterval(load, 10000); return () => clearInterval(timer); }, []);
+  usePolling(load, 10000);
 
   const update = async (patch: Record<string, unknown>) => {
     setBusy(true); setError("");

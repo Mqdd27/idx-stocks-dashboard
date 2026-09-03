@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { usePolling } from "@/lib/usePolling";
 
 export default function AIWatchlistPage() {
   const [data,setData]=useState<any>(null); const [busy,setBusy]=useState(false); const [error,setError]=useState("");
   const load=()=>api.aiWatchlistToday().then(setData).catch(e=>setError(e.message));
-  useEffect(()=>{load();const t=setInterval(load,30000);return()=>clearInterval(t)},[]);
+  usePolling(load, 30000);
   const refresh=async()=>{setBusy(true);setError("");try{await api.aiWatchlistRefresh();await load()}catch(e:any){setError(e.message)}finally{setBusy(false)}};
   const agents=(data?.data||[]).filter((x:any)=>x.method==="TRADING_AGENTS"); const paper=(data?.data||[]).filter((x:any)=>x.method==="PAPER_TRADE");
   return <div><div className="terminal-page-head"><div><span className="terminal-eyebrow">MONITOR / DAILY SETUPS</span><h1>AI WATCHLIST</h1><div className="terminal-page-meta"><span>TRADING DAY {data?.trading_date||"-"}</span><span>MARKET {data?.market?.status||"-"}</span><span>DATA AS OF {data?.generated_at?new Date(data.generated_at).toLocaleTimeString("id-ID",{hour12:false}):"-"}</span></div></div><button className="btn" onClick={refresh} disabled={busy}>{busy?"UPDATING…":"REFRESH"}</button></div>{error&&<div className="analysis-err">WATCHLIST UPDATE FAILED · {error}</div>}<div className="watchlist-overview"><Summary title="TOP AI WATCHLIST" rows={data?.data||[]}/><Summary title="METHOD OVERLAP" rows={overlap(data?.data||[])}/></div><WatchSection title="TRADINGAGENTS WATCHLIST" code="TA" rows={agents}/><WatchSection title="PAPER TRADE WATCHLIST" code="QNT" rows={paper}/></div>;

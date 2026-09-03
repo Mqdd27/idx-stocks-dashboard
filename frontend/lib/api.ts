@@ -218,6 +218,7 @@ export const api = {
   stockTradeIdeas: (symbol: string) => jfetch<any>(`/api/recommendations/stocks/${symbol}/trade-ideas`),
   overview: () => jfetch<any>("/api/market/overview"),
   marketStatus: () => jfetch<any>("/api/market/status"),
+  marketCalendarStatus: () => jfetch<any>("/api/market/calendar/status"),
   marketCalendar: (start: string, end: string) => jfetch<any>(`/api/market/calendar?start_date=${start}&end_date=${end}`),
   marketHolidays: () => jfetch<any>("/api/market/holidays"),
   marketEvents: (start: string, end: string) => jfetch<any>(`/api/market/events?start_date=${start}&end_date=${end}`),
