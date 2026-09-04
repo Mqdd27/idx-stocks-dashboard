@@ -12,11 +12,16 @@ export default function NewsPage() {
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const loadNews = () => {
+  useEffect(() => {
     if (!selected) return;
+    let active = true;
+    setRows([]);
     setLoaded(false);
-    api.news(selected).then((r) => { setRows(r.data); setLoaded(true); }).catch(() => setLoaded(true));
-  };
+    api.news(selected)
+      .then((r) => { if (active) { setRows(r.data); setLoaded(true); } })
+      .catch(() => { if (active) setLoaded(true); });
+    return () => { active = false; };
+  }, [selected]);
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
