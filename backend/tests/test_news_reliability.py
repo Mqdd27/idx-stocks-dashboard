@@ -16,9 +16,10 @@ class NewsReliabilityContractTest(unittest.TestCase):
         self.assertIn("feedError ? <ErrorState", self.page)
         self.assertIn("stockError ? <ErrorState", self.page)
 
-    def test_success_and_failure_status_are_visible(self):
-        self.assertIn("Stock: {updatedAt ?", self.page)
-        self.assertIn("Market: {feedUpdatedAt ?", self.page)
+    def test_tab_shows_relevant_success_or_failure_status(self):
+        self.assertIn('tab === "stock"', self.page)
+        self.assertIn("Stock: ${updatedAt ?", self.page)
+        self.assertIn("Market: ${feedUpdatedAt ?", self.page)
 
 
 if __name__ == "__main__":
