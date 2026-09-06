@@ -396,6 +396,45 @@ def stock_technicals(symbol: str, db: Session = Depends(get_db)):
     return {"symbol": company.symbol, "technicals": analytics.technical_indicators(data)}
 
 
+
+def _news_sentiment(title: str, summary: Optional[str]) -> str:
+    text = f"{title} {summary or ''}".lower()
+    positive = ("naik", "menguat", "melonjak", "tumbuh", "laba", "untung", "beli", "buy", "upgrade", "positif")
+    negative = ("turun", "melemah", "anjlok", "rugi", "jual", "sell", "downgrade", "suspensi", "negatif")
+    if any(word in text for word in positive): return "positive"
+    if any(word in text for word in negative): return "negative"
+    return "neutral"
+
+@app.get("/api/news/feed")
+def news_feed(
+    sentiment: str = Query("all", pattern="^(all|positive|negative|neutral)$"),
+    source: Optional[str] = Query(None, max_length=64),
+    days: int = Query(7, ge=1, le=365),
+    db: Session = Depends(get_db),
+):
+    watchlist = db.execute(select(db_models.WatchlistItem.symbol).order_by(db_models.WatchlistItem.sort_order, db_models.WatchlistItem.symbol)).scalars().all()
+    symbols = list(dict.fromkeys([*watchlist, *(row["symbol"] for row in _market_rows(db, 10, "pct_desc"))]))[:20]
+    if not symbols: return {"symbols": [], "sources": [], "data": []}
+    since = datetime.now(timezone.utc) - timedelta(days=days)
+    rows = db.execute(
+        select(db_models.News, db_models.Company.symbol)
+        .join(db_models.Company, db_models.Company.id == db_models.News.company_id)
+        .where(db_models.Company.symbol.in_(symbols), db_models.News.published_at >= since)
+        .order_by(desc(db_models.News.published_at))
+        .limit(200)
+    ).all()
+    data, seen = [], set()
+    for news, symbol in rows:
+        key = (news.url or "").strip().lower() or " ".join(news.title.lower().split())
+        if key in seen: continue
+        seen.add(key)
+        tone = _news_sentiment(news.title, news.summary)
+        if sentiment != "all" and tone != sentiment: continue
+        if source and (news.source or "").lower() != source.lower(): continue
+        data.append({"symbol": symbol, "title": news.title, "url": news.url, "source": news.source, "published_at": news.published_at.isoformat() if news.published_at else None, "summary": news.summary, "sentiment": tone})
+    sources = sorted({item["source"] for item in data if item["source"]})
+    return {"symbols": symbols, "sources": sources, "data": data}
+
 @app.get("/api/stocks/{symbol}/news")
 def stock_news(symbol: str, db: Session = Depends(get_db)):
     company = _get_company(db, symbol)
