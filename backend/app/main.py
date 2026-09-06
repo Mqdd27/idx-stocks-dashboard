@@ -577,11 +577,13 @@ def market_events(start_date: date = Query(...), end_date: date = Query(...), db
 def market_overview(db: Session = Depends(get_db)):
     ihsg = _get_company(db, "IHSG")
     ihsg_price = _latest_price(db, ihsg.id)
-    gainers = _market_rows(db, 10, "pct_desc")
-    losers = _market_rows(db, 10, "pct_asc")
-    active = _market_rows(db, 10, "volume")
-    all_rows = _market_rows(db, 10_000, "pct_desc")
-    total_volume = sum(r["volume"] or 0 for r in all_rows)
+    rows = _market_rows(db, 10_000, "pct_desc")
+    gainers = rows[:10]
+    losers = sorted(rows, key=lambda row: row["change_pct"])[:10]
+    today_iso = datetime.now(timezone.utc).astimezone().date().isoformat()
+    today_rows = [row for row in rows if row["date"].startswith(today_iso)]
+    active = sorted(today_rows or rows, key=lambda row: row["volume"] or 0, reverse=True)[:10]
+    total_volume = sum(row["volume"] or 0 for row in rows)
     return {
         "ihsg": {"symbol": "IHSG", "price": ihsg_price},
         "gainers": gainers,
