@@ -15,7 +15,7 @@ class WatchlistUxContractTest(unittest.TestCase):
 
     def test_ui_uses_native_drag_and_local_alerts(self):
         self.assertIn("draggable", self.page)
-        self.assertIn("onDrop={() => reorder(it.symbol)}", self.page)
+        self.assertIn("onDrop={onDrop}", self.page)
         self.assertIn("stocks.watchlist.alerts", self.page)
         self.assertIn("latest_news", self.page)
 
