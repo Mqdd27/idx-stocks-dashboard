@@ -260,3 +260,35 @@ CREATE TABLE IF NOT EXISTS telegram_deliveries (
  UNIQUE(message_type, target_date, cycle)
 );
 CREATE INDEX IF NOT EXISTS ix_telegram_deliveries_status ON telegram_deliveries(status);
+
+CREATE TABLE IF NOT EXISTS ai_trading_batches (
+ id BIGSERIAL PRIMARY KEY,
+ status VARCHAR(16) NOT NULL DEFAULT 'QUEUED',
+ batch_size INTEGER NOT NULL DEFAULT 5,
+ total INTEGER NOT NULL DEFAULT 0,
+ completed INTEGER NOT NULL DEFAULT 0,
+ failed INTEGER NOT NULL DEFAULT 0,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS ix_ai_trading_batches_status ON ai_trading_batches(status);
+
+CREATE TABLE IF NOT EXISTS ai_trading_batch_items (
+ id BIGSERIAL PRIMARY KEY,
+ batch_id BIGINT NOT NULL,
+ symbol VARCHAR(16) NOT NULL,
+ status VARCHAR(16) NOT NULL DEFAULT 'QUEUED',
+ analysis_id BIGINT,
+ error_message TEXT,
+ result JSONB,
+ attempt_count INTEGER NOT NULL DEFAULT 0,
+ claimed_by VARCHAR(96),
+ claimed_at TIMESTAMPTZ,
+ heartbeat_at TIMESTAMPTZ,
+ started_at TIMESTAMPTZ,
+ finished_at TIMESTAMPTZ,
+ UNIQUE (batch_id, symbol)
+);
+CREATE INDEX IF NOT EXISTS ix_ai_trading_batch_items_batch_id ON ai_trading_batch_items(batch_id);
+CREATE INDEX IF NOT EXISTS ix_ai_trading_batch_items_symbol ON ai_trading_batch_items(symbol);
+CREATE INDEX IF NOT EXISTS ix_ai_trading_batch_items_status ON ai_trading_batch_items(status);
