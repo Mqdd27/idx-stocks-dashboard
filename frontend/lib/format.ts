@@ -2,7 +2,10 @@
 
 export function fmtNum(n: number | null | undefined, digits = 2): string {
   if (n === null || n === undefined || isNaN(n)) return "-";
-  return n.toLocaleString("id-ID", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  return n.toLocaleString("id-ID", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
 }
 
 export function fmtPrice(n: number | null | undefined): string {

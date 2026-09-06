@@ -24,7 +24,11 @@ interface FallbackInfo {
   text: string;
 }
 
-export default function AIAssistPanel({ symbol, companyName, drawer = false }: Props) {
+export default function AIAssistPanel({
+  symbol,
+  companyName,
+  drawer = false,
+}: Props) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -61,7 +65,11 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
     setFb(null);
     const msgs = [...messages, { role: "user" as const, content: text, model }];
     if (modelRef.current && modelRef.current !== model) {
-      msgs.push({ role: "assistant" as const, content: `— Model changed: ${modelRef.current} → ${model} —`, model });
+      msgs.push({
+        role: "assistant" as const,
+        content: `— Model changed: ${modelRef.current} → ${model} —`,
+        model,
+      });
     }
     setMessages(msgs);
     modelRef.current = model;
@@ -74,7 +82,13 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
       const resp = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, model, symbol: symbol || null, conversation_id: convId, stream: true }),
+        body: JSON.stringify({
+          message: text,
+          model,
+          symbol: symbol || null,
+          conversation_id: convId,
+          stream: true,
+        }),
       });
       if (!resp.ok) {
         const j = await resp.json().catch(() => ({}));
@@ -102,7 +116,11 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
             acc += payload.delta;
             setMessages((m) => {
               const copy = [...m];
-              copy[copy.length - 1] = { role: "assistant", content: acc, model };
+              copy[copy.length - 1] = {
+                role: "assistant",
+                content: acc,
+                model,
+              };
               return copy;
             });
           } else if (payload.error) {
@@ -114,7 +132,12 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
         }
       }
     } catch (e: any) {
-      setFb({ message: String(e.message || e), model, provider: "unknown", text });
+      setFb({
+        message: String(e.message || e),
+        model,
+        provider: "unknown",
+        text,
+      });
     } finally {
       setBusy(false);
       checkQueue();
@@ -123,11 +146,23 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
 
   function handleErr(j: any, model: string, text: string) {
     if (j.error) {
-      const info: FallbackInfo = { message: String(j.error), model, provider: j.provider || "unknown", text };
+      const info: FallbackInfo = {
+        message: String(j.error),
+        model,
+        provider: j.provider || "unknown",
+        text,
+      };
       setFb(info);
       if (fallbackRef.current && j.fallback_available) {
         api.cloudFallbackModel().then((cloudModel) => {
-          setMessages((m) => [...m, { role: "assistant", content: `— ${model} gagal. Auto-fallback: ${cloudModel} —`, model }]);
+          setMessages((m) => [
+            ...m,
+            {
+              role: "assistant",
+              content: `— ${model} gagal. Auto-fallback: ${cloudModel} —`,
+              model,
+            },
+          ]);
           modelRef.current = cloudModel;
           setTimeout(() => doSendWithText(model, cloudModel), 0);
         });
@@ -142,8 +177,14 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
 
   const header = (
     <div className="chat-head">
-      <div className="chat-title"><strong>Ask AI</strong>{companyName && <span title={companyName}>{companyName}</span>}</div>
-      <div className="chat-model"><span>Model</span><ModelSelector /></div>
+      <div className="chat-title">
+        <strong>Ask AI</strong>
+        {companyName && <span title={companyName}>{companyName}</span>}
+      </div>
+      <div className="chat-model">
+        <span>Model</span>
+        <ModelSelector />
+      </div>
     </div>
   );
 
@@ -154,8 +195,35 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
         {fb.provider} · Fallback available: cloud model
       </div>
       <div style={{ display: "flex", gap: 8 }}>
-        <button className="btn btn-sm" onClick={() => { setFb(null); doSendWithText(fb.model, fb.text); }}>Retry Local</button>
-        <button className="btn btn-sm btn-primary" onClick={() => { api.cloudFallbackModel().then((m) => { setFb(null); modelRef.current = m; setMessages((prev) => [...prev, { role: "assistant", content: `— Model changed: ${fb.model} → ${m} —`, model: m }]); doSendWithText(m, fb.text); }); }}>Use Cloud</button>
+        <button
+          className="btn btn-sm"
+          onClick={() => {
+            setFb(null);
+            doSendWithText(fb.model, fb.text);
+          }}
+        >
+          Retry Local
+        </button>
+        <button
+          className="btn btn-sm btn-primary"
+          onClick={() => {
+            api.cloudFallbackModel().then((m) => {
+              setFb(null);
+              modelRef.current = m;
+              setMessages((prev) => [
+                ...prev,
+                {
+                  role: "assistant",
+                  content: `— Model changed: ${fb.model} → ${m} —`,
+                  model: m,
+                },
+              ]);
+              doSendWithText(m, fb.text);
+            });
+          }}
+        >
+          Use Cloud
+        </button>
       </div>
     </div>
   );
@@ -164,17 +232,36 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
     <div className="chat-body" ref={bodyRef}>
       {messages.length === 0 && (
         <div className="empty-state">
-          Tanya tentang {symbol ? symbol : "saham"} — mis. "Kenapa ROE turun?" atau "Jelaskan MACD sekarang."
+          Tanya tentang {symbol ? symbol : "saham"} — mis. "Kenapa ROE turun?"
+          atau "Jelaskan MACD sekarang."
         </div>
       )}
-      {queued && <div className="queue-note">Local AI is busy. Your request is queued.</div>}
+      {queued && (
+        <div className="queue-note">
+          Local AI is busy. Your request is queued.
+        </div>
+      )}
       {messages.map((m, i) => (
         <div key={i} className={`chat-msg ${m.role}`}>
-          <div className="who">{m.role === "user" ? "You" : `AI${m.model ? " · " + m.model : ""}`}</div>
-          <div className="bubble">{m.role === "assistant" ? <ChatMarkdown text={m.content || (busy && i === messages.length - 1 ? "▍" : "")} /> : m.content}</div>
+          <div className="who">
+            {m.role === "user" ? "You" : `AI${m.model ? " · " + m.model : ""}`}
+          </div>
+          <div className="bubble">
+            {m.role === "assistant" ? (
+              <ChatMarkdown
+                text={
+                  m.content || (busy && i === messages.length - 1 ? "▍" : "")
+                }
+              />
+            ) : (
+              m.content
+            )}
+          </div>
         </div>
       ))}
-      {busy && messages[messages.length - 1]?.role === "user" && <div className="typing">Menganalisis…</div>}
+      {busy && messages[messages.length - 1]?.role === "user" && (
+        <div className="typing">Menganalisis…</div>
+      )}
       {fallbackBox}
     </div>
   );
@@ -187,7 +274,13 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && send()}
       />
-      <button className="btn btn-primary" onClick={() => send()} disabled={busy || !input.trim()}>Send</button>
+      <button
+        className="btn btn-primary"
+        onClick={() => send()}
+        disabled={busy || !input.trim()}
+      >
+        Send
+      </button>
     </div>
   );
 
@@ -203,18 +296,51 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
 
   return (
     <>
-      <button className="drawer-toggle" onClick={() => setOpen(!open)} title="AI Assistant">✦</button>
+      <button
+        className="drawer-toggle"
+        onClick={() => setOpen(!open)}
+        title="AI Assistant"
+      >
+        ✦
+      </button>
       {open && (
         <div className="chat-drawer">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderBottom: "1px solid var(--border)" }}>
-            <strong>AI Assistant{companyName ? ` · ${companyName}` : ""}</strong>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "10px 14px",
+              borderBottom: "1px solid var(--border)",
+            }}
+          >
+            <strong>
+              AI Assistant{companyName ? ` · ${companyName}` : ""}
+            </strong>
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-              <label style={{ fontSize: 11, color: "var(--muted)", display: "flex", gap: 4, alignItems: "center" }}>
-                <input type="checkbox" defaultChecked={fallbackRef.current} onChange={(e) => { fallbackRef.current = e.target.checked; setFallback(e.target.checked); }} />
+              <label
+                style={{
+                  fontSize: 11,
+                  color: "var(--muted)",
+                  display: "flex",
+                  gap: 4,
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  defaultChecked={fallbackRef.current}
+                  onChange={(e) => {
+                    fallbackRef.current = e.target.checked;
+                    setFallback(e.target.checked);
+                  }}
+                />
                 Allow AI fallback
               </label>
               <ModelSelector />
-              <button className="btn btn-sm" onClick={() => setOpen(false)}>✕</button>
+              <button className="btn btn-sm" onClick={() => setOpen(false)}>
+                ✕
+              </button>
             </div>
           </div>
           {body}
@@ -225,16 +351,39 @@ export default function AIAssistPanel({ symbol, companyName, drawer = false }: P
   );
 }
 function ChatMarkdown({ text }: { text: string }) {
-  return <div className="chat-markdown">{text.split("\n").map((line, i) => {
-    const v = line.trim();
-    if (!v) return <div className="markdown-gap" key={i} />;
-    if (/^---+$/.test(v)) return <hr key={i} />;
-    if (/^#{1,6}\s/.test(v)) return <h3 key={i}>{chatInline(v.replace(/^#{1,6}\s/, ""))}</h3>;
-    if (/^[-*]\s/.test(v)) return <div className="markdown-item" key={i}>• {chatInline(v.slice(2))}</div>;
-    if (/^\d+\.\s/.test(v)) return <div className="markdown-item" key={i}>{chatInline(v)}</div>;
-    return <p key={i}>{chatInline(v)}</p>;
-  })}</div>;
+  return (
+    <div className="chat-markdown">
+      {text.split("\n").map((line, i) => {
+        const v = line.trim();
+        if (!v) return <div className="markdown-gap" key={i} />;
+        if (/^---+$/.test(v)) return <hr key={i} />;
+        if (/^#{1,6}\s/.test(v))
+          return <h3 key={i}>{chatInline(v.replace(/^#{1,6}\s/, ""))}</h3>;
+        if (/^[-*]\s/.test(v))
+          return (
+            <div className="markdown-item" key={i}>
+              • {chatInline(v.slice(2))}
+            </div>
+          );
+        if (/^\d+\.\s/.test(v))
+          return (
+            <div className="markdown-item" key={i}>
+              {chatInline(v)}
+            </div>
+          );
+        return <p key={i}>{chatInline(v)}</p>;
+      })}
+    </div>
+  );
 }
 function chatInline(value: string) {
-  return value.split(/(\*\*[^*]+\*\*)/g).map((part, i) => part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : part);
+  return value
+    .split(/(\*\*[^*]+\*\*)/g)
+    .map((part, i) =>
+      part.startsWith("**") && part.endsWith("**") ? (
+        <strong key={i}>{part.slice(2, -2)}</strong>
+      ) : (
+        part
+      ),
+    );
 }

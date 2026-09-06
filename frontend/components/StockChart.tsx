@@ -9,12 +9,19 @@ import {
   LineSeries,
   type IChartApi,
   type ISeriesApi,
-  
 } from "lightweight-charts";
 import { api } from "@/lib/api";
 
 const RANGES = ["1D", "1W", "1M", "3M", "6M", "1Y", "3Y", "5Y"] as const;
-const INDICATORS = ["SMA20", "SMA50", "SMA200", "EMA", "RSI", "MACD", "BOLL"] as const;
+const INDICATORS = [
+  "SMA20",
+  "SMA50",
+  "SMA200",
+  "EMA",
+  "RSI",
+  "MACD",
+  "BOLL",
+] as const;
 
 interface Props {
   symbol: string;
@@ -63,11 +70,14 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
       priceScaleId: "vol",
       color: "#273149",
     });
-    chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+    chart
+      .priceScale("vol")
+      .applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
     candleRef.current = candles;
     volRef.current = vol;
     const onResize = () => {
-      if (containerRef.current) chart.applyOptions({ width: containerRef.current.clientWidth });
+      if (containerRef.current)
+        chart.applyOptions({ width: containerRef.current.clientWidth });
     };
     window.addEventListener("resize", onResize);
     return () => {
@@ -82,36 +92,47 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
 
   useEffect(() => {
     let alive = true;
-    api.prices(symbol, range).then((res) => {
-      if (!alive || !chartRef.current || !candleRef.current) return;
-      const candles = res.data
-        .filter((d) => d.open != null && d.close != null)
-        .map((d) => ({
-          time: d.time,
-          open: d.open,
-          high: d.high ?? d.close,
-          low: d.low ?? d.close,
-          close: d.close,
-        }));
-      const vols = res.data
-        .filter((d) => d.volume != null)
-        .map((d) => ({
-          time: d.time,
-          value: d.volume,
-          color: d.close >= (d.open ?? d.close) ? "rgba(0,193,118,.45)" : "rgba(255,77,94,.45)",
-        }));
-      candleRef.current.setData(candles);
-      volRef.current?.setData(vols);
-      chartRef.current?.timeScale().fitContent();
-      if (res.data.length > 0) {
-        const last = res.data[res.data.length - 1];
-        const prev = res.data[res.data.length - 2];
-        const chg = prev ? last.close - prev.close : 0;
-        const pct = prev ? (chg / prev.close) * 100 : 0;
-        setLegend([`${symbol} ${Math.round(last.close).toLocaleString("id-ID")}`, `${chg > 0 ? "+" : ""}${chg.toFixed(2)} (${pct > 0 ? "+" : ""}${pct.toFixed(2)}%)`]);
-      }
-    }).catch(() => {});
-    return () => { alive = false; };
+    api
+      .prices(symbol, range)
+      .then((res) => {
+        if (!alive || !chartRef.current || !candleRef.current) return;
+        const candles = res.data
+          .filter((d) => d.open != null && d.close != null)
+          .map((d) => ({
+            time: d.time,
+            open: d.open,
+            high: d.high ?? d.close,
+            low: d.low ?? d.close,
+            close: d.close,
+          }));
+        const vols = res.data
+          .filter((d) => d.volume != null)
+          .map((d) => ({
+            time: d.time,
+            value: d.volume,
+            color:
+              d.close >= (d.open ?? d.close)
+                ? "rgba(0,193,118,.45)"
+                : "rgba(255,77,94,.45)",
+          }));
+        candleRef.current.setData(candles);
+        volRef.current?.setData(vols);
+        chartRef.current?.timeScale().fitContent();
+        if (res.data.length > 0) {
+          const last = res.data[res.data.length - 1];
+          const prev = res.data[res.data.length - 2];
+          const chg = prev ? last.close - prev.close : 0;
+          const pct = prev ? (chg / prev.close) * 100 : 0;
+          setLegend([
+            `${symbol} ${Math.round(last.close).toLocaleString("id-ID")}`,
+            `${chg > 0 ? "+" : ""}${chg.toFixed(2)} (${pct > 0 ? "+" : ""}${pct.toFixed(2)}%)`,
+          ]);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
   }, [symbol, range]);
 
   function toggleIndicator(ind: string) {
@@ -125,7 +146,11 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
 
   function openTradingView() {
     const base = symbol.replace(/\.JK$/, "");
-    window.open(`https://www.tradingview.com/chart/?symbol=IDX:${base}`, "_blank", "noopener");
+    window.open(
+      `https://www.tradingview.com/chart/?symbol=IDX:${base}`,
+      "_blank",
+      "noopener",
+    );
   }
 
   function applyIndicators(inds: string[]) {
@@ -136,7 +161,11 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
       const t = res.technicals;
       if (!t || !chartRef.current) return;
       const series: ISeriesApi<"Line">[] = [];
-      const addLine = (data: { time: string; value: number }[], color: string, title: string) => {
+      const addLine = (
+        data: { time: string; value: number }[],
+        color: string,
+        title: string,
+      ) => {
         if (data.length === 0) return;
         const s = chartRef.current!.addSeries(LineSeries, {
           color,
@@ -154,11 +183,18 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
       if (inds.some((i) => ["SMA20", "SMA50", "SMA200", "EMA"].includes(i))) {
         api.prices(symbol, range).then((pres) => {
           if (!aliveRef.current || !chartRef.current) return;
-          const closes = pres.data.map((d) => ({ time: d.time, close: d.close }));
-          if (inds.includes("SMA20")) addLine(sma(closes, 20), "#f6a623", "SMA20");
-          if (inds.includes("SMA50")) addLine(sma(closes, 50), "#3e9cff", "SMA50");
-          if (inds.includes("SMA200")) addLine(sma(closes, 200), "#27c2d1", "SMA200");
-          if (inds.includes("EMA")) addLine(ema(closes, 20), "#e8ecf4", "EMA20");
+          const closes = pres.data.map((d) => ({
+            time: d.time,
+            close: d.close,
+          }));
+          if (inds.includes("SMA20"))
+            addLine(sma(closes, 20), "#f6a623", "SMA20");
+          if (inds.includes("SMA50"))
+            addLine(sma(closes, 50), "#3e9cff", "SMA50");
+          if (inds.includes("SMA200"))
+            addLine(sma(closes, 200), "#27c2d1", "SMA200");
+          if (inds.includes("EMA"))
+            addLine(ema(closes, 20), "#e8ecf4", "EMA20");
           overlayRef.current.push(...series);
         });
       } else if (inds.includes("BOLL")) {
@@ -167,13 +203,18 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
       if (inds.includes("RSI") || inds.includes("MACD")) {
         // RSI/MACD shown in legend summary
         const parts: string[] = [];
-        if (inds.includes("RSI") && t.rsi14 != null) parts.push(`RSI14 ${t.rsi14}`);
-        if (inds.includes("MACD") && t.macd) parts.push(`MACD ${t.macd.macd} / SIG ${t.macd.signal}`);
+        if (inds.includes("RSI") && t.rsi14 != null)
+          parts.push(`RSI14 ${t.rsi14}`);
+        if (inds.includes("MACD") && t.macd)
+          parts.push(`MACD ${t.macd.macd} / SIG ${t.macd.signal}`);
         setLegend((prev) => [...prev.slice(0, 2), ...parts]);
       }
       if (inds.includes("BOLL") && t.bollinger) {
         const bb = t.bollinger;
-        setLegend((prev) => [...prev.slice(0, 2), `BB ${bb.upper}/${bb.middle}/${bb.lower}`]);
+        setLegend((prev) => [
+          ...prev.slice(0, 2),
+          `BB ${bb.upper}/${bb.middle}/${bb.lower}`,
+        ]);
       }
     });
   }
@@ -205,18 +246,38 @@ export default function StockChart({ symbol, initial = "1Y" }: Props) {
     <div className="chart-wrap">
       <div className="chart-toolbar">
         {RANGES.map((r) => (
-          <button key={r} className={range === r ? "active" : ""} onClick={() => setRange(r)}>{r}</button>
+          <button
+            key={r}
+            className={range === r ? "active" : ""}
+            onClick={() => setRange(r)}
+          >
+            {r}
+          </button>
         ))}
         <span style={{ flex: 1 }} />
         {INDICATORS.map((i) => (
-          <button key={i} className={activeInd.includes(i) ? "active" : ""} onClick={() => toggleIndicator(i)}>
+          <button
+            key={i}
+            className={activeInd.includes(i) ? "active" : ""}
+            onClick={() => toggleIndicator(i)}
+          >
             {i}
           </button>
         ))}
       </div>
-      <div className="legend">{legend.map((l, i) => <span key={i}>{l}</span>)}</div>
+      <div className="legend">
+        {legend.map((l, i) => (
+          <span key={i}>{l}</span>
+        ))}
+      </div>
       <div className="tv-overlay">
-        <div className="tv-badge" onClick={openTradingView} title="Buka di TradingView">TradingView ↗</div>
+        <div
+          className="tv-badge"
+          onClick={openTradingView}
+          title="Buka di TradingView"
+        >
+          TradingView ↗
+        </div>
         <div ref={containerRef} onClick={openTradingView} />
       </div>
     </div>
