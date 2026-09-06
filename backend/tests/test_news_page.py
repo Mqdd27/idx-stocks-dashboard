@@ -9,8 +9,8 @@ class NewsPageContractTest(unittest.TestCase):
 
     def test_selecting_stock_loads_news(self):
         page = self.source.read_text()
+        self.assertIn("api.news(selected, refreshKey || undefined)", page)
         self.assertIn("}, [selected, refreshKey]);", page)
-        self.assertIn("api.news(selected, refreshKey > 0 ? refreshKey : undefined)", page)
 
     def test_default_feed_uses_watchlist_then_top_gainer(self):
         page = self.source.read_text()
