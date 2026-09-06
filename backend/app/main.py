@@ -1179,6 +1179,7 @@ def watchlist_get(db: Session = Depends(get_db)):
         ).scalar_one_or_none()
         price = _latest_price(db, company.id) if company else None
         ratios = _company_ratios(db, company.id) if company else None
+        news = db.execute(select(db_models.News).where(db_models.News.company_id == company.id).order_by(desc(db_models.News.published_at)).limit(1)).scalar_one_or_none() if company else None
         out.append(
             {
                 "symbol": item.symbol,
@@ -1186,6 +1187,7 @@ def watchlist_get(db: Session = Depends(get_db)):
                 "sort_order": item.sort_order,
                 "price": price,
                 "ratios": ratios,
+                "latest_news": {"title": news.title, "url": news.url, "published_at": news.published_at.isoformat() if news.published_at else None} if news else None,
             }
         )
     return {"data": out}
@@ -1196,7 +1198,7 @@ async def watchlist_add(request: Request, db: Session = Depends(get_db)):
     body = await request.json()
     action = body.get("action", "add")
     symbol = security.sanitize_text(str(body.get("symbol", "")), 16).upper()
-    if not security.valid_symbol(symbol):
+    if action != "reorder" and not security.valid_symbol(symbol):
         raise HTTPException(400, "Invalid symbol")
     if action == "add":
         existing = db.execute(
@@ -1211,6 +1213,20 @@ async def watchlist_add(request: Request, db: Session = Depends(get_db)):
         db.add(item)
         db.commit()
         return {"status": "added", "symbol": symbol}
+    if action == "update":
+        item = db.execute(select(db_models.WatchlistItem).where(db_models.WatchlistItem.symbol == symbol)).scalar_one_or_none()
+        if not item: raise HTTPException(404, "Watchlist item not found")
+        item.note = security.sanitize_text(str(body.get("note", "")), 500) or None
+        db.commit()
+        return {"status": "updated", "symbol": symbol}
+    if action == "reorder":
+        symbols = body.get("symbols")
+        if not isinstance(symbols, list) or len(symbols) > 100: raise HTTPException(400, "Invalid symbols")
+        items = {item.symbol: item for item in db.execute(select(db_models.WatchlistItem)).scalars()}
+        if set(symbols) != set(items): raise HTTPException(400, "Watchlist symbols mismatch")
+        for index, value in enumerate(symbols): items[value].sort_order = index
+        db.commit()
+        return {"status": "reordered"}
     if action == "remove":
         items = db.execute(
             select(db_models.WatchlistItem).where(db_models.WatchlistItem.symbol == symbol)

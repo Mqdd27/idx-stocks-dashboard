@@ -251,6 +251,8 @@ export const api = {
     jfetch("/api/watchlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "add", symbol, note }) }),
   watchlistRemove: (symbol: string) =>
     jfetch("/api/watchlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "remove", symbol }) }),
+  watchlistUpdate: (symbol: string, note: string) => jfetch("/api/watchlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "update", symbol, note }) }),
+  watchlistReorder: (symbols: string[]) => jfetch("/api/watchlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "reorder", symbols }) }),
   aiModels: () => jfetch<AIConfig[]>("/api/ai/models"),
   aiQueue: () => jfetch<{ active: boolean; queued: number; max_concurrency: number }>("/api/ai/queue-status"),
   cloudFallbackModel: async (): Promise<string> => {
