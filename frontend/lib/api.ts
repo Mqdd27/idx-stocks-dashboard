@@ -204,7 +204,7 @@ export const api = {
     jfetch<{ data: any[] }>(`/api/stocks/${symbol}/financials?period_type=${periodType}`),
   ratios: (symbol: string) => jfetch<{ data: any[] }>(`/api/stocks/${symbol}/ratios`),
   technicals: (symbol: string) => jfetch<{ technicals: Technicals | null }>(`/api/stocks/${symbol}/technicals`),
-  news: (symbol: string) => jfetch<{ data: any[] }>(`/api/stocks/${symbol}/news`),
+  news: (symbol: string, refresh?: number) => jfetch<{ data: any[] }>(`/api/stocks/${symbol}/news${refresh ? "?refresh=" + refresh : ""}`),
   aiWatchlistToday: () => jfetch<any>("/api/ai-watchlist/today"),
   aiWatchlistAgents: () => jfetch<any>("/api/ai-watchlist/trading-agents"),
   aiWatchlistPaper: () => jfetch<any>("/api/ai-watchlist/paper"),
