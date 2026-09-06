@@ -1,4 +1,5 @@
 """TradingAgents reasoning connected to the existing deterministic paper engine."""
+
 from datetime import date, datetime, timezone
 
 from sqlalchemy import desc, select
@@ -29,18 +30,28 @@ def select_candidates(db, limit: int) -> list[dict]:
     rows = paper_candidates(force=True, limit=1000, db=db)["data"]
     eligible = [row for row in rows if row.get("action") == "buy"]
     latest = {}
-    for company in db.execute(select(Company).where(Company.symbol.in_([row["symbol"] for row in eligible]))).scalars():
-        price = db.execute(select(DailyPrice).where(DailyPrice.company_id == company.id).order_by(desc(DailyPrice.date)).limit(1)).scalar_one_or_none()
+    for company in db.execute(
+        select(Company).where(Company.symbol.in_([row["symbol"] for row in eligible]))
+    ).scalars():
+        price = db.execute(
+            select(DailyPrice)
+            .where(DailyPrice.company_id == company.id)
+            .order_by(desc(DailyPrice.date))
+            .limit(1)
+        ).scalar_one_or_none()
         latest[company.symbol] = {
             "volume": int(price.volume or 0) if price else 0,
             "close": float(price.close or 0) if price else 0,
         }
-    eligible.sort(key=lambda row: (
-        float(row.get("score") or 0),
-        float(row.get("risk_reward") or 0),
-        latest.get(row["symbol"], {}).get("volume", 0),
-        latest.get(row["symbol"], {}).get("close", 0),
-    ), reverse=True)
+    eligible.sort(
+        key=lambda row: (
+            float(row.get("score") or 0),
+            float(row.get("risk_reward") or 0),
+            latest.get(row["symbol"], {}).get("volume", 0),
+            latest.get(row["symbol"], {}).get("close", 0),
+        ),
+        reverse=True,
+    )
     return eligible[:limit]
 
 
@@ -52,13 +63,25 @@ def _open_paper_trade(db, run_id: int, symbol: str, analysis: dict) -> tuple[boo
         return False, "PAPER_BOT_DISABLED"
     if analysis.get("action") != "BUY":
         return False, f"AI_{analysis.get('action', 'NO_TRADE')}"
-    if db.execute(select(PaperTrade).where(PaperTrade.symbol == symbol, PaperTrade.status == "open")).scalar_one_or_none():
+    if db.execute(
+        select(PaperTrade).where(
+            PaperTrade.symbol == symbol, PaperTrade.status == "open"
+        )
+    ).scalar_one_or_none():
         return False, "DUPLICATE_OPEN_POSITION"
 
-    if db.execute(select(PaperTrade).where(PaperTrade.symbol == symbol, PaperTrade.entry_date == today_jakarta())).scalar_one_or_none():
+    if db.execute(
+        select(PaperTrade).where(
+            PaperTrade.symbol == symbol, PaperTrade.entry_date == today_jakarta()
+        )
+    ).scalar_one_or_none():
         return False, "DUPLICATE_TODAY"
 
-    open_trades = db.execute(select(PaperTrade).where(PaperTrade.status == "open")).scalars().all()
+    open_trades = (
+        db.execute(select(PaperTrade).where(PaperTrade.status == "open"))
+        .scalars()
+        .all()
+    )
     if len(open_trades) >= int(paper.max_positions):
         return False, "MAX_OPEN_POSITIONS"
 
@@ -68,25 +91,49 @@ def _open_paper_trade(db, run_id: int, symbol: str, analysis: dict) -> tuple[boo
     if not snapshot:
         return False, "NO_CURRENT_PRICE"
 
-    rows = db.execute(
-        select(DailyPrice)
-        .where(DailyPrice.company_id == company.id, DailyPrice.close.is_not(None))
-        .order_by(desc(DailyPrice.date)).limit(280)
-    ).scalars().all()[::-1]
-    indicators = analytics.technical_indicators([
-        {"date": row.date, "open": row.open, "high": row.high, "low": row.low, "close": row.close, "volume": row.volume}
-        for row in rows
-    ]) or {}
+    rows = (
+        db.execute(
+            select(DailyPrice)
+            .where(DailyPrice.company_id == company.id, DailyPrice.close.is_not(None))
+            .order_by(desc(DailyPrice.date))
+            .limit(280)
+        )
+        .scalars()
+        .all()[::-1]
+    )
+    indicators = (
+        analytics.technical_indicators(
+            [
+                {
+                    "date": row.date,
+                    "open": row.open,
+                    "high": row.high,
+                    "low": row.low,
+                    "close": row.close,
+                    "volume": row.volume,
+                }
+                for row in rows
+            ]
+        )
+        or {}
+    )
     indicators["last_price"] = snapshot["price"]
     setup = decide(indicators, float(paper.min_score), float(paper.min_rr))
     if setup.action != "buy" or setup.stop is None or setup.target is None:
         return False, f"DETERMINISTIC_GATE: {setup.reason}"
 
-    exposure = sum(float(trade.entry_price) * int(trade.quantity) * 100 for trade in open_trades)
+    exposure = sum(
+        float(trade.entry_price) * int(trade.quantity) * 100 for trade in open_trades
+    )
     available = max(0.0, float(paper.cash) - exposure)
     quantity = size_position(
-        available, snapshot["price"], setup.stop, float(paper.risk_per_trade),
-        float(paper.fee_rate), float(paper.slippage_rate), float(paper.max_exposure),
+        available,
+        snapshot["price"],
+        setup.stop,
+        float(paper.risk_per_trade),
+        float(paper.fee_rate),
+        float(paper.slippage_rate),
+        float(paper.max_exposure),
     )
     if quantity <= 0:
         return False, "POSITION_SIZE_ZERO"
@@ -94,16 +141,32 @@ def _open_paper_trade(db, run_id: int, symbol: str, analysis: dict) -> tuple[boo
     run_key = f"ai-auto-{today_jakarta().isoformat()}-{run_id}"
     fill = snapshot["price"] * (1 + float(paper.slippage_rate))
     trade = PaperTrade(
-        symbol=symbol, entry_date=snapshot["date"], entry_timestamp=now,
-        entry_price=fill, quantity=quantity, stop_loss=setup.stop,
-        take_profit=setup.target, score=setup.score,
-        reason=f"TradingAgents={analysis.get('decision')}; {setup.reason}", run_key=run_key,
+        symbol=symbol,
+        entry_date=snapshot["date"],
+        entry_timestamp=now,
+        entry_price=fill,
+        quantity=quantity,
+        stop_loss=setup.stop,
+        take_profit=setup.target,
+        score=setup.score,
+        reason=f"TradingAgents={analysis.get('decision')}; {setup.reason}",
+        run_key=run_key,
     )
     db.add(trade)
-    db.add(PaperAuditEvent(
-        event_type="ai_trade_opened", symbol=symbol,
-        payload={"run_id": run_id, "analysis_id": analysis.get("id"), "entry": fill, "stop": setup.stop, "target": setup.target, "rr": setup.risk_reward},
-    ))
+    db.add(
+        PaperAuditEvent(
+            event_type="ai_trade_opened",
+            symbol=symbol,
+            payload={
+                "run_id": run_id,
+                "analysis_id": analysis.get("id"),
+                "entry": fill,
+                "stop": setup.stop,
+                "target": setup.target,
+                "rr": setup.risk_reward,
+            },
+        )
+    )
     db.commit()
     return True, "OPENED"
 
@@ -134,9 +197,25 @@ def execute_run(run_id: int) -> None:
                     analysis = analyze(symbol, config.quick_model, config.deep_model)
                     opened, reason = _open_paper_trade(db, run_id, symbol, analysis)
                     created += int(opened)
-                    results.append({"symbol": symbol, "analysis_id": analysis.get("id"), "decision": analysis.get("decision"), "action": analysis.get("action"), "trade_opened": opened, "reason": reason})
+                    results.append(
+                        {
+                            "symbol": symbol,
+                            "analysis_id": analysis.get("id"),
+                            "decision": analysis.get("decision"),
+                            "action": analysis.get("action"),
+                            "trade_opened": opened,
+                            "reason": reason,
+                        }
+                    )
                 except Exception as exc:
-                    results.append({"symbol": symbol, "action": "FAILED", "trade_opened": False, "reason": str(exc)[:500]})
+                    results.append(
+                        {
+                            "symbol": symbol,
+                            "action": "FAILED",
+                            "trade_opened": False,
+                            "reason": str(exc)[:500],
+                        }
+                    )
 
             run = db.get(AIAutoTradeRun, run_id)
             run.results = results

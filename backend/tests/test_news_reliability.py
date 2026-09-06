@@ -15,7 +15,7 @@ class NewsReliabilityContractTest(unittest.TestCase):
     def test_errors_are_not_rendered_as_empty_news(self):
         self.assertIn("NEWS FEED GAGAL DIMUAT", self.content)
         self.assertIn("COBA LAGI", self.content)
-        self.assertIn("error ? <NewsError", self.page)
+        self.assertIn("<NewsError message={error} onRetry={onRetry} />", self.page)
 
     def test_tab_shows_relevant_success_or_failure_status(self):
         self.assertIn('tab === "stock"', self.page)

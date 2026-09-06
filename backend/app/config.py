@@ -17,31 +17,68 @@ class Settings:
             "DATABASE_URL",
             "postgresql+psycopg2://stocks_app:stocks_app@127.0.0.1:5432/stocks",
         )
-        self.nine_router_url: str = os.environ.get("NINE_ROUTER_URL", "http://127.0.0.1:20128/v1")
+        self.nine_router_url: str = os.environ.get(
+            "NINE_ROUTER_URL", "http://127.0.0.1:20128/v1"
+        )
         self.nine_router_api_key: str = os.environ.get("NINE_ROUTER_API_KEY", "")
         self.ollama_url: str = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
         self.default_ai_model: str = os.environ.get("DEFAULT_AI_MODEL", "qwen3.5:2b")
-        self.market_poll_interval: int = int(os.environ.get("MARKET_POLL_INTERVAL", "30"))
-        self.allow_ai_fallback: bool = os.environ.get("ALLOW_AI_FALLBACK", "false").lower() in ("1", "true", "yes")
-        self.ai_rate_limit_per_minute: int = int(os.environ.get("AI_RATE_LIMIT_PER_MINUTE", "20"))
+        self.market_poll_interval: int = int(
+            os.environ.get("MARKET_POLL_INTERVAL", "30")
+        )
+        self.allow_ai_fallback: bool = os.environ.get(
+            "ALLOW_AI_FALLBACK", "false"
+        ).lower() in ("1", "true", "yes")
+        self.ai_rate_limit_per_minute: int = int(
+            os.environ.get("AI_RATE_LIMIT_PER_MINUTE", "20")
+        )
         self.max_chat_length: int = int(os.environ.get("MAX_CHAT_LENGTH", "4000"))
         self.max_context_symbols: int = int(os.environ.get("MAX_CONTEXT_SYMBOLS", "8"))
-        self.paper_candidates_limit: int = int(os.environ.get("PAPER_CANDIDATES_LIMIT", "280"))
-        self.paper_candidates_cache_seconds: float = float(os.environ.get("PAPER_CANDIDATES_CACHE_SECONDS", "15"))
-        self.paper_max_snapshot_age_seconds: int = int(os.environ.get("PAPER_MAX_SNAPSHOT_AGE_SECONDS", "900"))
+        self.paper_candidates_limit: int = int(
+            os.environ.get("PAPER_CANDIDATES_LIMIT", "280")
+        )
+        self.paper_candidates_cache_seconds: float = float(
+            os.environ.get("PAPER_CANDIDATES_CACHE_SECONDS", "15")
+        )
+        self.paper_max_snapshot_age_seconds: int = int(
+            os.environ.get("PAPER_MAX_SNAPSHOT_AGE_SECONDS", "900")
+        )
         self.paper_universe: tuple[str, ...] = tuple(
-            symbol.strip().upper() for symbol in os.environ.get("PAPER_UNIVERSE", "").split(",") if symbol.strip()
+            symbol.strip().upper()
+            for symbol in os.environ.get("PAPER_UNIVERSE", "").split(",")
+            if symbol.strip()
         )
         self.timezone: str = os.environ.get("TZ", "Asia/Jakarta")
-        self.ai_trading_enabled = os.environ.get("AI_TRADING_ENABLED", "false").lower() in ("1", "true", "yes")
-        self.ai_trading_quick_model = os.environ.get("TRADINGAGENTS_QUICK_THINK_LLM", "cx/gpt-5.4-mini")
-        self.ai_trading_deep_model = os.environ.get("TRADINGAGENTS_DEEP_THINK_LLM", "cx/gpt-5.6-sol")
-        self.log_dir: Path = Path(os.environ.get("LOG_DIR", "/opt/stocks-dashboard/logs"))
+        self.ai_trading_enabled = os.environ.get(
+            "AI_TRADING_ENABLED", "false"
+        ).lower() in ("1", "true", "yes")
+        self.ai_trading_quick_model = os.environ.get(
+            "TRADINGAGENTS_QUICK_THINK_LLM", "cx/gpt-5.4-mini"
+        )
+        self.ai_trading_deep_model = os.environ.get(
+            "TRADINGAGENTS_DEEP_THINK_LLM", "cx/gpt-5.6-sol"
+        )
+        self.log_dir: Path = Path(
+            os.environ.get("LOG_DIR", "/opt/stocks-dashboard/logs")
+        )
         self.admin_api_token = os.environ.get("ADMIN_API_TOKEN", "")
-        self.cors_allowed_origins = [item.strip() for item in os.environ.get("CORS_ALLOWED_ORIGINS", "https://stocks.mqdd.my.id,http://localhost:3100,http://127.0.0.1:3100").split(",") if item.strip()]
-        self.admin_cookie_secure = os.environ.get("ADMIN_COOKIE_SECURE", "true").lower() in ("1", "true", "yes")
-        self.enable_fred_enrichment = os.environ.get("ENABLE_FRED_ENRICHMENT", "false").lower() in ("1", "true", "yes")
-        self.enable_polymarket_enrichment = os.environ.get("ENABLE_POLYMARKET_ENRICHMENT", "false").lower() in ("1", "true", "yes")
+        self.cors_allowed_origins = [
+            item.strip()
+            for item in os.environ.get(
+                "CORS_ALLOWED_ORIGINS",
+                "https://stocks.mqdd.my.id,http://localhost:3100,http://127.0.0.1:3100",
+            ).split(",")
+            if item.strip()
+        ]
+        self.admin_cookie_secure = os.environ.get(
+            "ADMIN_COOKIE_SECURE", "true"
+        ).lower() in ("1", "true", "yes")
+        self.enable_fred_enrichment = os.environ.get(
+            "ENABLE_FRED_ENRICHMENT", "false"
+        ).lower() in ("1", "true", "yes")
+        self.enable_polymarket_enrichment = os.environ.get(
+            "ENABLE_POLYMARKET_ENRICHMENT", "false"
+        ).lower() in ("1", "true", "yes")
 
 
 @lru_cache

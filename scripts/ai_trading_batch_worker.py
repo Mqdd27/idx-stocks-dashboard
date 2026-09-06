@@ -11,6 +11,11 @@ from app.db import SessionLocal
 
 worker_id = f"{socket.gethostname()}:{os.getpid()}"
 with SessionLocal() as db:
-    batch = db.execute(select(AITradingBatch).where(AITradingBatch.status.in_(["QUEUED", "RUNNING"])).order_by(AITradingBatch.id).limit(1)).scalar_one_or_none()
+    batch = db.execute(
+        select(AITradingBatch)
+        .where(AITradingBatch.status.in_(["QUEUED", "RUNNING"]))
+        .order_by(AITradingBatch.id)
+        .limit(1)
+    ).scalar_one_or_none()
 if batch:
     print(run_one_item(batch.id, worker_id), flush=True)

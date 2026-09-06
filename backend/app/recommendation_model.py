@@ -4,16 +4,21 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 from .db import Base
 
+
 class TradeRecommendation(Base):
     __tablename__ = "trade_recommendations"
-    __table_args__ = (UniqueConstraint("trading_date", "symbol", "method", "strategy", "cycle"),)
+    __table_args__ = (
+        UniqueConstraint("trading_date", "symbol", "method", "strategy", "cycle"),
+    )
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     trading_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
     symbol: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
     method: Mapped[str] = mapped_column(String(32), nullable=False)
     strategy: Mapped[str] = mapped_column(String(16), nullable=False)
     cycle: Mapped[str] = mapped_column(String(32), nullable=False, default="daily")
-    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    generated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
     data_timestamp: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     market_status: Mapped[str] = mapped_column(String(32), nullable=False)
     action: Mapped[str] = mapped_column(String(16), nullable=False)

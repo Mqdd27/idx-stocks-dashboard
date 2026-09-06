@@ -19,8 +19,18 @@ def create_batch(batch_size=5):
         batch = AITradingBatch(status="QUEUED", batch_size=size)
         db.add(batch)
         db.flush()
-        symbols = db.execute(select(Company.symbol).where(Company.symbol != "IHSG").order_by(Company.symbol)).scalars().all()
-        db.add_all([AITradingBatchItem(batch_id=batch.id, symbol=symbol) for symbol in symbols])
+        symbols = (
+            db.execute(
+                select(Company.symbol)
+                .where(Company.symbol != "IHSG")
+                .order_by(Company.symbol)
+            )
+            .scalars()
+            .all()
+        )
+        db.add_all(
+            [AITradingBatchItem(batch_id=batch.id, symbol=symbol) for symbol in symbols]
+        )
         batch.total = len(symbols)
         db.commit()
         return batch.id
@@ -28,7 +38,19 @@ def create_batch(batch_size=5):
 
 def recover_stale(db, batch_id, now):
     stale_before = now - timedelta(seconds=STALE_SECONDS)
-    rows = db.execute(select(AITradingBatchItem).where(AITradingBatchItem.batch_id == batch_id, AITradingBatchItem.status == "RUNNING", AITradingBatchItem.heartbeat_at < stale_before).with_for_update(skip_locked=True)).scalars().all()
+    rows = (
+        db.execute(
+            select(AITradingBatchItem)
+            .where(
+                AITradingBatchItem.batch_id == batch_id,
+                AITradingBatchItem.status == "RUNNING",
+                AITradingBatchItem.heartbeat_at < stale_before,
+            )
+            .with_for_update(skip_locked=True)
+        )
+        .scalars()
+        .all()
+    )
     for item in rows:
         if item.attempt_count >= MAX_ATTEMPTS:
             item.status = "FAILED"
@@ -43,9 +65,20 @@ def recover_stale(db, batch_id, now):
     return len(rows)
 
 
-
 def retry_failed(db, batch_id):
-    rows = db.execute(select(AITradingBatchItem).where(AITradingBatchItem.batch_id == batch_id, AITradingBatchItem.status == "FAILED", AITradingBatchItem.attempt_count < MAX_ATTEMPTS).with_for_update(skip_locked=True)).scalars().all()
+    rows = (
+        db.execute(
+            select(AITradingBatchItem)
+            .where(
+                AITradingBatchItem.batch_id == batch_id,
+                AITradingBatchItem.status == "FAILED",
+                AITradingBatchItem.attempt_count < MAX_ATTEMPTS,
+            )
+            .with_for_update(skip_locked=True)
+        )
+        .scalars()
+        .all()
+    )
     for item in rows:
         item.status = "QUEUED"
         item.error_message = "RETRY_REQUESTED"
@@ -54,14 +87,29 @@ def retry_failed(db, batch_id):
         item.heartbeat_at = None
     return len(rows)
 
+
 def claim_next_item(batch_id, worker_id):
     now = datetime.now(timezone.utc)
     with SessionLocal() as db:
-        batch = db.execute(select(AITradingBatch).where(AITradingBatch.id == batch_id).with_for_update()).scalar_one_or_none()
+        batch = db.execute(
+            select(AITradingBatch)
+            .where(AITradingBatch.id == batch_id)
+            .with_for_update()
+        ).scalar_one_or_none()
         if not batch or batch.status == "COMPLETED":
             return None
         recover_stale(db, batch_id, now)
-        item = db.execute(select(AITradingBatchItem).where(AITradingBatchItem.batch_id == batch_id, AITradingBatchItem.status == "QUEUED", AITradingBatchItem.attempt_count < MAX_ATTEMPTS).order_by(AITradingBatchItem.id).with_for_update(skip_locked=True).limit(1)).scalar_one_or_none()
+        item = db.execute(
+            select(AITradingBatchItem)
+            .where(
+                AITradingBatchItem.batch_id == batch_id,
+                AITradingBatchItem.status == "QUEUED",
+                AITradingBatchItem.attempt_count < MAX_ATTEMPTS,
+            )
+            .order_by(AITradingBatchItem.id)
+            .with_for_update(skip_locked=True)
+            .limit(1)
+        ).scalar_one_or_none()
         if not item:
             _refresh_batch(db, batch, now)
             db.commit()
@@ -80,7 +128,15 @@ def claim_next_item(batch_id, worker_id):
 def complete_item(item_id, worker_id, result=None, error=None):
     now = datetime.now(timezone.utc)
     with SessionLocal() as db:
-        item = db.execute(select(AITradingBatchItem).where(AITradingBatchItem.id == item_id, AITradingBatchItem.claimed_by == worker_id, AITradingBatchItem.status == "RUNNING").with_for_update()).scalar_one_or_none()
+        item = db.execute(
+            select(AITradingBatchItem)
+            .where(
+                AITradingBatchItem.id == item_id,
+                AITradingBatchItem.claimed_by == worker_id,
+                AITradingBatchItem.status == "RUNNING",
+            )
+            .with_for_update()
+        ).scalar_one_or_none()
         if not item:
             return False
         item.finished_at = now
@@ -96,7 +152,11 @@ def complete_item(item_id, worker_id, result=None, error=None):
             item.analysis_id = result.get("id") if result else None
             item.result = result
         db.flush()
-        batch = db.execute(select(AITradingBatch).where(AITradingBatch.id == item.batch_id).with_for_update()).scalar_one()
+        batch = db.execute(
+            select(AITradingBatch)
+            .where(AITradingBatch.id == item.batch_id)
+            .with_for_update()
+        ).scalar_one()
         _refresh_batch(db, batch, now)
         db.commit()
         return True
@@ -104,10 +164,18 @@ def complete_item(item_id, worker_id, result=None, error=None):
 
 def _refresh_batch(db, batch, now):
     db.flush()
-    counts = dict(db.execute(select(AITradingBatchItem.status, func.count()).where(AITradingBatchItem.batch_id == batch.id).group_by(AITradingBatchItem.status)).all())
+    counts = dict(
+        db.execute(
+            select(AITradingBatchItem.status, func.count())
+            .where(AITradingBatchItem.batch_id == batch.id)
+            .group_by(AITradingBatchItem.status)
+        ).all()
+    )
     batch.completed = counts.get("COMPLETED", 0)
     batch.failed = counts.get("FAILED", 0)
-    batch.status = "COMPLETED" if batch.completed + batch.failed >= batch.total else "QUEUED"
+    batch.status = (
+        "COMPLETED" if batch.completed + batch.failed >= batch.total else "QUEUED"
+    )
     batch.updated_at = now
 
 
@@ -130,4 +198,12 @@ def batch_snapshot(batch_id):
         batch = db.get(AITradingBatch, batch_id)
         if not batch:
             return None
-        return {"id": batch.id, "status": batch.status, "batch_size": batch.batch_size, "total": batch.total, "completed": batch.completed, "failed": batch.failed, "remaining": max(0, batch.total - batch.completed - batch.failed)}
+        return {
+            "id": batch.id,
+            "status": batch.status,
+            "batch_size": batch.batch_size,
+            "total": batch.total,
+            "completed": batch.completed,
+            "failed": batch.failed,
+            "remaining": max(0, batch.total - batch.completed - batch.failed),
+        }

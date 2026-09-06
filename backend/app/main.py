@@ -1,4 +1,5 @@
 """Stocks Dashboard - FastAPI backend."""
+
 import asyncio
 import json
 import time
@@ -14,16 +15,32 @@ from sqlalchemy.orm import Session, aliased
 from . import analytics, security
 from .operations_service import operations_health
 from . import models as db_models
-from .ai_provider import AIError, _model_kind, complete, discover_models, get_queue_status
+from .ai_provider import (
+    AIError,
+    _model_kind,
+    complete,
+    discover_models,
+    get_queue_status,
+)
 from .config import get_settings
 from .db import get_db
 from .rate_limit import rate_limit
 from .security import admin_token_valid, request_admin_token
 from .market_calendar import get_market_status, today_jakarta
-from .paper_trading import check_exit, decide, setup_confidence, size_position, trade_metrics
+from .paper_trading import (
+    check_exit,
+    decide,
+    setup_confidence,
+    size_position,
+    trade_metrics,
+)
 from .ai_trading_routes import router as ai_trading_router
 from .ai_auto_trade_routes import router as ai_auto_trade_router
-from .recommendation_routes import router as recommendation_router, screener_router, trade_ideas_router
+from .recommendation_routes import (
+    router as recommendation_router,
+    screener_router,
+    trade_ideas_router,
+)
 from .watchlist_routes import router as watchlist_router
 from .batch_routes import router as batch_router
 
@@ -32,17 +49,27 @@ _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
 
 app = FastAPI(title="Stocks Dashboard API", version="1.0.0")
 
+
 @app.middleware("http")
 async def protect_mutations(request: Request, call_next):
-    if request.method in ("POST", "PUT", "PATCH", "DELETE") and request.url.path.startswith("/api/") and request.url.path not in ("/api/admin/login",):
-        if not admin_token_valid(request_admin_token(request), settings.admin_api_token):
+    if (
+        request.method in ("POST", "PUT", "PATCH", "DELETE")
+        and request.url.path.startswith("/api/")
+        and request.url.path not in ("/api/admin/login",)
+    ):
+        if not admin_token_valid(
+            request_admin_token(request), settings.admin_api_token
+        ):
             return JSONResponse({"detail": "Authentication required"}, status_code=401)
     return await call_next(request)
+
 
 @app.post("/api/admin/login")
 async def admin_login(request: Request):
     if not settings.admin_api_token:
-        return JSONResponse({"detail": "Admin authentication is not configured"}, status_code=503)
+        return JSONResponse(
+            {"detail": "Admin authentication is not configured"}, status_code=503
+        )
     try:
         body = await request.json()
     except Exception:
@@ -50,8 +77,16 @@ async def admin_login(request: Request):
     if not admin_token_valid(body.get("token"), settings.admin_api_token):
         return JSONResponse({"detail": "Invalid credentials"}, status_code=401)
     response = JSONResponse({"authenticated": True})
-    response.set_cookie("stx_admin", body["token"], httponly=True, secure=settings.admin_cookie_secure, samesite="strict", max_age=28800)
+    response.set_cookie(
+        "stx_admin",
+        body["token"],
+        httponly=True,
+        secure=settings.admin_cookie_secure,
+        samesite="strict",
+        max_age=28800,
+    )
     return response
+
 
 @app.post("/api/admin/logout")
 def admin_logout():
@@ -59,9 +94,17 @@ def admin_logout():
     response.delete_cookie("stx_admin")
     return response
 
+
 @app.get("/api/admin/status")
 def admin_status(request: Request):
-    return {"authenticated": admin_token_valid(request_admin_token(request), settings.admin_api_token), "configured": bool(settings.admin_api_token)}
+    return {
+        "authenticated": admin_token_valid(
+            request_admin_token(request), settings.admin_api_token
+        ),
+        "configured": bool(settings.admin_api_token),
+    }
+
+
 app.include_router(ai_trading_router)
 app.include_router(ai_auto_trade_router)
 app.include_router(recommendation_router)
@@ -122,7 +165,11 @@ def _today_start_utc() -> datetime:
     from zoneinfo import ZoneInfo
 
     wib = datetime.now(timezone.utc).astimezone(ZoneInfo(settings.timezone))
-    return datetime.combine(wib.date(), datetime.min.time()).replace(tzinfo=ZoneInfo(settings.timezone)).astimezone(timezone.utc)
+    return (
+        datetime.combine(wib.date(), datetime.min.time())
+        .replace(tzinfo=ZoneInfo(settings.timezone))
+        .astimezone(timezone.utc)
+    )
 
 
 def _latest_price(db: Session, company_id: int) -> Optional[dict]:
@@ -142,14 +189,21 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
         .limit(1)
     ).scalar_one_or_none()
 
-    def _change(close: float, previous_close: float | None) -> tuple[Optional[float], Optional[float]]:
+    def _change(
+        close: float, previous_close: float | None
+    ) -> tuple[Optional[float], Optional[float]]:
         change = (close - previous_close) if previous_close else None
         change_pct = (change / previous_close * 100) if previous_close else None
-        return (round(change, 2) if change is not None else None,
-                round(change_pct, 2) if change_pct is not None else None)
+        return (
+            round(change, 2) if change is not None else None,
+            round(change_pct, 2) if change_pct is not None else None,
+        )
 
     if intraday:
-        change, change_pct = _change(float(intraday.price), float(prev.close) if prev and prev.close is not None else None)
+        change, change_pct = _change(
+            float(intraday.price),
+            float(prev.close) if prev and prev.close is not None else None,
+        )
         fresh = (datetime.now(timezone.utc) - intraday.timestamp).total_seconds() <= 900
         return {
             "date": intraday.timestamp.isoformat(),
@@ -157,26 +211,40 @@ def _latest_price(db: Session, company_id: int) -> Optional[dict]:
             "high": float(intraday.high) if intraday.high is not None else None,
             "low": float(intraday.low) if intraday.low is not None else None,
             "close": float(intraday.price) if intraday.price is not None else None,
-            "previous_close": float(prev.close) if prev and prev.close is not None else None,
+            "previous_close": (
+                float(prev.close) if prev and prev.close is not None else None
+            ),
             "volume": intraday.volume,
             "change": change,
             "change_pct": change_pct,
-            "live": fresh, "is_live": fresh, "last_updated": intraday.timestamp.isoformat(), "market_status": get_market_status().get("status"), "is_stale": not fresh,
+            "live": fresh,
+            "is_live": fresh,
+            "last_updated": intraday.timestamp.isoformat(),
+            "market_status": get_market_status().get("status"),
+            "is_stale": not fresh,
         }
     if not prev:
         return None
-    change, change_pct = _change(float(prev.close), float(prev.previous_close) if prev.previous_close else None)
+    change, change_pct = _change(
+        float(prev.close), float(prev.previous_close) if prev.previous_close else None
+    )
     return {
         "date": str(prev.date),
         "open": float(prev.open) if prev.open is not None else None,
         "high": float(prev.high) if prev.high is not None else None,
         "low": float(prev.low) if prev.low is not None else None,
         "close": float(prev.close) if prev.close is not None else None,
-        "previous_close": float(prev.previous_close) if prev.previous_close is not None else None,
+        "previous_close": (
+            float(prev.previous_close) if prev.previous_close is not None else None
+        ),
         "volume": prev.volume,
         "change": change,
         "change_pct": change_pct,
-        "live": False, "is_live": False, "last_updated": prev.date.isoformat(), "market_status": get_market_status().get("status"), "is_stale": True,
+        "live": False,
+        "is_live": False,
+        "last_updated": prev.date.isoformat(),
+        "market_status": get_market_status().get("status"),
+        "is_stale": True,
     }
 
 
@@ -199,11 +267,21 @@ def _company_ratios(db: Session, company_id: int) -> Optional[dict]:
         "roa": float(row.roa) if row.roa is not None else None,
         "der": float(row.der) if row.der is not None else None,
         "npm": float(row.npm) if row.npm is not None else None,
-        "gross_margin": float(row.gross_margin) if row.gross_margin is not None else None,
-        "operating_margin": float(row.operating_margin) if row.operating_margin is not None else None,
-        "dividend_yield": float(row.dividend_yield) if row.dividend_yield is not None else None,
-        "revenue_growth": float(row.revenue_growth) if row.revenue_growth is not None else None,
-        "net_income_growth": float(row.net_income_growth) if row.net_income_growth is not None else None,
+        "gross_margin": (
+            float(row.gross_margin) if row.gross_margin is not None else None
+        ),
+        "operating_margin": (
+            float(row.operating_margin) if row.operating_margin is not None else None
+        ),
+        "dividend_yield": (
+            float(row.dividend_yield) if row.dividend_yield is not None else None
+        ),
+        "revenue_growth": (
+            float(row.revenue_growth) if row.revenue_growth is not None else None
+        ),
+        "net_income_growth": (
+            float(row.net_income_growth) if row.net_income_growth is not None else None
+        ),
     }
 
 
@@ -237,7 +315,10 @@ def list_stocks(
     query = select(db_models.Company).order_by(db_models.Company.symbol)
     if q and q.strip():
         term = f"%{q.strip()}%"
-        query = query.where(db_models.Company.symbol.ilike(term) | db_models.Company.company_name.ilike(term))
+        query = query.where(
+            db_models.Company.symbol.ilike(term)
+            | db_models.Company.company_name.ilike(term)
+        )
     companies = db.execute(query.limit(limit)).scalars().all()
     out = []
     for c in companies:
@@ -280,13 +361,29 @@ def stock_prices(
     db: Session = Depends(get_db),
 ):
     company = _get_company(db, symbol)
-    days = {"1d": 1, "1w": 7, "1m": 31, "3m": 92, "6m": 184, "1y": 366, "3y": 1100, "5y": 1830}[range]
+    days = {
+        "1d": 1,
+        "1w": 7,
+        "1m": 31,
+        "3m": 92,
+        "6m": 184,
+        "1y": 366,
+        "3y": 1100,
+        "5y": 1830,
+    }[range]
     since = today_jakarta() - timedelta(days=days)
-    rows = db.execute(
-        select(db_models.DailyPrice)
-        .where(db_models.DailyPrice.company_id == company.id, db_models.DailyPrice.date >= since)
-        .order_by(db_models.DailyPrice.date)
-    ).scalars().all()
+    rows = (
+        db.execute(
+            select(db_models.DailyPrice)
+            .where(
+                db_models.DailyPrice.company_id == company.id,
+                db_models.DailyPrice.date >= since,
+            )
+            .order_by(db_models.DailyPrice.date)
+        )
+        .scalars()
+        .all()
+    )
     data = [
         {
             "time": r.date.isoformat(),
@@ -298,7 +395,12 @@ def stock_prices(
         }
         for r in rows
     ]
-    return {"symbol": company.symbol, "range": range, "interval": interval, "data": data}
+    return {
+        "symbol": company.symbol,
+        "range": range,
+        "interval": interval,
+        "data": data,
+    }
 
 
 @app.get("/api/stocks/{symbol}/financials")
@@ -308,14 +410,18 @@ def stock_financials(
     db: Session = Depends(get_db),
 ):
     company = _get_company(db, symbol)
-    rows = db.execute(
-        select(db_models.FinancialStatement)
-        .where(
-            db_models.FinancialStatement.company_id == company.id,
-            db_models.FinancialStatement.period_type == period_type,
+    rows = (
+        db.execute(
+            select(db_models.FinancialStatement)
+            .where(
+                db_models.FinancialStatement.company_id == company.id,
+                db_models.FinancialStatement.period_type == period_type,
+            )
+            .order_by(desc(db_models.FinancialStatement.period))
         )
-        .order_by(desc(db_models.FinancialStatement.period))
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return {
         "symbol": company.symbol,
         "period_type": period_type,
@@ -323,16 +429,42 @@ def stock_financials(
             {
                 "period": str(r.period),
                 "revenue": float(r.revenue) if r.revenue is not None else None,
-                "gross_profit": float(r.gross_profit) if r.gross_profit is not None else None,
-                "operating_profit": float(r.operating_profit) if r.operating_profit is not None else None,
+                "gross_profit": (
+                    float(r.gross_profit) if r.gross_profit is not None else None
+                ),
+                "operating_profit": (
+                    float(r.operating_profit)
+                    if r.operating_profit is not None
+                    else None
+                ),
                 "net_income": float(r.net_income) if r.net_income is not None else None,
-                "total_assets": float(r.total_assets) if r.total_assets is not None else None,
-                "total_liabilities": float(r.total_liabilities) if r.total_liabilities is not None else None,
-                "total_equity": float(r.total_equity) if r.total_equity is not None else None,
+                "total_assets": (
+                    float(r.total_assets) if r.total_assets is not None else None
+                ),
+                "total_liabilities": (
+                    float(r.total_liabilities)
+                    if r.total_liabilities is not None
+                    else None
+                ),
+                "total_equity": (
+                    float(r.total_equity) if r.total_equity is not None else None
+                ),
                 "cash": float(r.cash) if r.cash is not None else None,
-                "operating_cashflow": float(r.operating_cashflow) if r.operating_cashflow is not None else None,
-                "investing_cashflow": float(r.investing_cashflow) if r.investing_cashflow is not None else None,
-                "financing_cashflow": float(r.financing_cashflow) if r.financing_cashflow is not None else None,
+                "operating_cashflow": (
+                    float(r.operating_cashflow)
+                    if r.operating_cashflow is not None
+                    else None
+                ),
+                "investing_cashflow": (
+                    float(r.investing_cashflow)
+                    if r.investing_cashflow is not None
+                    else None
+                ),
+                "financing_cashflow": (
+                    float(r.financing_cashflow)
+                    if r.financing_cashflow is not None
+                    else None
+                ),
                 "capex": float(r.capex) if r.capex is not None else None,
             }
             for r in rows
@@ -343,11 +475,15 @@ def stock_financials(
 @app.get("/api/stocks/{symbol}/ratios")
 def stock_ratios(symbol: str, db: Session = Depends(get_db)):
     company = _get_company(db, symbol)
-    rows = db.execute(
-        select(db_models.FinancialRatio)
-        .where(db_models.FinancialRatio.company_id == company.id)
-        .order_by(desc(db_models.FinancialRatio.period))
-    ).scalars().all()
+    rows = (
+        db.execute(
+            select(db_models.FinancialRatio)
+            .where(db_models.FinancialRatio.company_id == company.id)
+            .order_by(desc(db_models.FinancialRatio.period))
+        )
+        .scalars()
+        .all()
+    )
     return {
         "symbol": company.symbol,
         "data": [
@@ -361,11 +497,25 @@ def stock_ratios(symbol: str, db: Session = Depends(get_db)):
                 "roa": float(r.roa) if r.roa is not None else None,
                 "der": float(r.der) if r.der is not None else None,
                 "npm": float(r.npm) if r.npm is not None else None,
-                "gross_margin": float(r.gross_margin) if r.gross_margin is not None else None,
-                "operating_margin": float(r.operating_margin) if r.operating_margin is not None else None,
-                "dividend_yield": float(r.dividend_yield) if r.dividend_yield is not None else None,
-                "revenue_growth": float(r.revenue_growth) if r.revenue_growth is not None else None,
-                "net_income_growth": float(r.net_income_growth) if r.net_income_growth is not None else None,
+                "gross_margin": (
+                    float(r.gross_margin) if r.gross_margin is not None else None
+                ),
+                "operating_margin": (
+                    float(r.operating_margin)
+                    if r.operating_margin is not None
+                    else None
+                ),
+                "dividend_yield": (
+                    float(r.dividend_yield) if r.dividend_yield is not None else None
+                ),
+                "revenue_growth": (
+                    float(r.revenue_growth) if r.revenue_growth is not None else None
+                ),
+                "net_income_growth": (
+                    float(r.net_income_growth)
+                    if r.net_income_growth is not None
+                    else None
+                ),
             }
             for r in rows
         ],
@@ -375,11 +525,15 @@ def stock_ratios(symbol: str, db: Session = Depends(get_db)):
 @app.get("/api/stocks/{symbol}/technicals")
 def stock_technicals(symbol: str, db: Session = Depends(get_db)):
     company = _get_company(db, symbol)
-    rows = db.execute(
-        select(db_models.DailyPrice)
-        .where(db_models.DailyPrice.company_id == company.id)
-        .order_by(db_models.DailyPrice.date)
-    ).scalars().all()
+    rows = (
+        db.execute(
+            select(db_models.DailyPrice)
+            .where(db_models.DailyPrice.company_id == company.id)
+            .order_by(db_models.DailyPrice.date)
+        )
+        .scalars()
+        .all()
+    )
     if not rows:
         return {"symbol": company.symbol, "technicals": None}
     data = [
@@ -393,17 +547,43 @@ def stock_technicals(symbol: str, db: Session = Depends(get_db)):
         }
         for r in rows
     ]
-    return {"symbol": company.symbol, "technicals": analytics.technical_indicators(data)}
-
+    return {
+        "symbol": company.symbol,
+        "technicals": analytics.technical_indicators(data),
+    }
 
 
 def _news_sentiment(title: str, summary: Optional[str]) -> str:
     text = f"{title} {summary or ''}".lower()
-    positive = ("naik", "menguat", "melonjak", "tumbuh", "laba", "untung", "beli", "buy", "upgrade", "positif")
-    negative = ("turun", "melemah", "anjlok", "rugi", "jual", "sell", "downgrade", "suspensi", "negatif")
-    if any(word in text for word in positive): return "positive"
-    if any(word in text for word in negative): return "negative"
+    positive = (
+        "naik",
+        "menguat",
+        "melonjak",
+        "tumbuh",
+        "laba",
+        "untung",
+        "beli",
+        "buy",
+        "upgrade",
+        "positif",
+    )
+    negative = (
+        "turun",
+        "melemah",
+        "anjlok",
+        "rugi",
+        "jual",
+        "sell",
+        "downgrade",
+        "suspensi",
+        "negatif",
+    )
+    if any(word in text for word in positive):
+        return "positive"
+    if any(word in text for word in negative):
+        return "negative"
     return "neutral"
+
 
 @app.get("/api/news/feed")
 def news_feed(
@@ -412,38 +592,73 @@ def news_feed(
     days: int = Query(7, ge=1, le=365),
     db: Session = Depends(get_db),
 ):
-    watchlist = db.execute(select(db_models.WatchlistItem.symbol).order_by(db_models.WatchlistItem.sort_order, db_models.WatchlistItem.symbol)).scalars().all()
-    symbols = list(dict.fromkeys([*watchlist, *(row["symbol"] for row in _market_rows(db, 10, "pct_desc"))]))[:20]
-    if not symbols: return {"symbols": [], "sources": [], "data": []}
+    watchlist = (
+        db.execute(
+            select(db_models.WatchlistItem.symbol).order_by(
+                db_models.WatchlistItem.sort_order, db_models.WatchlistItem.symbol
+            )
+        )
+        .scalars()
+        .all()
+    )
+    symbols = list(
+        dict.fromkeys(
+            [*watchlist, *(row["symbol"] for row in _market_rows(db, 10, "pct_desc"))]
+        )
+    )[:20]
+    if not symbols:
+        return {"symbols": [], "sources": [], "data": []}
     since = datetime.now(timezone.utc) - timedelta(days=days)
     rows = db.execute(
         select(db_models.News, db_models.Company.symbol)
         .join(db_models.Company, db_models.Company.id == db_models.News.company_id)
-        .where(db_models.Company.symbol.in_(symbols), db_models.News.published_at >= since)
+        .where(
+            db_models.Company.symbol.in_(symbols), db_models.News.published_at >= since
+        )
         .order_by(desc(db_models.News.published_at))
         .limit(200)
     ).all()
     data, seen = [], set()
     for news, symbol in rows:
         key = (news.url or "").strip().lower() or " ".join(news.title.lower().split())
-        if key in seen: continue
+        if key in seen:
+            continue
         seen.add(key)
         tone = _news_sentiment(news.title, news.summary)
-        if sentiment != "all" and tone != sentiment: continue
-        if source and (news.source or "").lower() != source.lower(): continue
-        data.append({"symbol": symbol, "title": news.title, "url": news.url, "source": news.source, "published_at": news.published_at.isoformat() if news.published_at else None, "summary": news.summary, "sentiment": tone})
+        if sentiment != "all" and tone != sentiment:
+            continue
+        if source and (news.source or "").lower() != source.lower():
+            continue
+        data.append(
+            {
+                "symbol": symbol,
+                "title": news.title,
+                "url": news.url,
+                "source": news.source,
+                "published_at": (
+                    news.published_at.isoformat() if news.published_at else None
+                ),
+                "summary": news.summary,
+                "sentiment": tone,
+            }
+        )
     sources = sorted({item["source"] for item in data if item["source"]})
     return {"symbols": symbols, "sources": sources, "data": data}
+
 
 @app.get("/api/stocks/{symbol}/news")
 def stock_news(symbol: str, db: Session = Depends(get_db)):
     company = _get_company(db, symbol)
-    rows = db.execute(
-        select(db_models.News)
-        .where(db_models.News.company_id == company.id)
-        .order_by(desc(db_models.News.published_at))
-        .limit(30)
-    ).scalars().all()
+    rows = (
+        db.execute(
+            select(db_models.News)
+            .where(db_models.News.company_id == company.id)
+            .order_by(desc(db_models.News.published_at))
+            .limit(30)
+        )
+        .scalars()
+        .all()
+    )
     return {
         "symbol": company.symbol,
         "data": [
@@ -461,13 +676,17 @@ def stock_news(symbol: str, db: Session = Depends(get_db)):
 
 def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
     """Latest price rows (intraday-first) for all companies with change computed in bulk."""
-    intra_rows = db.execute(
-        select(db_models.IntradayPrice)
-        .where(
-            db_models.IntradayPrice.timestamp >= _today_start_utc(),
+    intra_rows = (
+        db.execute(
+            select(db_models.IntradayPrice)
+            .where(
+                db_models.IntradayPrice.timestamp >= _today_start_utc(),
+            )
+            .order_by(desc(db_models.IntradayPrice.timestamp))
         )
-        .order_by(desc(db_models.IntradayPrice.timestamp))
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     intra_latest: dict[int, db_models.IntradayPrice] = {}
     intra_vol: dict[int, float] = {}
     for r in intra_rows:
@@ -486,7 +705,11 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
     )
     latest = (
         select(db_models.DailyPrice)
-        .join(sub, (db_models.DailyPrice.company_id == sub.c.company_id) & (db_models.DailyPrice.date == sub.c.max_date))
+        .join(
+            sub,
+            (db_models.DailyPrice.company_id == sub.c.company_id)
+            & (db_models.DailyPrice.date == sub.c.max_date),
+        )
         .subquery()
     )
     latest_alias = aliased(db_models.DailyPrice, latest)
@@ -498,7 +721,11 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
     out = []
     for company, lp in rows:
         ir = intra_latest.get(company.id)
-        prev = float(lp.close) if ir and lp.close is not None else (float(lp.previous_close) if lp.previous_close else None)
+        prev = (
+            float(lp.close)
+            if ir and lp.close is not None
+            else (float(lp.previous_close) if lp.previous_close else None)
+        )
         if not prev:
             continue
         if ir:
@@ -539,39 +766,135 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
 def operational_health(db: Session = Depends(get_db)):
     return operations_health(db)
 
+
 @app.get("/api/market/status")
 def market_status():
     return get_market_status()
 
+
 @app.get("/api/market/calendar/status")
 def market_calendar_status(db: Session = Depends(get_db)):
     from .calendar_sync_service import calendar_fresh
-    sync = db.execute(select(db_models.CollectorLog).where(db_models.CollectorLog.collector == "market_calendar", db_models.CollectorLog.message == "CALENDAR_SYNC_OK").order_by(desc(db_models.CollectorLog.created_at)).limit(1)).scalar_one_or_none()
+
+    sync = db.execute(
+        select(db_models.CollectorLog)
+        .where(
+            db_models.CollectorLog.collector == "market_calendar",
+            db_models.CollectorLog.message == "CALENDAR_SYNC_OK",
+        )
+        .order_by(desc(db_models.CollectorLog.created_at))
+        .limit(1)
+    ).scalar_one_or_none()
     today = today_jakarta()
-    upcoming = db.execute(select(db_models.MarketHoliday).where(db_models.MarketHoliday.market == "IDX", db_models.MarketHoliday.date >= today, db_models.MarketHoliday.is_trading_day == False).order_by(db_models.MarketHoliday.date).limit(10)).scalars().all()
+    upcoming = (
+        db.execute(
+            select(db_models.MarketHoliday)
+            .where(
+                db_models.MarketHoliday.market == "IDX",
+                db_models.MarketHoliday.date >= today,
+                db_models.MarketHoliday.is_trading_day == False,
+            )
+            .order_by(db_models.MarketHoliday.date)
+            .limit(10)
+        )
+        .scalars()
+        .all()
+    )
     details = sync.details or {} if sync else {}
-    return {"fresh": calendar_fresh(), "last_sync": sync.created_at if sync else None, "source": details.get("source"), "mode": "IDX" if details.get("source") == "IDX" else "FALLBACK", "upcoming_holidays": [{"date": row.date, "name": row.name, "source": row.source} for row in upcoming]}
+    return {
+        "fresh": calendar_fresh(),
+        "last_sync": sync.created_at if sync else None,
+        "source": details.get("source"),
+        "mode": "IDX" if details.get("source") == "IDX" else "FALLBACK",
+        "upcoming_holidays": [
+            {"date": row.date, "name": row.name, "source": row.source}
+            for row in upcoming
+        ],
+    }
+
 
 @app.get("/api/market/holidays")
 def market_holidays(db: Session = Depends(get_db)):
-    rows = db.execute(select(db_models.MarketHoliday).where(db_models.MarketHoliday.market == "IDX").order_by(db_models.MarketHoliday.date)).scalars().all()
-    return {"data": [{"date": r.date.isoformat(), "name": r.name, "holiday_type": r.holiday_type, "source": r.source, "source_url": r.source_url, "is_trading_day": r.is_trading_day, "notes": r.notes} for r in rows]}
+    rows = (
+        db.execute(
+            select(db_models.MarketHoliday)
+            .where(db_models.MarketHoliday.market == "IDX")
+            .order_by(db_models.MarketHoliday.date)
+        )
+        .scalars()
+        .all()
+    )
+    return {
+        "data": [
+            {
+                "date": r.date.isoformat(),
+                "name": r.name,
+                "holiday_type": r.holiday_type,
+                "source": r.source,
+                "source_url": r.source_url,
+                "is_trading_day": r.is_trading_day,
+                "notes": r.notes,
+            }
+            for r in rows
+        ]
+    }
+
 
 @app.get("/api/market/calendar")
 def market_calendar(start_date: date = Query(...), end_date: date = Query(...)):
-    if end_date < start_date or (end_date - start_date).days > 366: raise HTTPException(400, "Invalid date range")
-    from .market_calendar import get_holiday, is_trading_day
-    out=[]; day=start_date
-    while day <= end_date:
-        h=get_holiday(day); out.append({"date":day.isoformat(),"is_trading_day":is_trading_day(day),"holiday":h.name if h else None,"holiday_type":h.holiday_type if h else None}); day += timedelta(days=1)
-    return {"market":"IDX","timezone":"Asia/Jakarta","data":out}
-
-@app.get("/api/market/events")
-def market_events(start_date: date = Query(...), end_date: date = Query(...), db: Session = Depends(get_db)):
     if end_date < start_date or (end_date - start_date).days > 366:
         raise HTTPException(400, "Invalid date range")
-    rows = db.execute(select(db_models.CorporateAction, db_models.Company.symbol).join(db_models.Company, db_models.Company.id == db_models.CorporateAction.company_id).where(db_models.CorporateAction.date >= start_date, db_models.CorporateAction.date <= end_date).order_by(db_models.CorporateAction.date)).all()
-    return {"data": [{"symbol": symbol, "date": action.date.isoformat(), "action_type": action.action_type, "description": action.description, "source": action.source} for action, symbol in rows]}
+    from .market_calendar import get_holiday, is_trading_day
+
+    out = []
+    day = start_date
+    while day <= end_date:
+        h = get_holiday(day)
+        out.append(
+            {
+                "date": day.isoformat(),
+                "is_trading_day": is_trading_day(day),
+                "holiday": h.name if h else None,
+                "holiday_type": h.holiday_type if h else None,
+            }
+        )
+        day += timedelta(days=1)
+    return {"market": "IDX", "timezone": "Asia/Jakarta", "data": out}
+
+
+@app.get("/api/market/events")
+def market_events(
+    start_date: date = Query(...),
+    end_date: date = Query(...),
+    db: Session = Depends(get_db),
+):
+    if end_date < start_date or (end_date - start_date).days > 366:
+        raise HTTPException(400, "Invalid date range")
+    rows = db.execute(
+        select(db_models.CorporateAction, db_models.Company.symbol)
+        .join(
+            db_models.Company,
+            db_models.Company.id == db_models.CorporateAction.company_id,
+        )
+        .where(
+            db_models.CorporateAction.date >= start_date,
+            db_models.CorporateAction.date <= end_date,
+        )
+        .order_by(db_models.CorporateAction.date)
+    ).all()
+    return {
+        "data": [
+            {
+                "symbol": symbol,
+                "date": action.date.isoformat(),
+                "action_type": action.action_type,
+                "description": action.description,
+                "source": action.source,
+            }
+            for action, symbol in rows
+        ]
+    }
+
 
 @app.get("/api/market/overview")
 def market_overview(db: Session = Depends(get_db)):
@@ -582,7 +905,9 @@ def market_overview(db: Session = Depends(get_db)):
     losers = sorted(rows, key=lambda row: row["change_pct"])[:10]
     today_iso = datetime.now(timezone.utc).astimezone().date().isoformat()
     today_rows = [row for row in rows if row["date"].startswith(today_iso)]
-    active = sorted(today_rows or rows, key=lambda row: row["volume"] or 0, reverse=True)[:10]
+    active = sorted(
+        today_rows or rows, key=lambda row: row["volume"] or 0, reverse=True
+    )[:10]
     total_volume = sum(row["volume"] or 0 for row in rows)
     return {
         "ihsg": {"symbol": "IHSG", "price": ihsg_price},
@@ -621,42 +946,67 @@ def screener(
     above_sma200: Optional[bool] = Query(None),
     db: Session = Depends(get_db),
 ):
-    companies = db.execute(
-        select(db_models.Company).where(db_models.Company.symbol != "IHSG")
-    ).scalars().all()
+    companies = (
+        db.execute(select(db_models.Company).where(db_models.Company.symbol != "IHSG"))
+        .scalars()
+        .all()
+    )
     results = []
     for c in companies:
         price = _latest_price(db, c.id)
         ratios = _company_ratios(db, c.id)
         if not price or not ratios:
             continue
-        if per_max is not None and (ratios.get("per") is None or ratios["per"] > per_max):
+        if per_max is not None and (
+            ratios.get("per") is None or ratios["per"] > per_max
+        ):
             continue
-        if pbv_max is not None and (ratios.get("pbv") is None or ratios["pbv"] > pbv_max):
+        if pbv_max is not None and (
+            ratios.get("pbv") is None or ratios["pbv"] > pbv_max
+        ):
             continue
-        if roe_min is not None and (ratios.get("roe") is None or ratios["roe"] < roe_min):
+        if roe_min is not None and (
+            ratios.get("roe") is None or ratios["roe"] < roe_min
+        ):
             continue
-        if roa_min is not None and (ratios.get("roa") is None or ratios["roa"] < roa_min):
+        if roa_min is not None and (
+            ratios.get("roa") is None or ratios["roa"] < roa_min
+        ):
             continue
-        if der_max is not None and (ratios.get("der") is None or ratios["der"] > der_max):
+        if der_max is not None and (
+            ratios.get("der") is None or ratios["der"] > der_max
+        ):
             continue
         if revenue_growth_min is not None and (
-            ratios.get("revenue_growth") is None or ratios["revenue_growth"] < revenue_growth_min
+            ratios.get("revenue_growth") is None
+            or ratios["revenue_growth"] < revenue_growth_min
         ):
             continue
         if net_income_growth_min is not None and (
-            ratios.get("net_income_growth") is None or ratios["net_income_growth"] < net_income_growth_min
+            ratios.get("net_income_growth") is None
+            or ratios["net_income_growth"] < net_income_growth_min
         ):
             continue
         if dividend_yield_min is not None and (
-            ratios.get("dividend_yield") is None or ratios["dividend_yield"] < dividend_yield_min
+            ratios.get("dividend_yield") is None
+            or ratios["dividend_yield"] < dividend_yield_min
         ):
             continue
-        if volume_min is not None and (price.get("volume") is None or price["volume"] < volume_min):
+        if volume_min is not None and (
+            price.get("volume") is None or price["volume"] < volume_min
+        ):
             continue
-        if price_min is not None and price["close"] is not None and price["close"] < price_min:
+        if (
+            price_min is not None
+            and price["close"] is not None
+            and price["close"] < price_min
+        ):
             continue
-        if price_max is not None and price["close"] is not None and price["close"] > price_max:
+        if (
+            price_max is not None
+            and price["close"] is not None
+            and price["close"] > price_max
+        ):
             continue
         tech = _technicals_fast(db, c.id)
         if rsi_min is not None or rsi_max is not None:
@@ -685,12 +1035,16 @@ def screener(
 
 
 def _technicals_fast(db: Session, company_id: int) -> Optional[dict]:
-    rows = db.execute(
-        select(db_models.DailyPrice)
-        .where(db_models.DailyPrice.company_id == company_id)
-        .order_by(desc(db_models.DailyPrice.date))
-        .limit(250)
-    ).scalars().all()
+    rows = (
+        db.execute(
+            select(db_models.DailyPrice)
+            .where(db_models.DailyPrice.company_id == company_id)
+            .order_by(desc(db_models.DailyPrice.date))
+            .limit(250)
+        )
+        .scalars()
+        .all()
+    )
     rows = list(reversed(rows))
     if len(rows) < 2:
         return None
@@ -712,6 +1066,7 @@ def _technicals_fast(db: Session, company_id: int) -> Optional[dict]:
 # AI endpoints
 # ---------------------------------------------------------------------------
 
+
 @app.get("/api/ai/models")
 async def ai_models():
     return await discover_models()
@@ -727,34 +1082,56 @@ def _build_context(db: Session, symbol: str, for_local: bool = False) -> dict:
     price = _latest_price(db, company.id)
     tech = _technicals_fast(db, company.id)
     stmt_limit = 4 if for_local else 12
-    stmts = db.execute(
-        select(db_models.FinancialStatement)
-        .where(db_models.FinancialStatement.company_id == company.id)
-        .order_by(desc(db_models.FinancialStatement.period))
-        .limit(stmt_limit)
-    ).scalars().all()
+    stmts = (
+        db.execute(
+            select(db_models.FinancialStatement)
+            .where(db_models.FinancialStatement.company_id == company.id)
+            .order_by(desc(db_models.FinancialStatement.period))
+            .limit(stmt_limit)
+        )
+        .scalars()
+        .all()
+    )
     statements = [
         {
             "period": str(s.period),
             "period_type": s.period_type,
             "revenue": float(s.revenue) if s.revenue is not None else None,
-            "gross_profit": float(s.gross_profit) if s.gross_profit is not None else None,
-            "operating_profit": float(s.operating_profit) if s.operating_profit is not None else None,
+            "gross_profit": (
+                float(s.gross_profit) if s.gross_profit is not None else None
+            ),
+            "operating_profit": (
+                float(s.operating_profit) if s.operating_profit is not None else None
+            ),
             "net_income": float(s.net_income) if s.net_income is not None else None,
-            "total_assets": float(s.total_assets) if s.total_assets is not None else None,
-            "total_liabilities": float(s.total_liabilities) if s.total_liabilities is not None else None,
-            "total_equity": float(s.total_equity) if s.total_equity is not None else None,
-            "operating_cashflow": float(s.operating_cashflow) if s.operating_cashflow is not None else None,
+            "total_assets": (
+                float(s.total_assets) if s.total_assets is not None else None
+            ),
+            "total_liabilities": (
+                float(s.total_liabilities) if s.total_liabilities is not None else None
+            ),
+            "total_equity": (
+                float(s.total_equity) if s.total_equity is not None else None
+            ),
+            "operating_cashflow": (
+                float(s.operating_cashflow)
+                if s.operating_cashflow is not None
+                else None
+            ),
             "capex": float(s.capex) if s.capex is not None else None,
         }
         for s in stmts
     ]
-    ratios_rows = db.execute(
-        select(db_models.FinancialRatio)
-        .where(db_models.FinancialRatio.company_id == company.id)
-        .order_by(desc(db_models.FinancialRatio.period))
-        .limit(stmt_limit)
-    ).scalars().all()
+    ratios_rows = (
+        db.execute(
+            select(db_models.FinancialRatio)
+            .where(db_models.FinancialRatio.company_id == company.id)
+            .order_by(desc(db_models.FinancialRatio.period))
+            .limit(stmt_limit)
+        )
+        .scalars()
+        .all()
+    )
     ratios = [
         {
             "period": str(r.period),
@@ -766,20 +1143,34 @@ def _build_context(db: Session, symbol: str, for_local: bool = False) -> dict:
             "roa": float(r.roa) if r.roa is not None else None,
             "der": float(r.der) if r.der is not None else None,
             "npm": float(r.npm) if r.npm is not None else None,
-            "gross_margin": float(r.gross_margin) if r.gross_margin is not None else None,
-            "operating_margin": float(r.operating_margin) if r.operating_margin is not None else None,
-            "dividend_yield": float(r.dividend_yield) if r.dividend_yield is not None else None,
-            "revenue_growth": float(r.revenue_growth) if r.revenue_growth is not None else None,
-            "net_income_growth": float(r.net_income_growth) if r.net_income_growth is not None else None,
+            "gross_margin": (
+                float(r.gross_margin) if r.gross_margin is not None else None
+            ),
+            "operating_margin": (
+                float(r.operating_margin) if r.operating_margin is not None else None
+            ),
+            "dividend_yield": (
+                float(r.dividend_yield) if r.dividend_yield is not None else None
+            ),
+            "revenue_growth": (
+                float(r.revenue_growth) if r.revenue_growth is not None else None
+            ),
+            "net_income_growth": (
+                float(r.net_income_growth) if r.net_income_growth is not None else None
+            ),
         }
         for r in ratios_rows
     ]
-    actions = db.execute(
-        select(db_models.CorporateAction)
-        .where(db_models.CorporateAction.company_id == company.id)
-        .order_by(desc(db_models.CorporateAction.date))
-        .limit(10)
-    ).scalars().all()
+    actions = (
+        db.execute(
+            select(db_models.CorporateAction)
+            .where(db_models.CorporateAction.company_id == company.id)
+            .order_by(desc(db_models.CorporateAction.date))
+            .limit(10)
+        )
+        .scalars()
+        .all()
+    )
     corporate_actions = [
         {
             "date": str(a.date),
@@ -789,12 +1180,16 @@ def _build_context(db: Session, symbol: str, for_local: bool = False) -> dict:
         }
         for a in actions
     ]
-    news_rows = db.execute(
-        select(db_models.News)
-        .where(db_models.News.company_id == company.id)
-        .order_by(desc(db_models.News.published_at))
-        .limit(4 if for_local else 10)
-    ).scalars().all()
+    news_rows = (
+        db.execute(
+            select(db_models.News)
+            .where(db_models.News.company_id == company.id)
+            .order_by(desc(db_models.News.published_at))
+            .limit(4 if for_local else 10)
+        )
+        .scalars()
+        .all()
+    )
     news_items = [
         {
             "title": n.title,
@@ -805,10 +1200,20 @@ def _build_context(db: Session, symbol: str, for_local: bool = False) -> dict:
         for n in news_rows
     ]
     from .market_calendar import get_market_status, today_jakarta, previous_trading_day
+
     market = get_market_status()
-    last_trading_day = previous_trading_day(datetime.fromisoformat(market["date"]).date()) if not market["is_trading_day"] else datetime.fromisoformat(market["date"]).date()
+    last_trading_day = (
+        previous_trading_day(datetime.fromisoformat(market["date"]).date())
+        if not market["is_trading_day"]
+        else datetime.fromisoformat(market["date"]).date()
+    )
     return {
-        "market": {"status": market["status"], "is_trading_day": market["is_trading_day"], "last_trading_day": last_trading_day.isoformat(), "price_is_live": market["is_open"]},
+        "market": {
+            "status": market["status"],
+            "is_trading_day": market["is_trading_day"],
+            "last_trading_day": last_trading_day.isoformat(),
+            "price_is_live": market["is_open"],
+        },
         "company": {
             "symbol": company.symbol,
             "company_name": company.company_name,
@@ -865,6 +1270,7 @@ async def ai_analyze(request: Request, db: Session = Depends(get_db)):
     started = time.monotonic()
     stream = bool(body.get("stream", False))
     if stream:
+
         async def event_stream():
             q: asyncio.Queue = asyncio.Queue()
             accumulated: list[str] = []
@@ -872,7 +1278,12 @@ async def ai_analyze(request: Request, db: Session = Depends(get_db)):
             async def consume() -> None:
                 try:
                     async for chunk in await complete(
-                        messages, model, stream=True, request_type="analyze", symbol=symbol, max_tokens=1000
+                        messages,
+                        model,
+                        stream=True,
+                        request_type="analyze",
+                        symbol=symbol,
+                        max_tokens=1000,
                     ):
                         await q.put(("chunk", chunk))
                     await q.put(("end", None))
@@ -920,7 +1331,9 @@ async def ai_analyze(request: Request, db: Session = Depends(get_db)):
                                     "done": True,
                                     "model": model,
                                     "provider": provider,
-                                    "generated_at": datetime.now().astimezone().isoformat(),
+                                    "generated_at": datetime.now()
+                                    .astimezone()
+                                    .isoformat(),
                                 }
                             )
                             + "\n\n"
@@ -934,8 +1347,14 @@ async def ai_analyze(request: Request, db: Session = Depends(get_db)):
                             + json.dumps(
                                 {
                                     "error": str(exc),
-                                    "provider": exc.provider if isinstance(exc, AIError) else "unknown",
-                                    "model": exc.model if isinstance(exc, AIError) else model,
+                                    "provider": (
+                                        exc.provider
+                                        if isinstance(exc, AIError)
+                                        else "unknown"
+                                    ),
+                                    "model": (
+                                        exc.model if isinstance(exc, AIError) else model
+                                    ),
                                     "fallback_available": True,
                                 }
                             )
@@ -987,7 +1406,10 @@ async def ai_chat(request: Request, db: Session = Depends(get_db)):
     message = security.sanitize_ai_input(str(body.get("message", "")))
     if not message:
         raise HTTPException(400, "Message is required")
-    model = security.sanitize_text(str(body.get("model", "")), 128) or settings.default_ai_model
+    model = (
+        security.sanitize_text(str(body.get("model", "")), 128)
+        or settings.default_ai_model
+    )
     symbol = security.sanitize_text(str(body.get("symbol", "")), 16).upper() or None
     if symbol and not security.valid_symbol(symbol):
         raise HTTPException(400, "Invalid symbol")
@@ -1003,12 +1425,16 @@ async def ai_chat(request: Request, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(conversation)
 
-    history = db.execute(
-        select(db_models.AIMessage)
-        .where(db_models.AIMessage.conversation_id == conversation.id)
-        .order_by(db_models.AIMessage.id)
-        .limit(40)
-    ).scalars().all()
+    history = (
+        db.execute(
+            select(db_models.AIMessage)
+            .where(db_models.AIMessage.conversation_id == conversation.id)
+            .order_by(db_models.AIMessage.id)
+            .limit(40)
+        )
+        .scalars()
+        .all()
+    )
 
     context_text = ""
     if symbol:
@@ -1023,7 +1449,10 @@ async def ai_chat(request: Request, db: Session = Depends(get_db)):
             context_text = f"\n\nSymbol {symbol} has no data available."
 
     messages: list[dict] = [
-        {"role": "system", "content": SYSTEM_PROMPT + "\nAnswer in the language of the user."},
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT + "\nAnswer in the language of the user.",
+        },
     ]
     for h in history:
         messages.append({"role": h.role, "content": h.content})
@@ -1035,22 +1464,35 @@ async def ai_chat(request: Request, db: Session = Depends(get_db)):
         }
     )
 
-    db.add(db_models.AIMessage(conversation_id=conversation.id, role="user", content=message, model=model))
+    db.add(
+        db_models.AIMessage(
+            conversation_id=conversation.id, role="user", content=message, model=model
+        )
+    )
     db.commit()
 
     if stream:
+
         async def event_stream():
             accumulated = ""
             model_changed = False
             try:
                 async for chunk in await complete(
-                    messages, model, stream=True, request_type="chat", symbol=symbol, max_tokens=800
+                    messages,
+                    model,
+                    stream=True,
+                    request_type="chat",
+                    symbol=symbol,
+                    max_tokens=800,
                 ):
                     accumulated += chunk
                     yield f"data: {json.dumps({'delta': chunk})}\n\n"
                 db.add(
                     db_models.AIMessage(
-                        conversation_id=conversation.id, role="assistant", content=accumulated, model=model
+                        conversation_id=conversation.id,
+                        role="assistant",
+                        content=accumulated,
+                        model=model,
                     )
                 )
                 db.commit()
@@ -1068,7 +1510,10 @@ async def ai_chat(request: Request, db: Session = Depends(get_db)):
         )
         db.add(
             db_models.AIMessage(
-                conversation_id=conversation.id, role="assistant", content=reply, model=model
+                conversation_id=conversation.id,
+                role="assistant",
+                content=reply,
+                model=model,
             )
         )
         db.commit()
@@ -1087,16 +1532,23 @@ async def ai_summarize(request: Request, db: Session = Depends(get_db)):
     _check_ai_limits(request)
     body = await request.json()
     symbol = security.sanitize_text(str(body.get("symbol", "")), 16).upper()
-    model = security.sanitize_text(str(body.get("model", "")), 128) or settings.default_ai_model
+    model = (
+        security.sanitize_text(str(body.get("model", "")), 128)
+        or settings.default_ai_model
+    )
     if not security.valid_symbol(symbol):
         raise HTTPException(400, "Invalid symbol")
     company = _get_company(db, symbol)
-    news_rows = db.execute(
-        select(db_models.News)
-        .where(db_models.News.company_id == company.id)
-        .order_by(desc(db_models.News.published_at))
-        .limit(10)
-    ).scalars().all()
+    news_rows = (
+        db.execute(
+            select(db_models.News)
+            .where(db_models.News.company_id == company.id)
+            .order_by(desc(db_models.News.published_at))
+            .limit(10)
+        )
+        .scalars()
+        .all()
+    )
     if not news_rows:
         raise HTTPException(404, "No news available for this symbol")
     news_text = "\n".join(
@@ -1115,7 +1567,9 @@ async def ai_summarize(request: Request, db: Session = Depends(get_db)):
         },
     ]
     try:
-        text = await complete(messages, model, request_type="summarize", symbol=symbol, max_tokens=800)
+        text = await complete(
+            messages, model, request_type="summarize", symbol=symbol, max_tokens=800
+        )
         db.add(
             db_models.AIAnalysis(
                 company_id=company.id,
@@ -1133,7 +1587,12 @@ async def ai_summarize(request: Request, db: Session = Depends(get_db)):
         return _ai_error_response(exc, model, symbol)
 
 
-def _ai_error_response(exc: AIError, model: str, symbol: Optional[str], conversation_id: Optional[int] = None):
+def _ai_error_response(
+    exc: AIError,
+    model: str,
+    symbol: Optional[str],
+    conversation_id: Optional[int] = None,
+):
     return {
         "error": str(exc),
         "provider": exc.provider,
@@ -1148,16 +1607,25 @@ def ai_conversation(conversation_id: int, db: Session = Depends(get_db)):
     conversation = db.get(db_models.AIConversation, conversation_id)
     if not conversation:
         raise HTTPException(404, "Conversation not found")
-    rows = db.execute(
-        select(db_models.AIMessage)
-        .where(db_models.AIMessage.conversation_id == conversation_id)
-        .order_by(db_models.AIMessage.id)
-    ).scalars().all()
+    rows = (
+        db.execute(
+            select(db_models.AIMessage)
+            .where(db_models.AIMessage.conversation_id == conversation_id)
+            .order_by(db_models.AIMessage.id)
+        )
+        .scalars()
+        .all()
+    )
     return {
         "conversation_id": conversation.id,
         "symbol": conversation.symbol,
         "messages": [
-            {"role": m.role, "content": m.content, "model": m.model, "created_at": m.created_at.isoformat()}
+            {
+                "role": m.role,
+                "content": m.content,
+                "model": m.model,
+                "created_at": m.created_at.isoformat(),
+            }
             for m in rows
         ],
     }
@@ -1167,11 +1635,18 @@ def ai_conversation(conversation_id: int, db: Session = Depends(get_db)):
 # Watchlist
 # ---------------------------------------------------------------------------
 
+
 @app.get("/api/watchlist")
 def watchlist_get(db: Session = Depends(get_db)):
-    items = db.execute(
-        select(db_models.WatchlistItem).order_by(db_models.WatchlistItem.sort_order, db_models.WatchlistItem.symbol)
-    ).scalars().all()
+    items = (
+        db.execute(
+            select(db_models.WatchlistItem).order_by(
+                db_models.WatchlistItem.sort_order, db_models.WatchlistItem.symbol
+            )
+        )
+        .scalars()
+        .all()
+    )
     out = []
     for item in items:
         company = db.execute(
@@ -1179,7 +1654,16 @@ def watchlist_get(db: Session = Depends(get_db)):
         ).scalar_one_or_none()
         price = _latest_price(db, company.id) if company else None
         ratios = _company_ratios(db, company.id) if company else None
-        news = db.execute(select(db_models.News).where(db_models.News.company_id == company.id).order_by(desc(db_models.News.published_at)).limit(1)).scalar_one_or_none() if company else None
+        news = (
+            db.execute(
+                select(db_models.News)
+                .where(db_models.News.company_id == company.id)
+                .order_by(desc(db_models.News.published_at))
+                .limit(1)
+            ).scalar_one_or_none()
+            if company
+            else None
+        )
         out.append(
             {
                 "symbol": item.symbol,
@@ -1187,7 +1671,17 @@ def watchlist_get(db: Session = Depends(get_db)):
                 "sort_order": item.sort_order,
                 "price": price,
                 "ratios": ratios,
-                "latest_news": {"title": news.title, "url": news.url, "published_at": news.published_at.isoformat() if news.published_at else None} if news else None,
+                "latest_news": (
+                    {
+                        "title": news.title,
+                        "url": news.url,
+                        "published_at": (
+                            news.published_at.isoformat() if news.published_at else None
+                        ),
+                    }
+                    if news
+                    else None
+                ),
             }
         )
     return {"data": out}
@@ -1202,7 +1696,9 @@ async def watchlist_add(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(400, "Invalid symbol")
     if action == "add":
         existing = db.execute(
-            select(db_models.WatchlistItem).where(db_models.WatchlistItem.symbol == symbol)
+            select(db_models.WatchlistItem).where(
+                db_models.WatchlistItem.symbol == symbol
+            )
         ).scalar_one_or_none()
         if existing:
             return {"status": "exists", "symbol": symbol}
@@ -1214,23 +1710,40 @@ async def watchlist_add(request: Request, db: Session = Depends(get_db)):
         db.commit()
         return {"status": "added", "symbol": symbol}
     if action == "update":
-        item = db.execute(select(db_models.WatchlistItem).where(db_models.WatchlistItem.symbol == symbol)).scalar_one_or_none()
-        if not item: raise HTTPException(404, "Watchlist item not found")
+        item = db.execute(
+            select(db_models.WatchlistItem).where(
+                db_models.WatchlistItem.symbol == symbol
+            )
+        ).scalar_one_or_none()
+        if not item:
+            raise HTTPException(404, "Watchlist item not found")
         item.note = security.sanitize_text(str(body.get("note", "")), 500) or None
         db.commit()
         return {"status": "updated", "symbol": symbol}
     if action == "reorder":
         symbols = body.get("symbols")
-        if not isinstance(symbols, list) or len(symbols) > 100: raise HTTPException(400, "Invalid symbols")
-        items = {item.symbol: item for item in db.execute(select(db_models.WatchlistItem)).scalars()}
-        if set(symbols) != set(items): raise HTTPException(400, "Watchlist symbols mismatch")
-        for index, value in enumerate(symbols): items[value].sort_order = index
+        if not isinstance(symbols, list) or len(symbols) > 100:
+            raise HTTPException(400, "Invalid symbols")
+        items = {
+            item.symbol: item
+            for item in db.execute(select(db_models.WatchlistItem)).scalars()
+        }
+        if set(symbols) != set(items):
+            raise HTTPException(400, "Watchlist symbols mismatch")
+        for index, value in enumerate(symbols):
+            items[value].sort_order = index
         db.commit()
         return {"status": "reordered"}
     if action == "remove":
-        items = db.execute(
-            select(db_models.WatchlistItem).where(db_models.WatchlistItem.symbol == symbol)
-        ).scalars().all()
+        items = (
+            db.execute(
+                select(db_models.WatchlistItem).where(
+                    db_models.WatchlistItem.symbol == symbol
+                )
+            )
+            .scalars()
+            .all()
+        )
         for item in items:
             db.delete(item)
         db.commit()
@@ -1244,46 +1757,126 @@ def _paper_config(db: Session):
         config = db_models.PaperBotConfig()
         db.add(config)
         db.flush()
-    marker = db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "quantity_units_migrated").limit(1)).scalar_one_or_none()
+    marker = db.execute(
+        select(db_models.PaperAuditEvent)
+        .where(db_models.PaperAuditEvent.event_type == "quantity_units_migrated")
+        .limit(1)
+    ).scalar_one_or_none()
     if not marker:
         for trade in db.execute(select(db_models.PaperTrade)).scalars():
             if trade.quantity >= 100 and trade.quantity % 100 == 0:
                 trade.quantity //= 100
-        db.add(db_models.PaperAuditEvent(event_type="quantity_units_migrated", payload={"unit": "lots"}))
+        db.add(
+            db_models.PaperAuditEvent(
+                event_type="quantity_units_migrated", payload={"unit": "lots"}
+            )
+        )
         db.flush()
     return config
 
 
 def _latest_prices(db: Session, symbols: set[str] | None = None):
-    query = select(db_models.DailyPrice, db_models.Company).join(db_models.Company, db_models.Company.id == db_models.DailyPrice.company_id)
+    query = select(db_models.DailyPrice, db_models.Company).join(
+        db_models.Company, db_models.Company.id == db_models.DailyPrice.company_id
+    )
     if symbols:
         query = query.where(db_models.Company.symbol.in_(symbols))
     rows = db.execute(query.order_by(db_models.DailyPrice.date.desc())).all()
     prices = {}
     for price, company in rows:
-        if (symbols is None or company.symbol in symbols) and company.symbol not in prices and price.close is not None:
-            prices[company.symbol] = {"date": price.date, "price": float(price.close), "volume": price.volume, "timestamp": None, "source": "daily"}
-    intra = select(db_models.IntradayPrice, db_models.Company).join(db_models.Company, db_models.Company.id == db_models.IntradayPrice.company_id).where(db_models.IntradayPrice.timestamp >= _today_start_utc())
+        if (
+            (symbols is None or company.symbol in symbols)
+            and company.symbol not in prices
+            and price.close is not None
+        ):
+            prices[company.symbol] = {
+                "date": price.date,
+                "price": float(price.close),
+                "volume": price.volume,
+                "timestamp": None,
+                "source": "daily",
+            }
+    intra = (
+        select(db_models.IntradayPrice, db_models.Company)
+        .join(
+            db_models.Company,
+            db_models.Company.id == db_models.IntradayPrice.company_id,
+        )
+        .where(db_models.IntradayPrice.timestamp >= _today_start_utc())
+    )
     if symbols:
         intra = intra.where(db_models.Company.symbol.in_(symbols))
-    for price, company in db.execute(intra.order_by(db_models.IntradayPrice.timestamp.desc())).all():
-        if price.price is not None and (company.symbol not in prices or (prices[company.symbol].get("timestamp") or datetime.min.replace(tzinfo=timezone.utc)) < price.timestamp):
-            prices[company.symbol] = {"date": price.timestamp.date(), "price": float(price.price), "volume": price.volume, "timestamp": price.timestamp, "source": "intraday"}
+    for price, company in db.execute(
+        intra.order_by(db_models.IntradayPrice.timestamp.desc())
+    ).all():
+        if price.price is not None and (
+            company.symbol not in prices
+            or (
+                prices[company.symbol].get("timestamp")
+                or datetime.min.replace(tzinfo=timezone.utc)
+            )
+            < price.timestamp
+        ):
+            prices[company.symbol] = {
+                "date": price.timestamp.date(),
+                "price": float(price.price),
+                "volume": price.volume,
+                "timestamp": price.timestamp,
+                "source": "intraday",
+            }
     return prices
 
 
 def _execution_snapshot(db: Session, company_id: int, now: datetime):
-    intra = db.execute(select(db_models.IntradayPrice).where(db_models.IntradayPrice.company_id == company_id, db_models.IntradayPrice.timestamp >= _today_start_utc()).order_by(desc(db_models.IntradayPrice.timestamp)).limit(1)).scalar_one_or_none()
-    if intra and intra.price is not None and (now - intra.timestamp).total_seconds() <= settings.paper_max_snapshot_age_seconds:
-        return {"price": float(intra.price), "volume": intra.volume, "timestamp": intra.timestamp, "date": intra.timestamp.date(), "source": "intraday"}
-    daily = db.execute(select(db_models.DailyPrice).where(db_models.DailyPrice.company_id == company_id, db_models.DailyPrice.date == now.astimezone().date()).limit(1)).scalar_one_or_none()
+    intra = db.execute(
+        select(db_models.IntradayPrice)
+        .where(
+            db_models.IntradayPrice.company_id == company_id,
+            db_models.IntradayPrice.timestamp >= _today_start_utc(),
+        )
+        .order_by(desc(db_models.IntradayPrice.timestamp))
+        .limit(1)
+    ).scalar_one_or_none()
+    if (
+        intra
+        and intra.price is not None
+        and (now - intra.timestamp).total_seconds()
+        <= settings.paper_max_snapshot_age_seconds
+    ):
+        return {
+            "price": float(intra.price),
+            "volume": intra.volume,
+            "timestamp": intra.timestamp,
+            "date": intra.timestamp.date(),
+            "source": "intraday",
+        }
+    daily = db.execute(
+        select(db_models.DailyPrice)
+        .where(
+            db_models.DailyPrice.company_id == company_id,
+            db_models.DailyPrice.date == now.astimezone().date(),
+        )
+        .limit(1)
+    ).scalar_one_or_none()
     if daily and daily.close is not None:
-        return {"price": float(daily.close), "volume": daily.volume, "timestamp": now, "date": daily.date, "source": "daily"}
+        return {
+            "price": float(daily.close),
+            "volume": daily.volume,
+            "timestamp": now,
+            "date": daily.date,
+            "source": "daily",
+        }
     return None
 
 
 def _mark_and_close(db: Session, config):
-    trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    trades = (
+        db.execute(
+            select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")
+        )
+        .scalars()
+        .all()
+    )
     if not trades:
         return trades, 0.0
     prices = _latest_prices(db, {t.symbol for t in trades})
@@ -1293,13 +1886,30 @@ def _mark_and_close(db: Session, config):
         if not latest:
             continue
         price = latest["price"]
-        exit_decision = check_exit(trade.entry_date, today_jakarta(), price, float(trade.stop_loss), float(trade.take_profit), int(config.max_holding_days))
+        exit_decision = check_exit(
+            trade.entry_date,
+            today_jakarta(),
+            price,
+            float(trade.stop_loss),
+            float(trade.take_profit),
+            int(config.max_holding_days),
+        )
         if exit_decision.reason:
             fill = exit_decision.price * (1 - float(config.slippage_rate))
             shares = trade.quantity * 100
-            fees = (float(trade.entry_price) * shares + fill * shares) * float(config.fee_rate)
-            trade.exit_price, trade.exit_date, trade.exit_timestamp, trade.status = fill, today_jakarta(), datetime.now(timezone.utc), "closed"
-            trade.fees, trade.pnl = fees, (fill - float(trade.entry_price)) * shares - fees
+            fees = (float(trade.entry_price) * shares + fill * shares) * float(
+                config.fee_rate
+            )
+            trade.exit_price, trade.exit_date, trade.exit_timestamp, trade.status = (
+                fill,
+                today_jakarta(),
+                datetime.now(timezone.utc),
+                "closed",
+            )
+            trade.fees, trade.pnl = (
+                fees,
+                (fill - float(trade.entry_price)) * shares - fees,
+            )
         else:
             unrealized += (price - float(trade.entry_price)) * trade.quantity * 100
     return trades, unrealized
@@ -1310,27 +1920,79 @@ def paper_summary(db: Session = Depends(get_db)):
     config = _paper_config(db)
     _, unrealized = _mark_and_close(db, config)
     db.commit()
-    open_trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
-    closed = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "closed")).scalars().all()
+    open_trades = (
+        db.execute(
+            select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")
+        )
+        .scalars()
+        .all()
+    )
+    closed = (
+        db.execute(
+            select(db_models.PaperTrade).where(db_models.PaperTrade.status == "closed")
+        )
+        .scalars()
+        .all()
+    )
     metrics = trade_metrics(closed)
     exposure = sum(float(t.entry_price) * int(t.quantity) * 100 for t in open_trades)
-    cash = float(config.cash) + metrics["realized_pnl"] - exposure - sum(float(t.fees or 0) for t in open_trades)
-    return {"paper_only": True, "enabled": config.enabled, "cash": max(0.0, cash), "equity": max(0.0, cash + exposure + unrealized), "unrealized_pnl": unrealized, "open_positions": len(open_trades), "exposure": exposure, **metrics}
+    cash = (
+        float(config.cash)
+        + metrics["realized_pnl"]
+        - exposure
+        - sum(float(t.fees or 0) for t in open_trades)
+    )
+    return {
+        "paper_only": True,
+        "enabled": config.enabled,
+        "cash": max(0.0, cash),
+        "equity": max(0.0, cash + exposure + unrealized),
+        "unrealized_pnl": unrealized,
+        "open_positions": len(open_trades),
+        "exposure": exposure,
+        **metrics,
+    }
 
 
 @app.get("/api/paper-trading/positions")
 def paper_positions(db: Session = Depends(get_db)):
     config = _paper_config(db)
-    trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    trades = (
+        db.execute(
+            select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")
+        )
+        .scalars()
+        .all()
+    )
     prices = _latest_prices(db, {t.symbol for t in trades})
     data = []
     for trade in trades:
         current_price = prices.get(trade.symbol, {}).get("price")
         item = {k: v for k, v in trade.__dict__.items() if not k.startswith("_")}
         item["current_price"] = current_price
-        item["unrealized_pnl"] = ((current_price - float(trade.entry_price)) * int(trade.quantity) * 100 if current_price is not None else None)
-        item["unrealized_pnl_percent"] = (item["unrealized_pnl"] / (float(trade.entry_price) * int(trade.quantity) * 100) * 100 if current_price is not None else None)
-        item["confidence_score"] = (setup_confidence(float(trade.score), current_price, float(trade.entry_price), float(trade.stop_loss), float(trade.take_profit)) if current_price is not None else float(trade.score))
+        item["unrealized_pnl"] = (
+            (current_price - float(trade.entry_price)) * int(trade.quantity) * 100
+            if current_price is not None
+            else None
+        )
+        item["unrealized_pnl_percent"] = (
+            item["unrealized_pnl"]
+            / (float(trade.entry_price) * int(trade.quantity) * 100)
+            * 100
+            if current_price is not None
+            else None
+        )
+        item["confidence_score"] = (
+            setup_confidence(
+                float(trade.score),
+                current_price,
+                float(trade.entry_price),
+                float(trade.stop_loss),
+                float(trade.take_profit),
+            )
+            if current_price is not None
+            else float(trade.score)
+        )
         data.append(_json_safe(item))
     db.commit()
     return {"data": data}
@@ -1338,31 +2000,69 @@ def paper_positions(db: Session = Depends(get_db)):
 
 @app.get("/api/paper-trading/history")
 def paper_history(db: Session = Depends(get_db)):
-    return {"data": [_json_safe(t.__dict__) for t in db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "closed").order_by(desc(db_models.PaperTrade.exit_date))).scalars()]}
+    return {
+        "data": [
+            _json_safe(t.__dict__)
+            for t in db.execute(
+                select(db_models.PaperTrade)
+                .where(db_models.PaperTrade.status == "closed")
+                .order_by(desc(db_models.PaperTrade.exit_date))
+            ).scalars()
+        ]
+    }
 
 
 @app.get("/api/paper-trading/logs")
 def paper_logs(limit: int = Query(50, ge=1, le=200), db: Session = Depends(get_db)):
-    rows = db.execute(select(db_models.PaperAuditEvent).order_by(desc(db_models.PaperAuditEvent.created_at)).limit(limit)).scalars().all()
-    return {"data": [_json_safe({k: v for k, v in row.__dict__.items() if not k.startswith("_")}) for row in rows]}
+    rows = (
+        db.execute(
+            select(db_models.PaperAuditEvent)
+            .order_by(desc(db_models.PaperAuditEvent.created_at))
+            .limit(limit)
+        )
+        .scalars()
+        .all()
+    )
+    return {
+        "data": [
+            _json_safe({k: v for k, v in row.__dict__.items() if not k.startswith("_")})
+            for row in rows
+        ]
+    }
 
 
 @app.get("/api/paper-trading/config")
 def paper_config(db: Session = Depends(get_db)):
     config = _paper_config(db)
     db.commit()
-    return _json_safe({k: v for k, v in config.__dict__.items() if not k.startswith("_")})
+    return _json_safe(
+        {k: v for k, v in config.__dict__.items() if not k.startswith("_")}
+    )
 
 
 @app.put("/api/paper-trading/config")
 async def paper_config_update(request: Request, db: Session = Depends(get_db)):
     body = await request.json()
-    limits = {"cash": (0, 10**15), "risk_per_trade": (0, 1), "fee_rate": (0, 1), "slippage_rate": (0, 1), "min_score": (0, 100), "min_rr": (0, 100), "max_positions": (1, 10000), "max_exposure": (0, 1), "max_holding_days": (1, 10000)}
+    limits = {
+        "cash": (0, 10**15),
+        "risk_per_trade": (0, 1),
+        "fee_rate": (0, 1),
+        "slippage_rate": (0, 1),
+        "min_score": (0, 100),
+        "min_rr": (0, 100),
+        "max_positions": (1, 10000),
+        "max_exposure": (0, 1),
+        "max_holding_days": (1, 10000),
+    }
     config = _paper_config(db)
     for key, (low, high) in limits.items():
         if key in body:
             value = body[key]
-            if not isinstance(value, (int, float)) or isinstance(value, bool) or not low <= value <= high:
+            if (
+                not isinstance(value, (int, float))
+                or isinstance(value, bool)
+                or not low <= value <= high
+            ):
                 raise HTTPException(400, f"Invalid {key}")
             setattr(config, key, value)
     if "enabled" in body:
@@ -1373,13 +2073,26 @@ async def paper_config_update(request: Request, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(config)
     _paper_candidates_cache.clear()
-    return _json_safe({k: v for k, v in config.__dict__.items() if not k.startswith("_")})
+    return _json_safe(
+        {k: v for k, v in config.__dict__.items() if not k.startswith("_")}
+    )
 
 
 @app.post("/api/paper-trading/toggle")
 async def paper_toggle(request: Request, db: Session = Depends(get_db)):
-    config = db.execute(select(db_models.PaperBotConfig).limit(1)).scalar_one_or_none() or db_models.PaperBotConfig()
-    body = await request.json(); config.enabled = bool(body.get("enabled", not config.enabled));     db.add(config); db.add(db_models.PaperAuditEvent(event_type="toggle", payload={"enabled": config.enabled})); db.commit()
+    config = (
+        db.execute(select(db_models.PaperBotConfig).limit(1)).scalar_one_or_none()
+        or db_models.PaperBotConfig()
+    )
+    body = await request.json()
+    config.enabled = bool(body.get("enabled", not config.enabled))
+    db.add(config)
+    db.add(
+        db_models.PaperAuditEvent(
+            event_type="toggle", payload={"enabled": config.enabled}
+        )
+    )
+    db.commit()
     _paper_candidates_cache.clear()
     return {"paper_only": True, "enabled": config.enabled}
 
@@ -1396,10 +2109,19 @@ def paper_candidates(
         return {"data": []}
     universe = settings.paper_universe
     candidate_limit = limit or settings.paper_candidates_limit
-    cache_key = (tuple(universe), candidate_limit, float(config.min_score), float(config.min_rr))
+    cache_key = (
+        tuple(universe),
+        candidate_limit,
+        float(config.min_score),
+        float(config.min_rr),
+    )
     cached = _paper_candidates_cache.get(cache_key)
     now = time.monotonic()
-    if cached and not force and now - cached[0] < settings.paper_candidates_cache_seconds:
+    if (
+        cached
+        and not force
+        and now - cached[0] < settings.paper_candidates_cache_seconds
+    ):
         return {"data": cached[1]}
     query = select(db_models.Company).order_by(db_models.Company.symbol)
     if universe:
@@ -1407,15 +2129,41 @@ def paper_candidates(
     companies = db.execute(query.limit(candidate_limit)).scalars()
     rows = []
     for company in companies:
-        prices = db.execute(
-            select(db_models.DailyPrice)
-            .where(db_models.DailyPrice.company_id == company.id, db_models.DailyPrice.close.is_not(None))
-            .order_by(db_models.DailyPrice.date.desc()).limit(settings.paper_candidates_limit)
-        ).scalars().all()[::-1]
-        indicators = analytics.technical_indicators([{"date": p.date, "open": p.open, "high": p.high, "low": p.low, "close": p.close, "volume": p.volume} for p in prices])
+        prices = (
+            db.execute(
+                select(db_models.DailyPrice)
+                .where(
+                    db_models.DailyPrice.company_id == company.id,
+                    db_models.DailyPrice.close.is_not(None),
+                )
+                .order_by(db_models.DailyPrice.date.desc())
+                .limit(settings.paper_candidates_limit)
+            )
+            .scalars()
+            .all()[::-1]
+        )
+        indicators = analytics.technical_indicators(
+            [
+                {
+                    "date": p.date,
+                    "open": p.open,
+                    "high": p.high,
+                    "low": p.low,
+                    "close": p.close,
+                    "volume": p.volume,
+                }
+                for p in prices
+            ]
+        )
         if indicators:
             decision = decide(indicators, float(config.min_score), float(config.min_rr))
-            rows.append({"symbol": company.symbol, **decision.__dict__, "score_quality": "setup_score_0_4"})
+            rows.append(
+                {
+                    "symbol": company.symbol,
+                    **decision.__dict__,
+                    "score_quality": "setup_score_0_4",
+                }
+            )
     _paper_candidates_cache.clear()
     _paper_candidates_cache[cache_key] = (now, rows)
     return {"data": rows}
@@ -1430,37 +2178,188 @@ def paper_run(db: Session = Depends(get_db)):
         return {"status": "disabled", "created": 0}
     now = datetime.now(timezone.utc)
     run_key = now.strftime("%Y-%m-%d")
-    if db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "run", db_models.PaperAuditEvent.payload["run_key"].as_string() == run_key)).scalar_one_or_none(): return {"status": "already_run", "run_key": run_key}
+    if db.execute(
+        select(db_models.PaperAuditEvent).where(
+            db_models.PaperAuditEvent.event_type == "run",
+            db_models.PaperAuditEvent.payload["run_key"].as_string() == run_key,
+        )
+    ).scalar_one_or_none():
+        return {"status": "already_run", "run_key": run_key}
     created = 0
     reasons = []
-    open_trades = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")).scalars().all()
+    open_trades = (
+        db.execute(
+            select(db_models.PaperTrade).where(db_models.PaperTrade.status == "open")
+        )
+        .scalars()
+        .all()
+    )
     used_cash = sum(float(t.entry_price) * t.quantity * 100 for t in open_trades)
     for item in paper_candidates(force=False, limit=None, db=db)["data"]:
-        if item["action"] != "buy" or len(open_trades) + created >= config.max_positions:
+        if (
+            item["action"] != "buy"
+            or len(open_trades) + created >= config.max_positions
+        ):
             continue
-        company = db.execute(select(db_models.Company).where(db_models.Company.symbol == item["symbol"])).scalar_one()
+        company = db.execute(
+            select(db_models.Company).where(db_models.Company.symbol == item["symbol"])
+        ).scalar_one()
         snapshot = _execution_snapshot(db, company.id, now)
         if not snapshot:
-            reasons.append({"symbol": item["symbol"], "reason": "no current-session price snapshot"})
+            reasons.append(
+                {
+                    "symbol": item["symbol"],
+                    "reason": "no current-session price snapshot",
+                }
+            )
             continue
         price = snapshot["price"]
-        historical = db.execute(select(db_models.DailyPrice).where(db_models.DailyPrice.company_id == company.id, db_models.DailyPrice.close.is_not(None)).order_by(db_models.DailyPrice.date.desc()).limit(settings.paper_candidates_limit)).scalars().all()[::-1]
-        current_indicators = analytics.technical_indicators([{"date": p.date, "open": p.open, "high": p.high, "low": p.low, "close": p.close, "volume": p.volume} for p in historical]) or {}
+        historical = (
+            db.execute(
+                select(db_models.DailyPrice)
+                .where(
+                    db_models.DailyPrice.company_id == company.id,
+                    db_models.DailyPrice.close.is_not(None),
+                )
+                .order_by(db_models.DailyPrice.date.desc())
+                .limit(settings.paper_candidates_limit)
+            )
+            .scalars()
+            .all()[::-1]
+        )
+        current_indicators = (
+            analytics.technical_indicators(
+                [
+                    {
+                        "date": p.date,
+                        "open": p.open,
+                        "high": p.high,
+                        "low": p.low,
+                        "close": p.close,
+                        "volume": p.volume,
+                    }
+                    for p in historical
+                ]
+            )
+            or {}
+        )
         current_indicators["last_price"] = price
-        confirmation = decide(current_indicators, float(config.min_score), float(config.min_rr))
+        confirmation = decide(
+            current_indicators, float(config.min_score), float(config.min_rr)
+        )
         if confirmation.action != "buy":
-            reasons.append({"symbol": item["symbol"], "reason": "current snapshot failed setup confirmation"})
+            reasons.append(
+                {
+                    "symbol": item["symbol"],
+                    "reason": "current snapshot failed setup confirmation",
+                }
+            )
             continue
-        duplicate = db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.symbol == item["symbol"], db_models.PaperTrade.entry_date == snapshot["date"], db_models.PaperTrade.run_key == run_key)).scalar_one_or_none()
-        snapshot_key = snapshot["timestamp"].isoformat() if snapshot["timestamp"] else str(snapshot["date"])
-        if duplicate or db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "signal")).scalars().all() and any(e.payload.get("symbol") == item["symbol"] and e.payload.get("snapshot") == snapshot_key for e in db.execute(select(db_models.PaperAuditEvent).where(db_models.PaperAuditEvent.event_type == "signal")).scalars().all()):
-            reasons.append({"symbol": item["symbol"], "reason": "duplicate signal or entry for snapshot"})
+        duplicate = db.execute(
+            select(db_models.PaperTrade).where(
+                db_models.PaperTrade.symbol == item["symbol"],
+                db_models.PaperTrade.entry_date == snapshot["date"],
+                db_models.PaperTrade.run_key == run_key,
+            )
+        ).scalar_one_or_none()
+        snapshot_key = (
+            snapshot["timestamp"].isoformat()
+            if snapshot["timestamp"]
+            else str(snapshot["date"])
+        )
+        if (
+            duplicate
+            or db.execute(
+                select(db_models.PaperAuditEvent).where(
+                    db_models.PaperAuditEvent.event_type == "signal"
+                )
+            )
+            .scalars()
+            .all()
+            and any(
+                e.payload.get("symbol") == item["symbol"]
+                and e.payload.get("snapshot") == snapshot_key
+                for e in db.execute(
+                    select(db_models.PaperAuditEvent).where(
+                        db_models.PaperAuditEvent.event_type == "signal"
+                    )
+                )
+                .scalars()
+                .all()
+            )
+        ):
+            reasons.append(
+                {
+                    "symbol": item["symbol"],
+                    "reason": "duplicate signal or entry for snapshot",
+                }
+            )
             continue
-        qty = size_position(float(config.cash) - used_cash, price, item["stop"], float(config.risk_per_trade), float(config.fee_rate), float(config.slippage_rate), float(config.max_exposure))
-        cost = price * qty * 100 * (1 + float(config.fee_rate) + float(config.slippage_rate))
-        if qty and used_cash + cost <= float(config.cash) and db.execute(select(db_models.PaperTrade).where(db_models.PaperTrade.symbol == item["symbol"], db_models.PaperTrade.status == "open")).scalar_one_or_none() is None:
-            db.add(db_models.PaperTrade(symbol=item["symbol"], entry_date=snapshot["date"], entry_timestamp=now, entry_price=price * (1 + float(config.slippage_rate)), quantity=qty, stop_loss=confirmation.stop, take_profit=confirmation.target, score=confirmation.score, reason=confirmation.reason, run_key=run_key)); db.add(db_models.PaperAuditEvent(event_type="signal", payload={"symbol": item["symbol"], "snapshot": snapshot_key, "timestamp": now.isoformat(), "action": "buy"})); created += 1; used_cash += cost
-    db.add(db_models.PaperAuditEvent(event_type="run", payload={"run_key": run_key, "created": created, "reasons": reasons, "timestamp": now.isoformat()})); db.commit()
+        qty = size_position(
+            float(config.cash) - used_cash,
+            price,
+            item["stop"],
+            float(config.risk_per_trade),
+            float(config.fee_rate),
+            float(config.slippage_rate),
+            float(config.max_exposure),
+        )
+        cost = (
+            price
+            * qty
+            * 100
+            * (1 + float(config.fee_rate) + float(config.slippage_rate))
+        )
+        if (
+            qty
+            and used_cash + cost <= float(config.cash)
+            and db.execute(
+                select(db_models.PaperTrade).where(
+                    db_models.PaperTrade.symbol == item["symbol"],
+                    db_models.PaperTrade.status == "open",
+                )
+            ).scalar_one_or_none()
+            is None
+        ):
+            db.add(
+                db_models.PaperTrade(
+                    symbol=item["symbol"],
+                    entry_date=snapshot["date"],
+                    entry_timestamp=now,
+                    entry_price=price * (1 + float(config.slippage_rate)),
+                    quantity=qty,
+                    stop_loss=confirmation.stop,
+                    take_profit=confirmation.target,
+                    score=confirmation.score,
+                    reason=confirmation.reason,
+                    run_key=run_key,
+                )
+            )
+            db.add(
+                db_models.PaperAuditEvent(
+                    event_type="signal",
+                    payload={
+                        "symbol": item["symbol"],
+                        "snapshot": snapshot_key,
+                        "timestamp": now.isoformat(),
+                        "action": "buy",
+                    },
+                )
+            )
+            created += 1
+            used_cash += cost
+    db.add(
+        db_models.PaperAuditEvent(
+            event_type="run",
+            payload={
+                "run_key": run_key,
+                "created": created,
+                "reasons": reasons,
+                "timestamp": now.isoformat(),
+            },
+        )
+    )
+    db.commit()
     _paper_candidates_cache.clear()
     return {"status": "ok", "run_key": run_key, "created": created}
 
@@ -1468,5 +2367,6 @@ def paper_run(db: Session = Depends(get_db)):
 @app.get("/api/paper-trading/trades/{trade_id}")
 def paper_trade_detail(trade_id: int, db: Session = Depends(get_db)):
     trade = db.get(db_models.PaperTrade, trade_id)
-    if not trade: raise HTTPException(404, "Paper trade not found")
+    if not trade:
+        raise HTTPException(404, "Paper trade not found")
     return _json_safe(trade.__dict__)

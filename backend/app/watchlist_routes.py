@@ -18,7 +18,11 @@ def row(item):
         "trading_date": str(item.trading_date),
         "symbol": item.symbol,
         "method": item.method,
-        "mode": "PREVIEW" if item.status == "PREVIEW" or bool(risks.get("stale_preview")) else "LIVE",
+        "mode": (
+            "PREVIEW"
+            if item.status == "PREVIEW" or bool(risks.get("stale_preview"))
+            else "LIVE"
+        ),
         "status": item.status,
         "score": item.score,
         "confidence": item.confidence,
@@ -32,7 +36,9 @@ def row(item):
         "risk_reward": item.risk_reward,
         "generated_at": item.generated_at.isoformat() if item.generated_at else None,
         "updated_at": item.updated_at.isoformat() if item.updated_at else None,
-        "data_timestamp": item.data_timestamp.isoformat() if item.data_timestamp else None,
+        "data_timestamp": (
+            item.data_timestamp.isoformat() if item.data_timestamp else None
+        ),
         "valid_until": item.valid_until.isoformat() if item.valid_until else None,
         "reasons": item.reasons,
         "signals": item.signals,
@@ -45,32 +51,78 @@ def row(item):
 def today():
     current_date = datetime.now(TZ).date()
     with SessionLocal() as db:
-        items = db.execute(select(AIWatchlist).where(AIWatchlist.trading_date == current_date).order_by(desc(AIWatchlist.score))).scalars().all()
-    return {"trading_date": str(current_date), "market": get_market_status(), "generated_at": datetime.now(timezone.utc).isoformat(), "data": [row(item) for item in items], "status": "OK" if items else "NO_TRADE", "reason": None if items else "NO_QUALIFIED_WATCHLIST_CANDIDATES_TODAY"}
+        items = (
+            db.execute(
+                select(AIWatchlist)
+                .where(AIWatchlist.trading_date == current_date)
+                .order_by(desc(AIWatchlist.score))
+            )
+            .scalars()
+            .all()
+        )
+    return {
+        "trading_date": str(current_date),
+        "market": get_market_status(),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "data": [row(item) for item in items],
+        "status": "OK" if items else "NO_TRADE",
+        "reason": None if items else "NO_QUALIFIED_WATCHLIST_CANDIDATES_TODAY",
+    }
 
 
 @router.get("/trading-agents")
 def trading_agents():
-    return {"method": "TRADING_AGENTS", "data": [row(item) for item in _items("TRADING_AGENTS")], "market": get_market_status()}
+    return {
+        "method": "TRADING_AGENTS",
+        "data": [row(item) for item in _items("TRADING_AGENTS")],
+        "market": get_market_status(),
+    }
 
 
 @router.get("/paper")
 def paper():
-    return {"method": "PAPER_TRADE", "data": [row(item) for item in _items("PAPER_TRADE")], "market": get_market_status()}
+    return {
+        "method": "PAPER_TRADE",
+        "data": [row(item) for item in _items("PAPER_TRADE")],
+        "market": get_market_status(),
+    }
 
 
 @router.get("/history")
 def history(limit: int = 50):
     with SessionLocal() as db:
-        items = db.execute(select(AIWatchlist).order_by(desc(AIWatchlist.trading_date), desc(AIWatchlist.score)).limit(min(limit, 200))).scalars().all()
+        items = (
+            db.execute(
+                select(AIWatchlist)
+                .order_by(desc(AIWatchlist.trading_date), desc(AIWatchlist.score))
+                .limit(min(limit, 200))
+            )
+            .scalars()
+            .all()
+        )
     return {"data": [row(item) for item in items]}
 
 
 @router.get("/{symbol}")
 def symbol(symbol: str):
     with SessionLocal() as db:
-        items = db.execute(select(AIWatchlist).where(AIWatchlist.symbol == symbol.upper()).order_by(desc(AIWatchlist.trading_date), desc(AIWatchlist.generated_at)).limit(20)).scalars().all()
-    return {"symbol": symbol.upper(), "data": [row(item) for item in items], "market": get_market_status()}
+        items = (
+            db.execute(
+                select(AIWatchlist)
+                .where(AIWatchlist.symbol == symbol.upper())
+                .order_by(
+                    desc(AIWatchlist.trading_date), desc(AIWatchlist.generated_at)
+                )
+                .limit(20)
+            )
+            .scalars()
+            .all()
+        )
+    return {
+        "symbol": symbol.upper(),
+        "data": [row(item) for item in items],
+        "market": get_market_status(),
+    }
 
 
 @router.post("/refresh")
@@ -81,4 +133,15 @@ def refresh():
 def _items(method: str):
     current_date = datetime.now(TZ).date()
     with SessionLocal() as db:
-        return db.execute(select(AIWatchlist).where(AIWatchlist.trading_date == current_date, AIWatchlist.method == method).order_by(desc(AIWatchlist.score))).scalars().all()
+        return (
+            db.execute(
+                select(AIWatchlist)
+                .where(
+                    AIWatchlist.trading_date == current_date,
+                    AIWatchlist.method == method,
+                )
+                .order_by(desc(AIWatchlist.score))
+            )
+            .scalars()
+            .all()
+        )

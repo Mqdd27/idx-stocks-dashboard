@@ -14,6 +14,7 @@
 Run after every 9Router update, then restart 9Router:
     python3 scripts/patch_9router_ollama_think.py
 """
+
 import sys
 
 CHUNK = "/home/mqdd/.nvm/versions/node/v24.19.0/lib/node_modules/9router/app/.next-cli-build/server/chunks/8499.js"
@@ -47,8 +48,11 @@ def main() -> int:
             continue
         n = src.count(old)
         if n != 1:
-            print(f"ERROR: expected 1 occurrence of target in {chunk}, found {n}. "
-                  "9Router chunk may have changed format.", file=sys.stderr)
+            print(
+                f"ERROR: expected 1 occurrence of target in {chunk}, found {n}. "
+                "9Router chunk may have changed format.",
+                file=sys.stderr,
+            )
             ok = False
             continue
         open(chunk, "w").write(src.replace(old, new, 1))

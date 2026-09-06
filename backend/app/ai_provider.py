@@ -7,6 +7,7 @@ Two providers behind one interface:
 Frontend never sees provider credentials.
 Local inference is concurrency-limited (1 active at a time).
 """
+
 import asyncio
 import json
 import time
@@ -27,7 +28,15 @@ _ollama_ids: set = set()
 _router_ids: set = set()
 _router_combo_ids: set = set()
 _registry_ts: float = 0.0
-_LOCAL_HEURISTIC_PREFIXES = ("qwen", "llama", "mistral", "gemma", "phi", "deepseek-r1", "granite")
+_LOCAL_HEURISTIC_PREFIXES = (
+    "qwen",
+    "llama",
+    "mistral",
+    "gemma",
+    "phi",
+    "deepseek-r1",
+    "granite",
+)
 
 
 class AIError(Exception):
@@ -55,11 +64,15 @@ async def _refresh_registry() -> None:
         if settings.nine_router_api_key:
             headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
         async with httpx.AsyncClient(timeout=10) as client:
-            resp = await client.get(f"{settings.nine_router_url}/models", headers=headers)
+            resp = await client.get(
+                f"{settings.nine_router_url}/models", headers=headers
+            )
             if resp.status_code == 200:
                 models = resp.json().get("data", [])
                 _router_ids = {m["id"] for m in models}
-                _router_combo_ids = {m["id"] for m in models if m.get("owned_by") == "combo"}
+                _router_combo_ids = {
+                    m["id"] for m in models if m.get("owned_by") == "combo"
+                }
     except Exception:
         pass
 
@@ -80,12 +93,22 @@ async def discover_models() -> list[dict]:
     await _refresh_registry()
     models: list[dict] = []
     for m in sorted(_ollama_ids):
-        models.append({"id": m, "name": _pretty_name(m), "provider": "ollama", "local": True, "usable": True})
+        models.append(
+            {
+                "id": m,
+                "name": _pretty_name(m),
+                "provider": "ollama",
+                "local": True,
+                "usable": True,
+            }
+        )
     router_ids = sorted(_router_ids)
     probe_results = await asyncio.gather(
         *(_probe_router_model(m) for m in router_ids if _is_router_model_usable(m))
     )
-    probed = dict(zip([m for m in router_ids if _is_router_model_usable(m)], probe_results))
+    probed = dict(
+        zip([m for m in router_ids if _is_router_model_usable(m)], probe_results)
+    )
     for m in router_ids:
         heuristic = _is_router_model_usable(m)
         usable = probed.get(m, False) if heuristic else False
@@ -126,7 +149,11 @@ async def _probe_router_model(model_id: str) -> bool:
         headers = {"Content-Type": "application/json"}
         if settings.nine_router_api_key:
             headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
-        probe_timeout = 180 if model_id.startswith("ollama") else (60 if model_id in _router_combo_ids else 15)
+        probe_timeout = (
+            180
+            if model_id.startswith("ollama")
+            else (60 if model_id in _router_combo_ids else 15)
+        )
         async with httpx.AsyncClient(timeout=probe_timeout) as client:
             resp = await client.post(
                 f"{settings.nine_router_url}/chat/completions",
@@ -136,7 +163,11 @@ async def _probe_router_model(model_id: str) -> bool:
                     "messages": [{"role": "user", "content": "ping"}],
                     "stream": False,
                     "max_tokens": 1,
-                    **({"think": False, "keep_alive": "30m"} if model_id.startswith("ollama") else {}),
+                    **(
+                        {"think": False, "keep_alive": "30m"}
+                        if model_id.startswith("ollama")
+                        else {}
+                    ),
                 },
             )
             ok = resp.status_code == 200
@@ -200,27 +231,43 @@ async def _call_router(messages: list[dict], model: str, stream: bool) -> Any:
                         "model": model,
                         "messages": messages,
                         "stream": stream,
-                        **({"think": False, "keep_alive": "30m"} if model.startswith("ollama") else {}),
+                        **(
+                            {"think": False, "keep_alive": "30m"}
+                            if model.startswith("ollama")
+                            else {}
+                        ),
                     },
                 )
-                if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+                if (
+                    resp.status_code in (429, 500, 502, 503, 504)
+                    and attempt < _ROUTER_RETRIES
+                ):
                     last_exc = httpx.HTTPStatusError(
-                        f"Client error '{resp.status_code}' for url '{resp.url}'", request=resp.request, response=resp
+                        f"Client error '{resp.status_code}' for url '{resp.url}'",
+                        request=resp.request,
+                        response=resp,
                     )
                     await asyncio.sleep(_retry_delay(attempt))
                     continue
                 resp.raise_for_status()
                 return resp
         except httpx.HTTPStatusError as exc:
-            if exc.response.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+            if (
+                exc.response.status_code in (429, 500, 502, 503, 504)
+                and attempt < _ROUTER_RETRIES
+            ):
                 last_exc = exc
                 await asyncio.sleep(_retry_delay(attempt))
                 continue
             raise
-    raise AIError(f"9router request failed after retries: {last_exc}", "9router", model) from last_exc
+    raise AIError(
+        f"9router request failed after retries: {last_exc}", "9router", model
+    ) from last_exc
 
 
-async def _call_ollama(messages: list[dict], model: str, stream: bool, max_tokens: int = 1000) -> Any:
+async def _call_ollama(
+    messages: list[dict], model: str, stream: bool, max_tokens: int = 1000
+) -> Any:
     async with httpx.AsyncClient(timeout=900) as client:
         resp = await client.post(
             f"{settings.ollama_url}/api/chat",
@@ -306,7 +353,9 @@ async def complete(
                 else:
                     headers = {"Content-Type": "application/json"}
                     if settings.nine_router_api_key:
-                        headers["Authorization"] = f"Bearer {settings.nine_router_api_key}"
+                        headers["Authorization"] = (
+                            f"Bearer {settings.nine_router_api_key}"
+                        )
                     last_exc: Exception | None = None
                     for attempt in range(_ROUTER_RETRIES + 1):
                         try:
@@ -315,10 +364,21 @@ async def complete(
                                     "POST",
                                     f"{settings.nine_router_url}/chat/completions",
                                     headers=headers,
-                                    json={"model": model, "messages": messages, "stream": True,
-                                      **({"think": False, "keep_alive": "30m"} if model.startswith("ollama") else {})},
+                                    json={
+                                        "model": model,
+                                        "messages": messages,
+                                        "stream": True,
+                                        **(
+                                            {"think": False, "keep_alive": "30m"}
+                                            if model.startswith("ollama")
+                                            else {}
+                                        ),
+                                    },
                                 ) as resp:
-                                    if resp.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+                                    if (
+                                        resp.status_code in (429, 500, 502, 503, 504)
+                                        and attempt < _ROUTER_RETRIES
+                                    ):
                                         last_exc = httpx.HTTPStatusError(
                                             f"Client error '{resp.status_code}' for url '{resp.url}'",
                                             request=resp.request,
@@ -337,13 +397,18 @@ async def complete(
                                             chunk = json.loads(data)
                                         except Exception:
                                             continue
-                                        delta = chunk.get("choices", [{}])[0].get("delta", {})
+                                        delta = chunk.get("choices", [{}])[0].get(
+                                            "delta", {}
+                                        )
                                         content = delta.get("content", "")
                                         if content:
                                             yield content
                             break
                         except httpx.HTTPStatusError as exc:
-                            if exc.response.status_code in (429, 500, 502, 503, 504) and attempt < _ROUTER_RETRIES:
+                            if (
+                                exc.response.status_code in (429, 500, 502, 503, 504)
+                                and attempt < _ROUTER_RETRIES
+                            ):
                                 last_exc = exc
                                 await asyncio.sleep(_retry_delay(attempt))
                                 continue
@@ -351,7 +416,11 @@ async def complete(
                         except Exception:
                             raise
                     if last_exc is not None:
-                        raise AIError(f"9router request failed after retries: {last_exc}", "9router", model) from last_exc
+                        raise AIError(
+                            f"9router request failed after retries: {last_exc}",
+                            "9router",
+                            model,
+                        ) from last_exc
             success = True
         except AIError:
             raise
@@ -359,14 +428,25 @@ async def complete(
             error_msg = str(exc)[:2000]
             raise AIError(f"{provider} request failed: {exc}", provider, model) from exc
         finally:
-            _log_request(model, provider, is_local, request_type, symbol, started, success, error_msg)
+            _log_request(
+                model,
+                provider,
+                is_local,
+                request_type,
+                symbol,
+                started,
+                success,
+                error_msg,
+            )
 
     async def _run_full() -> str:
         nonlocal success, error_msg
         try:
             async with await _guard():
                 if provider == "ollama":
-                    resp = await _call_ollama(messages, model, stream=False, max_tokens=max_tokens)
+                    resp = await _call_ollama(
+                        messages, model, stream=False, max_tokens=max_tokens
+                    )
                     data = resp.json()
                     text = data.get("message", {}).get("content", "")
                 else:
@@ -388,14 +468,25 @@ async def complete(
             error_msg = str(exc)[:2000]
             raise AIError(f"{provider} request failed: {exc}", provider, model) from exc
         finally:
-            _log_request(model, provider, is_local, request_type, symbol, started, success, error_msg)
+            _log_request(
+                model,
+                provider,
+                is_local,
+                request_type,
+                symbol,
+                started,
+                success,
+                error_msg,
+            )
 
     if stream:
         return _run_stream()
     return await _run_full()
 
 
-def _record_router_usage(model: str, prompt_tokens: int, completion_tokens: int) -> None:
+def _record_router_usage(
+    model: str, prompt_tokens: int, completion_tokens: int
+) -> None:
     """9Router's passthrough path never records ollama usage; write it ourselves so
     the 9Router dashboard shows the traffic."""
     try:
@@ -406,7 +497,11 @@ def _record_router_usage(model: str, prompt_tokens: int, completion_tokens: int)
         base = model.split("/")[-1] if model.startswith("ollama") else model
         if not base:
             return
-        ts = datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+        ts = (
+            datetime.now(timezone.utc)
+            .isoformat(timespec="milliseconds")
+            .replace("+00:00", "Z")
+        )
         con = sqlite3.connect("/home/mqdd/.9router/db/data.sqlite", timeout=10)
         con.execute(
             "INSERT INTO usageHistory(timestamp, provider, model, connectionId, apiKey, endpoint, promptTokens, completionTokens, cost, status, tokens, meta) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

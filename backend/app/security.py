@@ -1,4 +1,5 @@
 """Input validation, sanitization and prompt-injection protection."""
+
 import re
 
 SYMBOL_RE = re.compile(r"^[A-Z0-9\.\-\^]{1,16}$")
@@ -42,6 +43,7 @@ def wrap_untrusted(content: str, max_len: int = 4000) -> str:
 
 def ensure_max_context_symbols(symbols: list[str], limit: int = 8) -> list[str]:
     return [s for s in symbols if valid_symbol(s)][:limit]
+
 
 import hmac
 from fastapi import Request

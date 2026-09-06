@@ -1,4 +1,5 @@
 """Simple in-memory sliding-window rate limiter for AI endpoints."""
+
 import time
 from typing import Optional
 

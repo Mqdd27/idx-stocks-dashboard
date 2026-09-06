@@ -25,16 +25,28 @@ class PaperBotConfig(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    cash: Mapped[float] = mapped_column(Numeric(20, 2), default=100000000, nullable=False)
-    risk_per_trade: Mapped[float] = mapped_column(Numeric(8, 5), default=0.01, nullable=False)
-    fee_rate: Mapped[float] = mapped_column(Numeric(8, 5), default=0.0015, nullable=False)
-    slippage_rate: Mapped[float] = mapped_column(Numeric(8, 5), default=0.001, nullable=False)
+    cash: Mapped[float] = mapped_column(
+        Numeric(20, 2), default=100000000, nullable=False
+    )
+    risk_per_trade: Mapped[float] = mapped_column(
+        Numeric(8, 5), default=0.01, nullable=False
+    )
+    fee_rate: Mapped[float] = mapped_column(
+        Numeric(8, 5), default=0.0015, nullable=False
+    )
+    slippage_rate: Mapped[float] = mapped_column(
+        Numeric(8, 5), default=0.001, nullable=False
+    )
     min_score: Mapped[float] = mapped_column(Numeric(5, 2), default=3, nullable=False)
     min_rr: Mapped[float] = mapped_column(Numeric(5, 2), default=2, nullable=False)
     max_positions: Mapped[int] = mapped_column(Integer, default=5, nullable=False)
-    max_exposure: Mapped[float] = mapped_column(Numeric(8, 5), default=0.5, nullable=False)
+    max_exposure: Mapped[float] = mapped_column(
+        Numeric(8, 5), default=0.5, nullable=False
+    )
     max_holding_days: Mapped[int] = mapped_column(Integer, default=20, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
 
 
 class PaperTrade(Base):
@@ -43,10 +55,16 @@ class PaperTrade(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     symbol: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
     entry_date: Mapped[date] = mapped_column(Date, nullable=False)
-    entry_timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    entry_timestamp: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
     exit_date: Mapped[Optional[date]] = mapped_column(Date)
     exit_timestamp: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
-    status: Mapped[str] = mapped_column(String(16), default="open", nullable=False, index=True)
+    status: Mapped[str] = mapped_column(
+        String(16), default="open", nullable=False, index=True
+    )
     entry_price: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
     exit_price: Mapped[Optional[float]] = mapped_column(Numeric(18, 4))
     quantity: Mapped[int] = mapped_column(BigInteger, nullable=False)
@@ -77,17 +95,23 @@ class PaperAuditEvent(Base):
     event_type: Mapped[str] = mapped_column(String(32), nullable=False)
     symbol: Mapped[Optional[str]] = mapped_column(String(16))
     payload: Mapped[dict] = mapped_column(JSON, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
 
 class PaperStopChange(Base):
     __tablename__ = "paper_stop_changes"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    trade_id: Mapped[int] = mapped_column(ForeignKey("paper_trades.id", ondelete="CASCADE"), nullable=False)
+    trade_id: Mapped[int] = mapped_column(
+        ForeignKey("paper_trades.id", ondelete="CASCADE"), nullable=False
+    )
     old_stop: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
     new_stop: Mapped[float] = mapped_column(Numeric(18, 4), nullable=False)
     reason: Mapped[str] = mapped_column(Text, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
 
 class Company(Base):
@@ -148,7 +172,9 @@ class IntradayPrice(Base):
 
 class FinancialStatement(Base):
     __tablename__ = "financial_statements"
-    __table_args__ = (UniqueConstraint("company_id", "period", "period_type", "source"),)
+    __table_args__ = (
+        UniqueConstraint("company_id", "period", "period_type", "source"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     company_id: Mapped[int] = mapped_column(
@@ -176,7 +202,9 @@ class FinancialStatement(Base):
 
 class FinancialRatio(Base):
     __tablename__ = "financial_ratios"
-    __table_args__ = (UniqueConstraint("company_id", "period", "period_type", "source"),)
+    __table_args__ = (
+        UniqueConstraint("company_id", "period", "period_type", "source"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     company_id: Mapped[int] = mapped_column(
@@ -263,7 +291,9 @@ class AIMessage(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     conversation_id: Mapped[int] = mapped_column(
-        ForeignKey("ai_conversations.id", ondelete="CASCADE"), nullable=False, index=True
+        ForeignKey("ai_conversations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
     role: Mapped[str] = mapped_column(String(16), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
@@ -325,6 +355,8 @@ class CollectorLog(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
 class MarketHoliday(Base):
     __tablename__ = "market_holidays"
     __table_args__ = (UniqueConstraint("market", "date"),)
@@ -337,8 +369,13 @@ class MarketHoliday(Base):
     source_url: Mapped[Optional[str]] = mapped_column(Text)
     is_trading_day: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     notes: Mapped[Optional[str]] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
 
 class MarketCalendarOverride(Base):
     __tablename__ = "market_calendar_overrides"
@@ -349,12 +386,19 @@ class MarketCalendarOverride(Base):
     is_trading_day: Mapped[bool] = mapped_column(Boolean, nullable=False)
     open_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
     session_1_end: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
-    session_2_start: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
+    session_2_start: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=False)
+    )
     close_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=False))
     reason: Mapped[Optional[str]] = mapped_column(Text)
     source_url: Mapped[Optional[str]] = mapped_column(Text)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
 
 from .ai_trading_model import AITradingAnalysis
 

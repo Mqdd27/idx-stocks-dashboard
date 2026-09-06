@@ -1,5 +1,6 @@
 """Deterministic analytics: technical indicators and fundamental ratios.
 All calculations use pandas/numpy. No AI involved."""
+
 import math
 from typing import Optional
 
@@ -48,7 +49,10 @@ def technical_indicators(rows: list) -> Optional[dict]:
     def macd() -> Optional[dict]:
         if n < 26:
             return None
-        macd_line = close.ewm(span=12, adjust=False).mean() - close.ewm(span=26, adjust=False).mean()
+        macd_line = (
+            close.ewm(span=12, adjust=False).mean()
+            - close.ewm(span=26, adjust=False).mean()
+        )
         signal = macd_line.ewm(span=9, adjust=False).mean()
         hist = macd_line - signal
         return {
@@ -84,7 +88,9 @@ def technical_indicators(rows: list) -> Optional[dict]:
     def support_resistance() -> dict:
         window = min(n, 120)
         recent = close.iloc[-window:]
-        pivot = float((high.iloc[-window:].max() + low.iloc[-window:].min() + recent.iloc[-1]) / 3)
+        pivot = float(
+            (high.iloc[-window:].max() + low.iloc[-window:].min() + recent.iloc[-1]) / 3
+        )
         return {
             "support": round(float(low.iloc[-window:].min()), 2),
             "resistance": round(float(high.iloc[-window:].max()), 2),
@@ -118,7 +124,9 @@ def technical_indicators(rows: list) -> Optional[dict]:
         "atr14": atr(14),
         "volume_avg_20": vol_avg_20,
         "support_resistance": support_resistance(),
-        "above_sma200": bool(last_close > float(close.tail(200).mean())) if n >= 200 else None,
+        "above_sma200": (
+            bool(last_close > float(close.tail(200).mean())) if n >= 200 else None
+        ),
     }
     return result
 

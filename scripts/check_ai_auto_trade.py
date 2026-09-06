@@ -1,4 +1,5 @@
 """Safe self-check for AI Auto Trade gates. Does not call an LLM or create a trade."""
+
 from datetime import date
 
 from sqlalchemy import select
@@ -15,9 +16,13 @@ with SessionLocal() as db:
     assert len(candidates) <= 3
     assert all(candidate["action"] == "buy" for candidate in candidates)
 
-    open_trade = db.execute(select(PaperTrade).where(PaperTrade.status == "open").limit(1)).scalar_one_or_none()
+    open_trade = db.execute(
+        select(PaperTrade).where(PaperTrade.status == "open").limit(1)
+    ).scalar_one_or_none()
     symbol = open_trade.symbol if open_trade else "BBCA"
-    opened, reason = _open_paper_trade(db, 0, symbol, {"action": "NO_TRADE", "decision": "Market Weight"})
+    opened, reason = _open_paper_trade(
+        db, 0, symbol, {"action": "NO_TRADE", "decision": "Market Weight"}
+    )
     assert not opened and reason == "AI_NO_TRADE"
 
 assert not is_trading_day(date(2026, 8, 29))
