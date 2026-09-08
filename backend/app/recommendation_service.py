@@ -13,6 +13,7 @@ from .market_calendar import (
     next_trading_day,
 )
 from .calendar_sync_service import calendar_fresh
+from .data_quality_service import critical_data_stale
 from .models import Company, DailyPrice, IntradayPrice, PaperTrade
 from .recommendation_model import TradeRecommendation
 from .quant_setup import build_quant_setup
@@ -134,6 +135,9 @@ def _valid_strategy(strategy, now):
     status = get_market_status(now)
     if not calendar_fresh():
         return False, "CALENDAR_STALE", status
+    with SessionLocal() as db:
+        if critical_data_stale(db, status, now.astimezone(timezone.utc)):
+            return False, "CRITICAL_DATA_STALE", status
     if not status["is_trading_day"]:
         return False, "NON_TRADING_DAY", status
     sessions = get_trading_sessions(now.date())

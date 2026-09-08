@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session, aliased
 
 from . import analytics, security
 from .operations_service import operations_health
+from .data_quality_service import data_quality
 from . import models as db_models
 from .ai_provider import (
     AIError,
@@ -765,6 +766,10 @@ def _market_rows(db: Session, limit: int = 10, order: str = "pct_desc"):
 @app.get("/api/operations/health")
 def operational_health(db: Session = Depends(get_db)):
     return operations_health(db)
+
+@app.get("/api/data-quality")
+def data_quality_status(db: Session = Depends(get_db)):
+    return data_quality(db)
 
 
 @app.get("/api/market/status")
