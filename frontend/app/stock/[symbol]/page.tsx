@@ -8,6 +8,7 @@ import { fmtNum, fmtPrice, fmtVol, pct, cls, fmtBig } from "@/lib/format";
 import StockChart from "@/components/StockChart";
 import AIAssistPanel from "@/components/AIAssistPanel";
 import ModelSelector from "@/components/ModelSelector";
+import PaperDecisionCard from "@/components/PaperDecisionCard";
 import { getModel } from "@/lib/store";
 
 type Tab =
@@ -330,6 +331,7 @@ function OverviewTab({
         <Stat label="Prev Close" value={p ? fmtPrice(p.previous_close) : "-"} />
         <Stat label="Date" value={p?.date || "-"} />
       </div>
+      <PaperDecisionCard symbol={stock.symbol} stock={stock} tech={tech} />
       <h3 className="card-title" style={{ margin: "20px 0 10px" }}>
         Technicals
       </h3>
