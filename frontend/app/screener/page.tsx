@@ -217,9 +217,14 @@ function ScreenerDetail({ row, onClose }: { row: any; onClose: () => void }) {
               {row.symbol} · {row.strategy}
             </h2>
           </div>
-          <button className="btn" onClick={onClose}>
-            CLOSE
-          </button>
+          <div className="screener-modal-actions">
+            <Link className="screener-stock-link" href={`/stock/${row.symbol}`}>
+              LIHAT SAHAM
+            </Link>
+            <button className="btn" onClick={onClose}>
+              CLOSE
+            </button>
+          </div>
         </div>
         <div className="screener-detail-levels">
           <b>

@@ -660,6 +660,10 @@ img, svg, canvas { max-width: 100%; }
 .ticker-button { border:0; background:transparent; padding:0; cursor:pointer; }
 .screener-modal-backdrop { position:fixed; inset:0; z-index:80; display:grid; place-items:center; padding:16px; background:rgba(0,0,0,.72); }
 .screener-modal { width:min(900px,100%); max-height:min(84vh,760px); overflow:auto; background:var(--panel); border:1px solid var(--amber); box-shadow:0 18px 50px rgba(0,0,0,.5); }
+.screener-modal .terminal-panel-head { padding:10px 12px; }
+.screener-modal-actions { display:flex; gap:8px; align-items:center; flex:0 0 auto; }
+.screener-stock-link { padding:4px 0; color:var(--amber); border-bottom:1px solid transparent; font:800 9px var(--mono); white-space:nowrap; }
+.screener-stock-link:hover, .screener-stock-link:focus-visible { border-bottom-color:var(--amber); outline:none; }
 .screener-detail-levels { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:5px; padding:8px; border-bottom:1px solid var(--border); font:9px var(--mono); }
 .screener-reason { padding:10px 12px; border-bottom:1px solid var(--border); font-size:12px; line-height:1.55; }
 .screener-reason p { margin:0 0 7px; }.screener-reason p:last-child { margin-bottom:0; }
