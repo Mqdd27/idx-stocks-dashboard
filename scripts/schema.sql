@@ -292,3 +292,38 @@ CREATE TABLE IF NOT EXISTS ai_trading_batch_items (
 CREATE INDEX IF NOT EXISTS ix_ai_trading_batch_items_batch_id ON ai_trading_batch_items(batch_id);
 CREATE INDEX IF NOT EXISTS ix_ai_trading_batch_items_symbol ON ai_trading_batch_items(symbol);
 CREATE INDEX IF NOT EXISTS ix_ai_trading_batch_items_status ON ai_trading_batch_items(status);
+
+CREATE TABLE IF NOT EXISTS foreign_flow_daily (
+ id BIGSERIAL PRIMARY KEY,
+ company_id INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+ trading_date DATE NOT NULL,
+ foreign_buy_volume BIGINT,
+ foreign_sell_volume BIGINT,
+ net_foreign_volume BIGINT,
+ total_traded_volume BIGINT,
+ source VARCHAR(64) NOT NULL,
+ source_timestamp TIMESTAMPTZ,
+ collected_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ UNIQUE (company_id, trading_date, source)
+);
+CREATE INDEX IF NOT EXISTS ix_foreign_flow_daily_company_date ON foreign_flow_daily(company_id, trading_date DESC);
+CREATE INDEX IF NOT EXISTS ix_foreign_flow_daily_date ON foreign_flow_daily(trading_date DESC);
+CREATE INDEX IF NOT EXISTS ix_foreign_flow_daily_net ON foreign_flow_daily(net_foreign_volume);
+
+CREATE TABLE IF NOT EXISTS broker_activity_daily (
+ id BIGSERIAL PRIMARY KEY,
+ trading_date DATE NOT NULL,
+ broker_code VARCHAR(16) NOT NULL,
+ broker_name TEXT,
+ volume BIGINT,
+ value NUMERIC(24,2),
+ frequency BIGINT,
+ source VARCHAR(64) NOT NULL,
+ source_timestamp TIMESTAMPTZ,
+ collected_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ UNIQUE (broker_code, trading_date, source)
+);
+CREATE INDEX IF NOT EXISTS ix_broker_activity_daily_date ON broker_activity_daily(trading_date DESC);
+CREATE INDEX IF NOT EXISTS ix_broker_activity_daily_value ON broker_activity_daily(value DESC);

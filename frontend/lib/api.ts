@@ -285,6 +285,9 @@ export const api = {
     jfetch<any>(`/api/recommendations/stocks/${symbol}/trade-ideas`),
   overview: () => jfetch<any>("/api/market/overview"),
   marketStatus: () => jfetch<any>("/api/market/status"),
+  foreignFlow: (period = "5d") => jfetch<any>(`/api/foreign-flow?period=${period}`),
+  foreignFlowStock: (symbol: string, period = "5d") => jfetch<any>(`/api/foreign-flow/${symbol}?period=${period}`),
+  brokerActivity: () => jfetch<any>("/api/broker-activity"),
   marketCalendarStatus: () => jfetch<any>("/api/market/calendar/status"),
   operationsHealth: () => jfetch<any>("/api/operations/health"),
   strategyPerformanceTrades: (

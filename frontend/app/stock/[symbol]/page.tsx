@@ -9,6 +9,7 @@ import StockChart from "@/components/StockChart";
 import AIAssistPanel from "@/components/AIAssistPanel";
 import ModelSelector from "@/components/ModelSelector";
 import PaperDecisionCard from "@/components/PaperDecisionCard";
+import StockForeignFlow from "@/components/StockForeignFlow";
 import { getModel } from "@/lib/store";
 
 type Tab =
@@ -18,7 +19,8 @@ type Tab =
   | "valuation"
   | "news"
   | "ai"
-  | "trade";
+  | "trade"
+  | "foreign";
 
 export default function StockDetailPage() {
   const { symbol } = useParams() as { symbol: string };
@@ -155,6 +157,7 @@ export default function StockDetailPage() {
             "news",
             "ai",
             "trade",
+            "foreign",
           ] as Tab[]
         ).map((t) => (
           <button
@@ -189,6 +192,7 @@ export default function StockDetailPage() {
       {tab === "valuation" && <ValuationTab symbol={symbol} />}
       {tab === "news" && <NewsTab symbol={symbol} />}
       {tab === "trade" && <TradeIdeasTab symbol={symbol} />}
+      {tab === "foreign" && <StockForeignFlow symbol={symbol} />}
       {tab === "ai" && (
         <div
           className="grid"

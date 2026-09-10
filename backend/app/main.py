@@ -44,6 +44,8 @@ from .recommendation_routes import (
 )
 from .watchlist_routes import router as watchlist_router
 from .batch_routes import router as batch_router
+from .foreign_flow_routes import router as foreign_flow_router
+from .broker_activity_routes import router as broker_activity_router
 
 settings = get_settings()
 _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
@@ -113,6 +115,8 @@ app.include_router(screener_router)
 app.include_router(trade_ideas_router)
 app.include_router(watchlist_router)
 app.include_router(batch_router)
+app.include_router(foreign_flow_router)
+app.include_router(broker_activity_router)
 
 app.add_middleware(
     CORSMiddleware,

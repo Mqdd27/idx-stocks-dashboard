@@ -31,6 +31,8 @@ from shared.common import (  # noqa: E402
 from app import models as db_models  # noqa: E402
 from collector import yahoo  # noqa: E402
 from collector import news as news_collector  # noqa: E402
+from scripts.foreign_flow_ingest import ingest as ingest_foreign_flow  # noqa: E402
+from scripts.broker_activity_ingest import ingest as ingest_broker_activity  # noqa: E402
 
 logger = get_logger("daily_sync")
 
@@ -350,6 +352,13 @@ def main() -> None:
     finally:
         db.close()
     asyncio.run(news_collector.sync_news(symbols, names))
+    try:
+        result = ingest_foreign_flow(now_wib().date())
+        logger.info("foreign flow sync: %s", result)
+        logger.info("broker activity sync: %s", ingest_broker_activity(now_wib().date()))
+    except Exception as exc:  # noqa: BLE001
+        logger.error("foreign flow sync failed: %s", exc)
+        log_to_db("foreign_flow", "error", f"sync failed: {exc}")
     elapsed = int(time.monotonic() - start)
     logger.info("daily_sync done in %ss", elapsed)
     log_to_db("daily_sync", "info", f"done in {elapsed}s")

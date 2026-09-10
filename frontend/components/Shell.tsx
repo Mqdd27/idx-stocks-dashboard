@@ -11,6 +11,8 @@ const NAV = [
   { href: "/watchlist", key: "MON", label: "Monitor", hint: "G W" },
   { href: "/screener", key: "SCR", label: "Screener", hint: "G S" },
   { href: "/news", key: "NWS", label: "News" },
+  { href: "/foreign-flow", key: "FFL", label: "Foreign Flow" },
+  { href: "/broker-activity", key: "BRK", label: "Broker Activity" },
   { href: "/calendar", key: "CAL", label: "Calendar" },
   { href: "/auto-trade", key: "SIM", label: "Paper Trade" },
   { href: "/ai-trading", key: "AIR", label: "AI Research" },

@@ -259,6 +259,40 @@ class News(Base):
     content: Mapped[Optional[str]] = mapped_column(Text)
 
 
+
+class ForeignFlowDaily(Base):
+    __tablename__ = "foreign_flow_daily"
+    __table_args__ = (UniqueConstraint("company_id", "trading_date", "source"),)
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id", ondelete="CASCADE"), nullable=False, index=True)
+    trading_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    foreign_buy_volume: Mapped[Optional[float]] = mapped_column(BigInteger)
+    foreign_sell_volume: Mapped[Optional[float]] = mapped_column(BigInteger)
+    net_foreign_volume: Mapped[Optional[float]] = mapped_column(BigInteger, index=True)
+    total_traded_volume: Mapped[Optional[float]] = mapped_column(BigInteger)
+    source: Mapped[str] = mapped_column(String(64), nullable=False, default="IDX GetStockSummary")
+    source_timestamp: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    collected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class BrokerActivityDaily(Base):
+    __tablename__ = "broker_activity_daily"
+    __table_args__ = (UniqueConstraint("broker_code", "trading_date", "source"),)
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    trading_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    broker_code: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    broker_name: Mapped[Optional[str]] = mapped_column(Text)
+    volume: Mapped[Optional[float]] = mapped_column(BigInteger)
+    value: Mapped[Optional[float]] = mapped_column(Numeric(24, 2))
+    frequency: Mapped[Optional[float]] = mapped_column(BigInteger)
+    source: Mapped[str] = mapped_column(String(64), nullable=False, default="IDX GetBrokerSummary")
+    source_timestamp: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    collected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
 class WatchlistItem(Base):
     __tablename__ = "watchlists"
     __table_args__ = (UniqueConstraint("name", "symbol"),)
