@@ -1,17 +1,13 @@
-{
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Stocks IDX",
-  "version": "0.1.0",
-  "identifier": "id.mqdd.stocksidx",
-  "build": { "frontendDist": "../ui" },
-  "app": {
-    "withGlobalTauri": true,
-    "windows": [{ "title": "Stocks IDX", "width": 1440, "height": 900, "minWidth": 1024, "minHeight": 700 }],
-    "security": { "csp": "default-src 'self'; connect-src 'self'; frame-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'" }
-  },
-  "bundle": {
-    "active": true,
-    "targets": ["appimage", "deb", "dmg", "msi"],
-    "icon": ["icons/icon.png", "icons/icon.icns", "icons/icon.ico"]
-  }
-}
+ewogICIkc2NoZW1hIjogImh0dHBzOi8vc2NoZW1hLnRhdXJpLmFwcC9jb25maWcvMiIsCiAgInBy
+b2R1Y3ROYW1lIjogIlN0b2NrcyBJRFgiLAogICJ2ZXJzaW9uIjogIjAuMS4wIiwKICAiaWRlbnRp
+ZmllciI6ICJpZC5tcWRkLnN0b2Nrc2lkeCIsCiAgImJ1aWxkIjogeyAiZnJvbnRlbmREaXN0Ijog
+Ii4uL3VpIiB9LAogICJhcHAiOiB7CiAgICAid2l0aEdsb2JhbFRhdXJpIjogdHJ1ZSwKICAgICJ3
+aW5kb3dzIjogW3sgInRpdGxlIjogIlN0b2NrcyBJRFgiLCAid2lkdGgiOiAxNDQwLCAiaGVpZ2h0
+IjogOTAwLCAibWluV2lkdGgiOiAxMDI0LCAibWluSGVpZ2h0IjogNzAwIH1dLAogICAgInNlY3Vy
+aXR5IjogeyAiY3NwIjogImRlZmF1bHQtc3JjICdzZWxmJzsgY29ubmVjdC1zcmMgJ3NlbGYnIGh0
+dHA6Ly8xMjcuMC4wLjE6Mzk0MjE7IGZyYW1lLXNyYyAnc2VsZicgaHR0cDovLzEyNy4wLjAuMToz
+OTQyMTsgaW1nLXNyYyAnc2VsZicgZGF0YTogaHR0cHM6IGh0dHA6Ly8xMjcuMC4wLjE6Mzk0MjE7
+IHN0eWxlLXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnOyBzY3JpcHQtc3JjICdzZWxmJyIgfQog
+IH0sCiAgImJ1bmRsZSI6IHsKICAgICJhY3RpdmUiOiB0cnVlLAogICAgInRhcmdldHMiOiBbImFw
+cGltYWdlIiwgImRlYiIsICJkbWciLCAibXNpIl0sCiAgICAiaWNvbiI6IFsiaWNvbnMvaWNvbi5w
+bmciLCAiaWNvbnMvaWNvbi5pY25zIiwgImljb25zL2ljb24uaWNvIl0KICB9Cn0=
