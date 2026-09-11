@@ -327,3 +327,22 @@ CREATE TABLE IF NOT EXISTS broker_activity_daily (
 );
 CREATE INDEX IF NOT EXISTS ix_broker_activity_daily_date ON broker_activity_daily(trading_date DESC);
 CREATE INDEX IF NOT EXISTS ix_broker_activity_daily_value ON broker_activity_daily(value DESC);
+
+CREATE TABLE IF NOT EXISTS desktop_pairings (
+ id BIGSERIAL PRIMARY KEY,
+ code_hash VARCHAR(64) NOT NULL UNIQUE,
+ label VARCHAR(96),
+ expires_at TIMESTAMPTZ NOT NULL,
+ used_at TIMESTAMPTZ,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS ix_desktop_pairings_expires_at ON desktop_pairings(expires_at);
+
+CREATE TABLE IF NOT EXISTS desktop_devices (
+ id BIGSERIAL PRIMARY KEY,
+ token_hash VARCHAR(64) NOT NULL UNIQUE,
+ label VARCHAR(96),
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ last_used_at TIMESTAMPTZ,
+ revoked_at TIMESTAMPTZ
+);

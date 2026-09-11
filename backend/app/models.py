@@ -378,6 +378,28 @@ class AIRequestLog(Base):
     completion_tokens: Mapped[Optional[int]] = mapped_column(Integer)
 
 
+
+class DesktopPairing(Base):
+    __tablename__ = "desktop_pairings"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    code_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    label: Mapped[Optional[str]] = mapped_column(String(96))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DesktopDevice(Base):
+    __tablename__ = "desktop_devices"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    label: Mapped[Optional[str]] = mapped_column(String(96))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+
 class CollectorLog(Base):
     __tablename__ = "collector_logs"
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { getFallback, getModel, setFallback } from "@/lib/store";
+import DesktopPairing from "@/components/DesktopPairing";
 
 function stamp(value?: string) {
   return value
@@ -111,6 +112,7 @@ export default function SettingsPage() {
           </table>
         </div>
       </div>
+      <DesktopPairing />
       <div className="card" style={{ marginTop: 12 }}>
         <div className="card-title">
           NOTIFICATION DELIVERY HEALTH · {deliveries?.owner || "HERMES"}
