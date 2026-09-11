@@ -9,5 +9,9 @@
     "windows": [{ "title": "Stocks IDX", "width": 1440, "height": 900, "minWidth": 1024, "minHeight": 700 }],
     "security": { "csp": "default-src 'self'; connect-src 'self'; frame-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'" }
   },
-  "bundle": { "active": true, "targets": ["appimage", "deb", "dmg", "msi"], "icon": ["icons/icon.png"] }
+  "bundle": {
+    "active": true,
+    "targets": ["appimage", "deb", "dmg", "msi"],
+    "icon": ["icons/icon.png", "icons/icon.icns", "icons/icon.ico"]
+  }
 }
