@@ -27,6 +27,7 @@ from .config import get_settings
 from .db import get_db
 from .rate_limit import rate_limit
 from .security import admin_token_valid, request_admin_token
+from .desktop_auth import request_is_admin
 from .market_calendar import get_market_status, today_jakarta
 from .paper_trading import (
     check_exit,
@@ -46,6 +47,7 @@ from .watchlist_routes import router as watchlist_router
 from .batch_routes import router as batch_router
 from .foreign_flow_routes import router as foreign_flow_router
 from .broker_activity_routes import router as broker_activity_router
+from .desktop_routes import router as desktop_router
 
 settings = get_settings()
 _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
@@ -58,11 +60,9 @@ async def protect_mutations(request: Request, call_next):
     if (
         request.method in ("POST", "PUT", "PATCH", "DELETE")
         and request.url.path.startswith("/api/")
-        and request.url.path not in ("/api/admin/login",)
+        and request.url.path not in ("/api/admin/login", "/api/desktop/pairings/redeem", "/api/desktop/session")
     ):
-        if not admin_token_valid(
-            request_admin_token(request), settings.admin_api_token
-        ):
+        if not request_is_admin(request, settings.admin_api_token):
             return JSONResponse({"detail": "Authentication required"}, status_code=401)
     return await call_next(request)
 
@@ -101,9 +101,7 @@ def admin_logout():
 @app.get("/api/admin/status")
 def admin_status(request: Request):
     return {
-        "authenticated": admin_token_valid(
-            request_admin_token(request), settings.admin_api_token
-        ),
+        "authenticated": request_is_admin(request, settings.admin_api_token),
         "configured": bool(settings.admin_api_token),
     }
 
@@ -117,6 +115,7 @@ app.include_router(watchlist_router)
 app.include_router(batch_router)
 app.include_router(foreign_flow_router)
 app.include_router(broker_activity_router)
+app.include_router(desktop_router)
 
 app.add_middleware(
     CORSMiddleware,
