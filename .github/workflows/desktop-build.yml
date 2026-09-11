@@ -1,43 +1,30 @@
-name: Desktop builds
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [main, feature/desktop-pairing]
-    paths: ["desktop/**", ".github/workflows/desktop-build.yml"]
-
-permissions:
-  contents: read
-
-jobs:
-  build:
-    name: ${{ matrix.os }} desktop package
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-22.04
-            args: --bundles appimage,deb
-          - os: macos-latest
-            args: --bundles dmg
-          - os: windows-latest
-            args: --bundles msi
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli --version "^2" --locked
-      - name: Install Linux dependencies
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev patchelf
-      - name: Build desktop package
-        working-directory: desktop/src-tauri
-        run: cargo tauri build ${{ matrix.args }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: stocks-desktop-${{ runner.os }}
-          path: desktop/src-tauri/target/release/bundle/**
+bmFtZTogRGVza3RvcCBidWlsZHMKCm9uOgogIHdvcmtmbG93X2Rpc3BhdGNoOgogIHB1c2g6CiAg
+ICBicmFuY2hlczogW21haW4sIGZlYXR1cmUvZGVza3RvcC1wYWlyaW5nXQogICAgcGF0aHM6IFsi
+ZGVza3RvcC8qKiIsICIuZ2l0aHViL3dvcmtmbG93cy9kZXNrdG9wLWJ1aWxkLnltbCJdCiAgICB0
+YWdzOiBbInYqIl0KCnBlcm1pc3Npb25zOgogIGNvbnRlbnRzOiB3cml0ZQoKam9iczoKICBidWls
+ZDoKICAgIG5hbWU6ICR7eyBtYXRyaXgub3MgfX0gZGVza3RvcCBwYWNrYWdlCiAgICBzdHJhdGVn
+eToKICAgICAgZmFpbC1mYXN0OiBmYWxzZQogICAgICBtYXRyaXg6CiAgICAgICAgaW5jbHVkZToK
+ICAgICAgICAgIC0gb3M6IHVidW50dS0yMi4wNAogICAgICAgICAgICBhcmdzOiAtLWJ1bmRsZXMg
+YXBwaW1hZ2UsZGViCiAgICAgICAgICAtIG9zOiBtYWNvcy1sYXRlc3QKICAgICAgICAgICAgYXJn
+czogLS1idW5kbGVzIGRtZwogICAgICAgICAgLSBvczogd2luZG93cy1sYXRlc3QKICAgICAgICAg
+ICAgYXJnczogLS1idW5kbGVzIG1zaQogICAgcnVucy1vbjogJHt7IG1hdHJpeC5vcyB9fQogICAg
+c3RlcHM6CiAgICAgIC0gdXNlczogYWN0aW9ucy9jaGVja291dEB2NAogICAgICAtIHVzZXM6IGR0
+b2xuYXkvcnVzdC10b29sY2hhaW5Ac3RhYmxlCiAgICAgIC0gdXNlczogYWN0aW9ucy9zZXR1cC1u
+b2RlQHY0CiAgICAgICAgd2l0aDoKICAgICAgICAgIG5vZGUtdmVyc2lvbjogMjQKICAgICAgLSBu
+YW1lOiBJbnN0YWxsIFRhdXJpIENMSQogICAgICAgIHJ1bjogY2FyZ28gaW5zdGFsbCB0YXVyaS1j
+bGkgLS12ZXJzaW9uICJeMiIgLS1sb2NrZWQKICAgICAgLSBuYW1lOiBJbnN0YWxsIExpbnV4IGRl
+cGVuZGVuY2llcwogICAgICAgIGlmOiBydW5uZXIub3MgPT0gJ0xpbnV4JwogICAgICAgIHJ1bjog
+c3VkbyBhcHQtZ2V0IHVwZGF0ZSAmJiBzdWRvIGFwdC1nZXQgaW5zdGFsbCAteSBsaWJ3ZWJraXQy
+Z3RrLTQuMS1kZXYgbGliZ3RrLTMtZGV2IGxpYmF5YXRhbmEtYXBwaW5kaWNhdG9yMy1kZXYgbGli
+cnN2ZzItZGV2IGxpYnhkby1kZXYgcGF0Y2hlbGYKICAgICAgLSBuYW1lOiBCdWlsZCBkZXNrdG9w
+IHBhY2thZ2UKICAgICAgICB3b3JraW5nLWRpcmVjdG9yeTogZGVza3RvcC9zcmMtdGF1cmkKICAg
+ICAgICBydW46IGNhcmdvIHRhdXJpIGJ1aWxkICR7eyBtYXRyaXguYXJncyB9fQogICAgICAtIHVz
+ZXM6IGFjdGlvbnMvdXBsb2FkLWFydGlmYWN0QHY0CiAgICAgICAgd2l0aDoKICAgICAgICAgIG5h
+bWU6IHN0b2Nrcy1kZXNrdG9wLSR7eyBydW5uZXIub3MgfX0KICAgICAgICAgIHBhdGg6IGRlc2t0
+b3Avc3JjLXRhdXJpL3RhcmdldC9yZWxlYXNlL2J1bmRsZS8qKgoKICByZWxlYXNlOgogICAgbmFt
+ZTogUHVibGlzaCByZWxlYXNlCiAgICBpZjogc3RhcnRzV2l0aChnaXRodWIucmVmLCAncmVmcy90
+YWdzL3YnKQogICAgbmVlZHM6IFtidWlsZF0KICAgIHJ1bnMtb246IHVidW50dS1sYXRlc3QKICAg
+IHN0ZXBzOgogICAgICAtIHVzZXM6IGFjdGlvbnMvZG93bmxvYWQtYXJ0aWZhY3RAdjQKICAgICAg
+ICB3aXRoOgogICAgICAgICAgcGF0aDogYXJ0aWZhY3RzCiAgICAgIC0gdXNlczogc29mdHByb3Bz
+L2FjdGlvbi1naC1yZWxlYXNlQHYyCiAgICAgICAgd2l0aDoKICAgICAgICAgIGZpbGVzOiBhcnRp
+ZmFjdHMvKiovKgogICAgICAgICAgZ2VuZXJhdGVfcmVsZWFzZV9ub3RlczogdHJ1ZQ==
