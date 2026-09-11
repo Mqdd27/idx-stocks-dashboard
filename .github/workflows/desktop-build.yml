@@ -3,8 +3,8 @@ name: Desktop builds
 on:
   workflow_dispatch:
   push:
-    branches: [feature/desktop-pairing]
-    paths: ["desktop/**"]
+    branches: [main, feature/desktop-pairing]
+    paths: ["desktop/**", ".github/workflows/desktop-build.yml"]
 
 permissions:
   contents: read
