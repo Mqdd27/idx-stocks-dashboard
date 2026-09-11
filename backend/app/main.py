@@ -49,10 +49,22 @@ from .foreign_flow_routes import router as foreign_flow_router
 from .broker_activity_routes import router as broker_activity_router
 from .desktop_routes import router as desktop_router
 
+from contextlib import asynccontextmanager
+
 settings = get_settings()
 _paper_candidates_cache: dict[tuple, tuple[float, list[dict]]] = {}
 
-app = FastAPI(title="Stocks Dashboard API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app):
+    from .db import init_db
+
+    init_db()
+    yield
+
+
+app = FastAPI(title="Stocks Dashboard API", version="1.0.0", lifespan=lifespan)
+
 
 
 @app.middleware("http")
