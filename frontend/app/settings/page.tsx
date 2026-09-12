@@ -17,6 +17,9 @@ export default function SettingsPage() {
   const [health, setHealth] = useState<any>(null);
   const [deliveries, setDeliveries] = useState<any>(null);
   const [deliveryError, setDeliveryError] = useState("");
+  const [desktopAi, setDesktopAi] = useState<any>(null);
+  const [desktopAiStatus, setDesktopAiStatus] = useState("");
+  const isDesktop = typeof window !== "undefined" && window.parent !== window;
 
   useEffect(() => {
     setModelState(getModel() || "");
@@ -25,6 +28,13 @@ export default function SettingsPage() {
       .then((r) => r.json())
       .then(setHealth)
       .catch(() => {});
+    if (window.parent !== window) window.parent.postMessage({ type: "stocks-desktop-load-ai" }, "*");
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type === "stocks-desktop-ai-config") setDesktopAi(event.data.config);
+      if (event.data?.type === "stocks-desktop-ai-saved") setDesktopAiStatus("Tersimpan. Tutup dan buka ulang aplikasi untuk menerapkan AI.");
+      if (event.data?.type === "stocks-desktop-ai-error") setDesktopAiStatus(event.data.error);
+    };
+    window.addEventListener("message", handler);
     const load = () =>
       api
         .notificationStatus()
@@ -33,7 +43,7 @@ export default function SettingsPage() {
         .catch(() => setDeliveryError("Delivery health unavailable."));
     load();
     const timer = window.setInterval(load, 30000);
-    return () => clearInterval(timer);
+    return () => { clearInterval(timer); window.removeEventListener("message", handler); };
   }, []);
 
   return (
@@ -112,6 +122,19 @@ export default function SettingsPage() {
           </table>
         </div>
       </div>
+      {isDesktop && (
+        <div className="card" style={{ marginTop: 12 }}>
+          <div className="card-title">AI / 9ROUTER (OPTIONAL)</div>
+          <p className="muted">Market data tetap berjalan tanpa AI. Simpan konfigurasi ini bila ingin memakai AI Research.</p>
+          <div className="grid grid-2">
+            <input placeholder="9Router URL (.../v1)" value={desktopAi?.nine_router_url || ""} onChange={(e) => setDesktopAi({ ...desktopAi, nine_router_url: e.target.value })} />
+            <input type="password" placeholder="9Router API key" value={desktopAi?.nine_router_api_key || ""} onChange={(e) => setDesktopAi({ ...desktopAi, nine_router_api_key: e.target.value })} />
+            <input placeholder="Model default" value={desktopAi?.default_model || ""} onChange={(e) => setDesktopAi({ ...desktopAi, default_model: e.target.value })} />
+            <button className="btn btn-primary" onClick={() => { setDesktopAiStatus("Menyimpan..."); window.parent.postMessage({ type: "stocks-desktop-save-ai", config: desktopAi || {} }, "*"); }}>SAVE AI CONFIG</button>
+          </div>
+          {desktopAiStatus && <p className="muted" style={{ marginTop: 10 }}>{desktopAiStatus}</p>}
+        </div>
+      )}
       <DesktopPairing />
       <div className="card" style={{ marginTop: 12 }}>
         <div className="card-title">

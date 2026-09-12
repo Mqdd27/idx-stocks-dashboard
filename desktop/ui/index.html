@@ -1,34 +1,8 @@
 <!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Stocks IDX Desktop</title>
-  <link rel="stylesheet" href="./style.css"/>
-</head>
-<body>
-<main>
-  <section id="setup" hidden>
-    <h1>STOCKS IDX</h1>
-    <p class="muted">Setup pertama kali. Data tetap tersimpan lokal di perangkat ini.</p>
-    <input id="router" placeholder="9Router URL (https://host:port/v1)"/>
-    <input id="apikey" type="password" placeholder="9Router API Key"/>
-    <input id="model" placeholder="Model default (contoh: cx/gpt-5.4-mini)"/>
-    <input id="master" type="password" placeholder="Password master (min 12 karakter)"/>
-    <button id="setupBtn">SAVE &amp; LAUNCH</button>
-    <p id="status"></p>
-  </section>
-
-  <section id="lock" hidden>
-    <h1>STOCKS IDX</h1>
-    <p class="muted">Masukkan password master.</p>
-    <input id="password" type="password" placeholder="Password master"/>
-    <button id="unlockBtn">UNLOCK</button>
-    <p id="status2"></p>
-  </section>
-
-  <iframe id="dashboard" hidden></iframe>
-</main>
-<script type="module" src="./app.js"></script>
-</body>
-</html>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Stocks IDX Desktop</title><link rel="stylesheet" href="./style.css"/></head>
+<body><main>
+<section id="setup" hidden><h1>STOCKS IDX</h1><p class="muted">Buat password lokal. Konfigurasi AI/9Router opsional dan dapat ditambahkan nanti melalui Settings.</p><input id="master" type="password" placeholder="Password master (min 12 karakter)"/><button id="setupBtn">SAVE &amp; LAUNCH</button><p id="status"></p></section>
+<section id="lock" hidden><h1>STOCKS IDX</h1><p class="muted">Masukkan password master.</p><input id="password" type="password" placeholder="Password master"/><button id="unlockBtn">UNLOCK</button><p id="status2"></p></section>
+<iframe id="dashboard" hidden></iframe>
+</main><script type="module" src="./app.js"></script></body></html>

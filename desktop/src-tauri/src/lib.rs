@@ -34,17 +34,18 @@ fn config_keyring() -> Result<Entry, String> {
 
 #[tauri::command]
 fn has_setup() -> bool {
-    config_keyring()
+    auth_keyring()
         .and_then(|entry| entry.get_password().map_err(|e| e.to_string()))
         .is_ok()
 }
 
 #[tauri::command]
-fn load_config() -> Result<ProviderConfig, String> {
-    let stored = config_keyring()?
-        .get_password()
-        .map_err(|_| "Konfigurasi belum dibuat.".to_string())?;
-    serde_json::from_str(&stored).map_err(|e| e.to_string())
+fn load_config() -> ProviderConfig {
+    config_keyring()
+        .and_then(|entry| entry.get_password().map_err(|e| e.to_string()))
+        .ok()
+        .and_then(|stored| serde_json::from_str(&stored).ok())
+        .unwrap_or_default()
 }
 
 fn save_auth(password: &str) -> Result<(), String> {
@@ -60,14 +61,7 @@ fn save_auth(password: &str) -> Result<(), String> {
 }
 
 #[tauri::command]
-fn save_config(config: ProviderConfig, password: String) -> Result<(), String> {
-    if config.nine_router_url.is_empty()
-        || config.nine_router_api_key.is_empty()
-        || config.default_model.is_empty()
-    {
-        return Err("Konfigurasi 9Router dan model wajib diisi.".to_string());
-    }
-    save_auth(&password)?;
+fn save_config(config: ProviderConfig) -> Result<(), String> {
     let serialized = serde_json::to_string(&config).map_err(|e| e.to_string())?;
     config_keyring()?.set_password(&serialized).map_err(|e| e.to_string())
 }
@@ -94,7 +88,7 @@ fn env_payload(config: &ProviderConfig, database_path: String, static_dir: Strin
         "NINE_ROUTER_API_KEY": config.nine_router_api_key,
         "DEFAULT_AI_MODEL": config.default_model,
         "OLLAMA_URL": "http://127.0.0.1:11434",
-        "AI_TRADING_ENABLED": "true",
+        "AI_TRADING_ENABLED": if config.nine_router_url.is_empty() || config.nine_router_api_key.is_empty() { "false" } else { "true" },
         "CORS_ALLOWED_ORIGINS": "http://127.0.0.1",
         "ADMIN_COOKIE_SECURE": "false",
         "DESKTOP_LOCAL_AUTH": "true",
@@ -145,16 +139,15 @@ async fn start_backend(
 async fn setup_and_launch(
     app: tauri::AppHandle,
     state: TauriState<'_, Desktop>,
-    config: ProviderConfig,
     password: String,
 ) -> Result<String, String> {
-    save_config(config.clone(), password)?;
-    start_backend(app, state, config).await
+    save_auth(&password)?;
+    start_backend(app, state, load_config()).await
 }
 
 #[tauri::command]
 async fn launch_backend(app: tauri::AppHandle, state: TauriState<'_, Desktop>) -> Result<String, String> {
-    start_backend(app, state, load_config()?).await
+    start_backend(app, state, load_config()).await
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
