@@ -30,7 +30,7 @@ Mencakup lebih dari **840 emiten IDX** dan IHSG. Bukan platform broker: seluruh 
 
 ## Aplikasi desktop
 
-Aplikasi desktop menjalankan dashboard, API, dan SQLite lokal di perangkat. Tidak memerlukan `stocks.mqdd.my.id` atau PostgreSQL lokal.
+Aplikasi desktop menjalankan dashboard, API, dan SQLite lokal di perangkat.
 
 - Tersedia bundle Tauri untuk **macOS, Windows, dan Linux** melalui artefak GitHub Actions.
 - Setup awal hanya meminta **password master lokal**. Password disimpan sebagai hash Argon2; konfigurasi sensitif menggunakan OS keyring.
