@@ -39,30 +39,30 @@ Aplikasi desktop menjalankan dashboard, API, dan SQLite lokal di perangkat.
 - **9Router/AI opsional**: masukkan URL, API key, dan model dari `Pengaturan → AI / 9Router` hanya jika ingin memakai fitur AI. Simpan konfigurasi lalu gunakan `RESTART DESKTOP APP` untuk menerapkannya.
 - Semua endpoint desktop hanya bind ke `127.0.0.1`.
 
-Build desktop saat ini adalah artefak pengujian. Artefak macOS belum ditandatangani dan dinotarize Apple; Gatekeeper mungkin memerlukan penghapusan quarantine secara manual sebelum aplikasi dapat dibuka.
+Build desktop saat ini adalah artefak pengujian. Pengujian langsung baru dilakukan di macOS; paket Windows dan Linux saat ini hanya tervalidasi melalui build CI. Artefak macOS belum ditandatangani dan dinotarize Apple; Gatekeeper mungkin memerlukan penghapusan quarantine secara manual sebelum aplikasi dapat dibuka.
 
 ## Arsitektur
 
 ```text
-Yahoo Finance + Google News RSS + sumber EOD IDX
+Yahoo Finance + Google News RSS + IDX EOD sources
   -> PostgreSQL (web) / SQLite (desktop)
-  -> API FastAPI, analitik, mesin paper trading, layanan rekomendasi
-  -> UI workstation Next.js / shell desktop Tauri
+  -> FastAPI API, analytics, paper trading engine, recommendation services
+  -> Next.js workstation UI / Tauri desktop shell
 
 AI opsional:
 9Router atau Ollama
   -> Riset TradingAgents dan alur kerja berbantuan AI
 ```
 
-## Tautan cepat
+## Quick links
 
-- [Instalasi dan operasional](./INSTALLATION.md)
-- [Arsitektur](./INSTALLATION.md#architecture)
-- [Variabel lingkungan](./INSTALLATION.md#environment-variables)
-- [Layanan dan timer systemd](./INSTALLATION.md#systemd-services--timers)
-- [Endpoint API](./INSTALLATION.md#api-endpoints-summary)
+- [Installation & Operations](./INSTALLATION.md)
+- [Architecture](./INSTALLATION.md#architecture)
+- [Environment Variables](./INSTALLATION.md#environment-variables)
+- [Systemd Services & Timers](./INSTALLATION.md#systemd-services--timers)
+- [API Endpoints](./INSTALLATION.md#api-endpoints-summary)
 
-## Catatan keamanan dan data
+## Security & data notes
 
 - Proyek ini **tidak** menempatkan order riil atau terhubung ke broker.
 - Output AI adalah bantuan riset, bukan nasihat investasi atau jaminan imbal hasil.
