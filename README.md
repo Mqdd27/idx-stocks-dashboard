@@ -1,57 +1,70 @@
 # Stocks Dashboard IDX
 
-Indonesian stock market dashboard self-hosted with historical price analytics, financial statements, ratios, news, fundamental screening, watchlists, paper trading, TradingAgents AI research, BSJP/BPJS strategy performance, and Telegram brief delivery.
+Dashboard saham Indonesia untuk memantau pasar IDX, melakukan riset emiten, dan menjalankan simulasi strategi paper trading. Tersedia sebagai workstation web mandiri dan aplikasi desktop lokal untuk macOS, Windows, serta Linux.
 
-Supports **840+ companies** listed on the Indonesia Stock Exchange (IDX).
+Mencakup lebih dari **840 emiten IDX** dan IHSG. Bukan platform broker: seluruh keputusan dan posisi trading tetap berupa simulasi.
 
----
+## Fitur
 
-## 📌 Quick Links
+### Riset pasar
 
-- [Installation & Deployment Guide](./INSTALLATION.md)
-- [Architecture & Data Pipeline](./INSTALLATION.md#architecture)
-- [Environment Configuration](./INSTALLATION.md#environment-variables)
-- [Systemd Services & Timers](./INSTALLATION.md#systemd-services--timers)
-- [API Reference](./INSTALLATION.md#api-endpoints-summary)
+- **Terminal pasar**: IHSG, top gainers, top losers, saham paling aktif, status sesi IDX, dan watchlist.
+- **Detail emiten**: harga historis hingga lima tahun, chart candlestick, volume, SMA, EMA, RSI, MACD, Bollinger Bands, ATR, laporan keuangan, dan rasio valuasi.
+- **Market Feed & Stock News**: berita pasar dan berita per emiten dari Google News RSS, dengan filter sumber, sentimen, dan tanggal.
+- **Foreign Flow**: data EOD resmi IDX dari `ForeignBuy` dan `ForeignSell`; disajikan sebagai volume saham, bukan nilai Rupiah.
+- **Broker Activity**: turnover EOD broker tingkat pasar dari IDX. Data ini tidak diklaim sebagai aliran beli/jual per saham atau foreign flow.
+- **Penyaring fundamental**: filter valuasi, pertumbuhan, profitabilitas, dan setup teknikal.
 
----
+### Paper trading dan performa
 
-## ✨ Features
+- **Mesin paper trading kuantitatif**: setup teknikal deterministik, position sizing, target, stop loss, dan pencatatan hasil.
+- **Riset AI TradingAgents**: analisis multi-agent dengan validasi harga dan target deterministik sebelum dapat dipakai sebagai rekomendasi simulasi.
+- **BSJP & BPJS**: analitik beli sore-jual pagi dan beli pagi-jual sore, termasuk win rate, profit factor, return, equity index, dan rincian transaksi.
+- **AI Watchlist & AI Auto Trade**: alur kerja riset dan simulasi paper trading; tidak ada integrasi broker atau order riil.
 
-- **Interactive Market Terminal**: Dense dark workstation interface inspired by financial terminals, displaying market overview, IHSG composite index, top gainers, top losers, and most active movers.
-- **5-Year Price Analytics**: Candlestick charts powered by `lightweight-charts` with SMA, EMA, RSI, MACD, Bollinger Bands, ATR, and volume analysis.
-- **Financial Statements & Ratios**: Annual and quarterly financial statements (13 position items) with auto-calculated valuation and performance ratios (PER, PBV, ROE, ROA, DER, NPM, margins).
-- **Google News Integration**: Ticker-specific and general market news from Google News RSS feeds with automated backoff.
-- **Fundamental Screener**: Filter stocks across valuation, growth, profitability, and technical setup parameters.
-- **Dual Paper Trading Engine**:
-  - **Quant Engine**: Deterministic technical setup generation with automated position sizing, risk management, and outcome tracking.
-  - **TradingAgents AI**: Multi-agent LLM analysis via local 9Router (`cx/*` models) with strict price/target validation.
-- **BSJP & BPJS Strategy Analytics**:
-  - **BSJP (Beli Sore Jual Pagi)**: Overnight momentum strategy analytics.
-  - **BPJS (Beli Pagi Jual Sore)**: Intraday setup analytics with automatic overnight anomaly detection.
-  - **Performance Dashboard**: Win rate, net return, profit factor, best/worst trade, and normalized equity index curves at `/performance`.
-- **Durable Telegram Delivery**: Automated daily market briefs, performance reports, and image charts delivered via Hermes scheduler with content-hash and logical-key idempotency.
-- **Operations Health Monitoring**: Real-time tracking of calendar sync freshness, collector lag, batch queue progress, and Telegram delivery status at `/operations`.
+### Operasional
 
----
+- **Operations Health**: status kalender IDX, freshness kolektor, batch AI, dan kegagalan pengiriman notifikasi.
+- **Pengiriman Telegram tahan duplikasi**: Hermes mengirim daily brief dan laporan performa dengan idempotensi logical-key/content-hash.
+- **Kalender pasar Jakarta**: sesi pasar, hari libur, dan keputusan tanggal bisnis menggunakan `Asia/Jakarta`.
 
-## 🏗️ Architecture Overview
+## Aplikasi desktop
+
+Aplikasi desktop menjalankan dashboard, API, dan SQLite lokal di perangkat. Tidak memerlukan `stocks.mqdd.my.id` atau PostgreSQL lokal.
+
+- Tersedia bundle Tauri untuk **macOS, Windows, dan Linux** melalui artefak GitHub Actions.
+- Setup awal hanya meminta **password master lokal**. Password disimpan sebagai hash Argon2; konfigurasi sensitif menggunakan OS keyring.
+- Database SQLite dan daftar emiten dibuat lokal saat pertama dijalankan.
+- Harga awal IHSG dan saham likuid diambil di latar belakang. Dashboard menunjukkan progres ticker, jumlah berhasil, dan persentase selama proses ini berjalan.
+- **9Router/AI opsional**: masukkan URL, API key, dan model dari `Pengaturan → AI / 9Router` hanya jika ingin memakai fitur AI. Simpan konfigurasi lalu gunakan `RESTART DESKTOP APP` untuk menerapkannya.
+- Semua endpoint desktop hanya bind ke `127.0.0.1`.
+
+Build desktop saat ini adalah artefak pengujian. Artefak macOS belum ditandatangani dan dinotarize Apple; Gatekeeper mungkin memerlukan penghapusan quarantine secara manual sebelum aplikasi dapat dibuka.
+
+## Arsitektur
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                    Browser Workstation UI                   │
-│         Next.js 15 · React 19 · TypeScript · Bloomberg Dark │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ HTTP / SSE
-┌──────────────────────────────▼──────────────────────────────┐
-│                    FastAPI Backend (:8200)                  │
-│       Jakarta TZ · Quant Setup · Performance Service        │
-└──────────────┬───────────────┬───────────────┬──────────────┘
-               │               │               │
-  ┌────────────▼─────────┐ ┌───▼───────────┐ ┌─▼──────────────┐
-  │ PostgreSQL Database  │ │ Ollama Local  │ │ 9Router Gateway│
-  │ (market/paper/outcomes)│ │ (:11434)      │ │ (:20128)       │
-  └──────────────────────┘ └───────────────┘ └────────────────┘
+Yahoo Finance + Google News RSS + sumber EOD IDX
+  -> PostgreSQL (web) / SQLite (desktop)
+  -> API FastAPI, analitik, mesin paper trading, layanan rekomendasi
+  -> UI workstation Next.js / shell desktop Tauri
+
+AI opsional:
+9Router atau Ollama
+  -> Riset TradingAgents dan alur kerja berbantuan AI
 ```
 
-See [INSTALLATION.md](./INSTALLATION.md) for step-by-step setup instructions.
+## Tautan cepat
+
+- [Instalasi dan operasional](./INSTALLATION.md)
+- [Arsitektur](./INSTALLATION.md#architecture)
+- [Variabel lingkungan](./INSTALLATION.md#environment-variables)
+- [Layanan dan timer systemd](./INSTALLATION.md#systemd-services--timers)
+- [Endpoint API](./INSTALLATION.md#api-endpoints-summary)
+
+## Catatan keamanan dan data
+
+- Proyek ini **tidak** menempatkan order riil atau terhubung ke broker.
+- Output AI adalah bantuan riset, bukan nasihat investasi atau jaminan imbal hasil.
+- Foreign Flow memakai field resmi IDX untuk volume saham beli/jual asing. Broker Activity dan Foreign Flow memiliki semantik sumber yang berbeda dan tidak boleh saling dilabeli.
+- Kolektor produksi, scheduler, Telegram, dan eksekusi AI memiliki kontrol operasional terpisah. Pertahankan `AI_TRADING_ENABLED=false` kecuali telah sengaja dikonfigurasi dan diuji.
