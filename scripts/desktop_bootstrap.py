@@ -57,6 +57,82 @@ def seed_companies() -> None:
         db.close()
 
 
+CORE_SYMBOLS = (
+    "IHSG", "BBCA", "BBRI", "BMRI", "BBNI", "TLKM", "ASII", "ICBP", "INDF",
+    "UNTR", "AMRT", "CPIN", "MDKA", "ANTM", "INCO", "ADRO", "PTBA", "ITMG",
+    "PGAS", "MEDC", "PGEO", "GOTO", "TPIA", "BRPT", "PANI", "CUAN", "DSSA",
+    "KLBF", "SIDO", "MYOR", "UNVR", "HMSP", "EXCL", "ISAT", "MTEL", "TOWR",
+    "JSMR", "WIKA", "ADHI", "PTPP", "SMGR", "INTP", "JPFA", "AALI", "LSIP",
+    "BBTN", "BRIS", "ARTO", "ESSA", "HEAL", "MIKA",
+)
+
+
+def bootstrap_prices() -> None:
+    from sqlalchemy import select
+
+    from app import models as db_models
+    from app.db import SessionLocal
+    from collector.daily_sync import store_daily_rows
+    from collector import yahoo
+
+    db = SessionLocal()
+    try:
+        rows = db.execute(
+            select(db_models.Company.symbol, db_models.Company.yahoo_symbol)
+            .where(db_models.Company.symbol.in_(CORE_SYMBOLS))
+        ).all()
+    finally:
+        db.close()
+
+    async def sync() -> None:
+        import httpx
+
+        semaphore = asyncio.Semaphore(8)
+
+        async def fetch(symbol: str, yahoo_symbol: str):
+            async with semaphore:
+                try:
+                    async with httpx.AsyncClient(timeout=12) as client:
+                        chart = await yahoo.fetch_chart(yahoo_symbol, "1y", "1d", client=client)
+                    return symbol, chart
+                except Exception:
+                    return symbol, None
+
+        charts = await asyncio.gather(*(fetch(symbol, yahoo_symbol) for symbol, yahoo_symbol in rows))
+        for symbol, chart in charts:
+            if not chart:
+                continue
+            db = SessionLocal()
+            try:
+                company = db.execute(
+                    select(db_models.Company).where(db_models.Company.symbol == symbol)
+                ).scalar_one()
+            finally:
+                db.close()
+            store_daily_rows(company.id, yahoo.chart_to_daily_rows(chart))
+
+    asyncio.run(sync())
+
+
+def maybe_bootstrap_prices() -> None:
+    from sqlalchemy import select
+
+    from app import models as db_models
+    from app.db import SessionLocal
+
+    db = SessionLocal()
+    try:
+        has_price = db.execute(
+            select(db_models.DailyPrice.id).limit(1)
+        ).scalar_one_or_none() is not None
+    finally:
+        db.close()
+    if not has_price:
+        import threading
+
+        threading.Thread(target=bootstrap_prices, name="desktop-price-bootstrap", daemon=True).start()
+
+
 def sync_once() -> dict:
     from collector.daily_sync import all_symbols, load_seed, sync_fundamentals, sync_prices
     from collector.news import sync_news
@@ -89,6 +165,7 @@ def main() -> None:
     static_dir = Path(settings.desktop_static_dir)
     init_db()
     seed_companies()
+    maybe_bootstrap_prices()
     if os.environ.get("DESKTOP_SYNC_ONLY") == "1":
         print(json.dumps(sync_once()))
         return
