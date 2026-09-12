@@ -115,15 +115,15 @@ async fn start_backend(
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let env_path = dir.join("backend-env.json");
     let database_path = dir.join("stocks.db").to_string_lossy().to_string();
-    let static_dir = app.path().resource_dir().map_err(|e| e.to_string())?.join("frontend").to_string_lossy().to_string();
+    let static_dir = app.path().resource_dir().map_err(|e| e.to_string())?.join("resources/frontend").to_string_lossy().to_string();
     let env = env_payload(&config, database_path, static_dir);
     std::fs::write(&env_path, serde_json::to_string_pretty(&env).map_err(|e| e.to_string())?)
         .map_err(|e| e.to_string())?;
 
     let backend_name = if cfg!(target_os = "windows") {
-        "backend/stocks-backend.exe"
+        "resources/backend/stocks-backend.exe"
     } else {
-        "backend/stocks-backend"
+        "resources/backend/stocks-backend"
     };
     let backend = app.path().resource_dir().map_err(|e| e.to_string())?.join(backend_name);
     let child = std::process::Command::new(backend)
