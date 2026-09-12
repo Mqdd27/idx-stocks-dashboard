@@ -29,6 +29,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const [clock, setClock] = useState("");
   const [health, setHealth] = useState<any>(null);
+  const [bootstrap, setBootstrap] = useState<any>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const chordRef = useRef("");
 
@@ -52,6 +53,20 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       .then((r) => r.json())
       .then(setHealth)
       .catch(() => setHealth(null));
+  }, []);
+  useEffect(() => {
+    let alive = true;
+    const poll = () =>
+      fetch("/api/desktop/bootstrap-status")
+        .then((response) => response.ok && response.json())
+        .then((status) => alive && status && setBootstrap(status))
+        .catch(() => {});
+    poll();
+    const timer = window.setInterval(poll, 2000);
+    return () => {
+      alive = false;
+      window.clearInterval(timer);
+    };
   }, []);
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -159,7 +174,10 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           <AdminUnlock />
           <ModelSelector />
         </header>
-        <main className="content terminal-content">{children}</main>
+        <main className="content terminal-content">
+          {bootstrap?.running && <DesktopBootstrapProgress status={bootstrap} />}
+          {children}
+        </main>
       </div>
     </div>
   );
@@ -303,5 +321,22 @@ function AdminUnlock() {
     >
       {authenticated ? "AUTH OK" : "UNLOCK"}
     </button>
+  );
+}
+
+
+function DesktopBootstrapProgress({ status }: { status: { completed: number; succeeded: number; total: number } }) {
+  const percent = status.total ? Math.round((status.completed / status.total) * 100) : 0;
+  return (
+    <section className="desktop-bootstrap" role="status">
+      <div>
+        <strong>MENYIAPKAN DATA MARKET LOKAL</strong>
+        <span>{status.completed}/{status.total} saham diproses · {status.succeeded} berhasil</span>
+      </div>
+      <div className="desktop-bootstrap-track" aria-label={`${percent}% selesai`}>
+        <i style={{ width: `${percent}%` }} />
+      </div>
+      <b>{percent}%</b>
+    </section>
   );
 }

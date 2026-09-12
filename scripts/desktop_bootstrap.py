@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from threading import Lock
 
 import uvicorn
 
@@ -10,6 +11,7 @@ if getattr(sys, "frozen", False):
     sys.path[:0] = [str(Path(sys._MEIPASS) / "backend"), str(Path(sys._MEIPASS))]
 
 from fastapi import HTTPException, Request
+from fastapi.responses import JSONResponse
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -57,6 +59,20 @@ def seed_companies() -> None:
         db.close()
 
 
+BOOTSTRAP_PROGRESS = {"running": False, "completed": 0, "succeeded": 0, "total": 0}
+BOOTSTRAP_LOCK = Lock()
+
+
+def bootstrap_progress() -> dict:
+    with BOOTSTRAP_LOCK:
+        return BOOTSTRAP_PROGRESS.copy()
+
+
+def update_bootstrap_progress(**values: int | bool) -> None:
+    with BOOTSTRAP_LOCK:
+        BOOTSTRAP_PROGRESS.update(values)
+
+
 CORE_SYMBOLS = (
     "IHSG", "BBCA", "BBRI", "BMRI", "BBNI", "TLKM", "ASII", "ICBP", "INDF",
     "UNTR", "AMRT", "CPIN", "MDKA", "ANTM", "INCO", "ADRO", "PTBA", "ITMG",
@@ -84,6 +100,8 @@ def bootstrap_prices() -> None:
     finally:
         db.close()
 
+    update_bootstrap_progress(running=True, completed=0, succeeded=0, total=len(rows))
+
     async def sync() -> None:
         import httpx
 
@@ -100,18 +118,23 @@ def bootstrap_prices() -> None:
 
         charts = await asyncio.gather(*(fetch(symbol, yahoo_symbol) for symbol, yahoo_symbol in rows))
         for symbol, chart in charts:
-            if not chart:
-                continue
-            db = SessionLocal()
-            try:
-                company = db.execute(
-                    select(db_models.Company).where(db_models.Company.symbol == symbol)
-                ).scalar_one()
-            finally:
-                db.close()
-            store_daily_rows(company.id, yahoo.chart_to_daily_rows(chart))
+            succeeded = bootstrap_progress()["succeeded"]
+            if chart:
+                db = SessionLocal()
+                try:
+                    company = db.execute(
+                        select(db_models.Company).where(db_models.Company.symbol == symbol)
+                    ).scalar_one()
+                finally:
+                    db.close()
+                store_daily_rows(company.id, yahoo.chart_to_daily_rows(chart))
+                succeeded += 1
+            update_bootstrap_progress(completed=bootstrap_progress()["completed"] + 1, succeeded=succeeded)
 
-    asyncio.run(sync())
+    try:
+        asyncio.run(sync())
+    finally:
+        update_bootstrap_progress(running=False)
 
 
 def maybe_bootstrap_prices() -> None:
@@ -131,6 +154,8 @@ def maybe_bootstrap_prices() -> None:
         import threading
 
         threading.Thread(target=bootstrap_prices, name="desktop-price-bootstrap", daemon=True).start()
+    else:
+        update_bootstrap_progress(running=False, completed=0, succeeded=0, total=0)
 
 
 def sync_once() -> dict:
@@ -176,6 +201,10 @@ def main() -> None:
             if request.method in {"POST", "PUT", "PATCH", "DELETE"} and request.url.path.startswith("/api/") and not is_loopback(request):
                 raise HTTPException(403, "Desktop API only accepts local connections")
             return await call_next(request)
+
+    @app.get("/api/desktop/bootstrap-status", include_in_schema=False)
+    def desktop_bootstrap_status():
+        return JSONResponse(bootstrap_progress())
 
     if static_dir.exists():
         @app.get("/stock/{symbol}", include_in_schema=False)
