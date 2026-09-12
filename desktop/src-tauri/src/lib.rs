@@ -104,11 +104,15 @@ fn env_payload(config: &ProviderConfig, database_path: String, static_dir: Strin
 }
 
 #[tauri::command]
-async fn launch_backend(app: tauri::AppHandle, state: TauriState<'_, Desktop>) -> Result<String, String> {
+async fn launch_backend(
+    app: tauri::AppHandle,
+    state: TauriState<'_, Desktop>,
+    config: Option<ProviderConfig>,
+) -> Result<String, String> {
     if port_ready(BACKEND_PORT) {
         return Ok(format!("http://127.0.0.1:{BACKEND_PORT}"));
     }
-    let config = load_config()?;
+    let config = config.unwrap_or(load_config()?);
     let dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let env_path = dir.join("backend-env.json");
