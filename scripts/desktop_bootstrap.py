@@ -32,6 +32,30 @@ def load_runtime_env() -> None:
 def is_loopback(request: Request) -> bool:
     return request.client is not None and request.client.host in {"127.0.0.1", "::1"}
 
+def seed_companies() -> None:
+    from sqlalchemy import select
+
+    from app import models as db_models
+    from app.db import SessionLocal
+
+    root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
+    companies = json.loads((root / "collector" / "seed_companies.json").read_text())
+    db = SessionLocal()
+    try:
+        for row in companies:
+            symbol = row["symbol"].upper()
+            if db.execute(select(db_models.Company.id).where(db_models.Company.symbol == symbol)).scalar_one_or_none() is None:
+                db.add(db_models.Company(
+                    symbol=symbol,
+                    company_name=row.get("company_name") or symbol,
+                    sector=row.get("sector"),
+                    subsector=row.get("subsector"),
+                    yahoo_symbol=row.get("yahoo_symbol"),
+                ))
+        db.commit()
+    finally:
+        db.close()
+
 
 def sync_once() -> dict:
     from collector.daily_sync import all_symbols, load_seed, sync_fundamentals, sync_prices
@@ -64,6 +88,7 @@ def main() -> None:
     settings = get_settings()
     static_dir = Path(settings.desktop_static_dir)
     init_db()
+    seed_companies()
     if os.environ.get("DESKTOP_SYNC_ONLY") == "1":
         print(json.dumps(sync_once()))
         return
