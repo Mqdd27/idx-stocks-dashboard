@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  output: process.env.NEXT_OUTPUT === "export" ? "export" : "standalone",
+  images: { unoptimized: true },
   reactStrictMode: true,
   async rewrites() {
     return [

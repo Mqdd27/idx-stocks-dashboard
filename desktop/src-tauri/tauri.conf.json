@@ -7,7 +7,7 @@
   "app": {
     "withGlobalTauri": true,
     "windows": [{ "title": "Stocks IDX", "width": 1440, "height": 900, "minWidth": 1024, "minHeight": 700 }],
-    "security": { "csp": "default-src 'self'; connect-src 'self' http://127.0.0.1:39421; frame-src 'self' http://127.0.0.1:39421; img-src 'self' data: https: http://127.0.0.1:39421; style-src 'self' 'unsafe-inline'; script-src 'self'" }
+    "security": { "csp": "default-src 'self'; connect-src 'self' http://127.0.0.1:8200; frame-src 'self' http://127.0.0.1:8200; img-src 'self' data: https: http://127.0.0.1:8200; style-src 'self' 'unsafe-inline'; script-src 'self'" }
   },
   "bundle": {
     "active": true,

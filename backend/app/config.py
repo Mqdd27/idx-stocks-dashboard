@@ -61,6 +61,12 @@ class Settings:
         self.log_dir: Path = Path(
             os.environ.get("LOG_DIR", "/opt/stocks-dashboard/logs")
         )
+        self.desktop_static_dir: str = os.environ.get(
+            "DESKTOP_STATIC_DIR", "/opt/stocks-dashboard/frontend/out"
+        )
+        self.desktop_local_auth = os.environ.get(
+            "DESKTOP_LOCAL_AUTH", "false"
+        ).lower() in ("1", "true", "yes")
         self.admin_api_token = os.environ.get("ADMIN_API_TOKEN", "")
         self.cors_allowed_origins = [
             item.strip()

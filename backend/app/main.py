@@ -74,7 +74,8 @@ async def protect_mutations(request: Request, call_next):
         and request.url.path.startswith("/api/")
         and request.url.path not in ("/api/admin/login", "/api/desktop/pairings/redeem", "/api/desktop/session")
     ):
-        if not request_is_admin(request, settings.admin_api_token):
+        local_desktop = settings.desktop_local_auth and request.client and request.client.host in ("127.0.0.1", "::1")
+        if not local_desktop and not request_is_admin(request, settings.admin_api_token):
             return JSONResponse({"detail": "Authentication required"}, status_code=401)
     return await call_next(request)
 

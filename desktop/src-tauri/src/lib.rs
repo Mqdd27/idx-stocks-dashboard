@@ -1,122 +1,149 @@
-use std::sync::{Arc, Mutex};
+use std::process::Child;
+use std::sync::Mutex;
 
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use axum::{body::Body, extract::State, http::{HeaderValue, Request, StatusCode}, response::Response, routing::any, Router};
 use keyring::Entry;
 use rand::rngs::OsRng;
-use reqwest::Client;
+use serde::{Deserialize, Serialize};
+use tauri::Manager;
 use tauri::State as TauriState;
-use tokio::net::TcpListener;
 
 const SERVICE: &str = "id.mqdd.stocksidx";
-const ACCOUNT: &str = "desktop-device-token";
-const DASHBOARD: &str = "https://stocks.mqdd.my.id";
+const CONFIG_ACCOUNT: &str = "desktop-config";
+const AUTH_ACCOUNT: &str = "desktop-auth";
+const BACKEND_PORT: u16 = 8200;
 
-type Credential = Arc<Mutex<Option<String>>>;
+#[derive(Serialize, Deserialize, Default, Clone)]
+pub struct ProviderConfig {
+    pub nine_router_url: String,
+    pub nine_router_api_key: String,
+    pub default_model: String,
+}
 
-struct DesktopState(Credential);
+struct Desktop {
+    child: Mutex<Option<Child>>,
+}
 
-fn keyring() -> Result<Entry, String> {
-    Entry::new(SERVICE, ACCOUNT).map_err(|error| error.to_string())
+fn auth_keyring() -> Result<Entry, String> {
+    Entry::new(SERVICE, AUTH_ACCOUNT).map_err(|e| e.to_string())
+}
+
+fn config_keyring() -> Result<Entry, String> {
+    Entry::new(SERVICE, CONFIG_ACCOUNT).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-async fn pair(code: String, password: String, state: TauriState<'_, DesktopState>) -> Result<(), String> {
+fn has_setup() -> bool {
+    config_keyring()
+        .and_then(|entry| entry.get_password().map_err(|e| e.to_string()))
+        .is_ok()
+}
+
+#[tauri::command]
+fn load_config() -> Result<ProviderConfig, String> {
+    let stored = config_keyring()?
+        .get_password()
+        .map_err(|_| "Konfigurasi belum dibuat.".to_string())?;
+    serde_json::from_str(&stored).map_err(|e| e.to_string())
+}
+
+fn save_auth(password: &str) -> Result<(), String> {
     if password.len() < 12 {
-        return Err("Password desktop minimal 12 karakter.".into());
+        return Err("Password master minimal 12 karakter.".to_string());
     }
-    let response = Client::new()
-        .post(format!("{DASHBOARD}/api/desktop/pairings/redeem"))
-        .json(&serde_json::json!({"code": code, "label": "Stocks IDX Desktop"}))
-        .send()
-        .await
-        .map_err(|error| error.to_string())?;
-    if !response.status().is_success() {
-        return Err("Pairing code tidak valid atau sudah kedaluwarsa.".into());
-    }
-    let token = response
-        .json::<serde_json::Value>()
-        .await
-        .map_err(|error| error.to_string())?["device_token"]
-        .as_str()
-        .ok_or("Server tidak mengembalikan credential desktop.")?
-        .to_string();
     let salt = argon2::password_hash::SaltString::generate(&mut OsRng);
     let hash = Argon2::default()
         .hash_password(password.as_bytes(), &salt)
-        .map_err(|error| error.to_string())?
+        .map_err(|e| e.to_string())?
         .to_string();
-    keyring()?
-        .set_password(&format!("{hash}\n{token}"))
-        .map_err(|error| error.to_string())?;
-    *state.0.lock().map_err(|_| "Desktop state lock failed")? = Some(token);
-    Ok(())
+    auth_keyring()?.set_password(&hash).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-fn unlock(password: String, state: TauriState<'_, DesktopState>) -> Result<(), String> {
-    let stored = keyring()?
+fn save_config(config: ProviderConfig, password: String) -> Result<(), String> {
+    if config.nine_router_url.is_empty()
+        || config.nine_router_api_key.is_empty()
+        || config.default_model.is_empty()
+    {
+        return Err("Konfigurasi 9Router dan model wajib diisi.".to_string());
+    }
+    save_auth(&password)?;
+    let serialized = serde_json::to_string(&config).map_err(|e| e.to_string())?;
+    config_keyring()?.set_password(&serialized).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn unlock(password: String) -> Result<(), String> {
+    let stored = auth_keyring()?
         .get_password()
-        .map_err(|_| "Desktop belum dipair.")?;
-    let (hash, token) = stored.split_once('\n').ok_or("Credential desktop rusak.")?;
-    let parsed = PasswordHash::new(hash).map_err(|error| error.to_string())?;
+        .map_err(|_| "Belum ada password desktop.".to_string())?;
+    let parsed = PasswordHash::new(&stored).map_err(|e| e.to_string())?;
     Argon2::default()
         .verify_password(password.as_bytes(), &parsed)
-        .map_err(|_| "Password desktop salah.")?;
-    *state.0.lock().map_err(|_| "Desktop state lock failed")? = Some(token.to_string());
-    Ok(())
+        .map_err(|_| "Password desktop salah.".to_string())
+}
+
+fn port_ready(port: u16) -> bool {
+    std::net::TcpStream::connect(("127.0.0.1", port)).is_ok()
+}
+
+fn env_payload(config: &ProviderConfig, database_path: String, static_dir: String) -> serde_json::Value {
+    serde_json::json!({
+        "DATABASE_URL": format!("sqlite:///{database_path}"),
+        "NINE_ROUTER_URL": config.nine_router_url,
+        "NINE_ROUTER_API_KEY": config.nine_router_api_key,
+        "DEFAULT_AI_MODEL": config.default_model,
+        "OLLAMA_URL": "http://127.0.0.1:11434",
+        "AI_TRADING_ENABLED": "true",
+        "CORS_ALLOWED_ORIGINS": "http://127.0.0.1",
+        "ADMIN_COOKIE_SECURE": "false",
+        "DESKTOP_LOCAL_AUTH": "true",
+        "DESKTOP_STATIC_DIR": static_dir,
+        "DESKTOP_PORT": BACKEND_PORT.to_string(),
+    })
 }
 
 #[tauri::command]
-fn has_pairing() -> bool {
-    keyring().and_then(|entry| entry.get_password().map_err(|error| error.to_string())).is_ok()
-}
-
-async fn proxy(State(token): State<Credential>, request: Request<Body>) -> Response {
-    let path = request.uri().path_and_query().map(|value| value.as_str()).unwrap_or("/");
-    let url = format!("{DASHBOARD}{path}");
-    let method = request.method().clone();
-    let body = axum::body::to_bytes(request.into_body(), 10 * 1024 * 1024).await.unwrap_or_default();
-    let client = Client::new();
-    let mut upstream = client.request(method, url).body(body.to_vec());
-    if let Some(device_token) = token.lock().ok().and_then(|value| value.clone()) {
-        upstream = upstream.header("Authorization", format!("Desktop {device_token}"));
+async fn launch_backend(app: tauri::AppHandle, state: TauriState<'_, Desktop>) -> Result<String, String> {
+    if port_ready(BACKEND_PORT) {
+        return Ok(format!("http://127.0.0.1:{BACKEND_PORT}"));
     }
-    match upstream.send().await {
-        Ok(response) => {
-            let status = response.status();
-            let headers = response.headers().clone();
-            let body = response.bytes().await.unwrap_or_default();
-            let mut output = Response::new(Body::from(body));
-            *output.status_mut() = status;
-            for (name, value) in headers.iter() {
-                if name.as_str().eq_ignore_ascii_case("content-type") {
-                    output.headers_mut().insert(name, value.clone());
-                }
-            }
-            output
+    let config = load_config()?;
+    let dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let env_path = dir.join("backend-env.json");
+    let database_path = dir.join("stocks.db").to_string_lossy().to_string();
+    let static_dir = app.path().resource_dir().map_err(|e| e.to_string())?.join("frontend").to_string_lossy().to_string();
+    let env = env_payload(&config, database_path, static_dir);
+    std::fs::write(&env_path, serde_json::to_string_pretty(&env).map_err(|e| e.to_string())?)
+        .map_err(|e| e.to_string())?;
+
+    let child = std::process::Command::new("stocks-backend")
+        .arg(env_path)
+        .spawn()
+        .map_err(|e| format!("Gagal menjalankan backend lokal: {e}"))?;
+    *state.child.lock().map_err(|_| "lock".to_string())? = Some(child);
+
+    for _ in 0..120 {
+        std::thread::sleep(std::time::Duration::from_millis(500));
+        if port_ready(BACKEND_PORT) {
+            return Ok(format!("http://127.0.0.1:{BACKEND_PORT}"));
         }
-        Err(_) => Response::builder()
-            .status(StatusCode::BAD_GATEWAY)
-            .header("content-type", HeaderValue::from_static("text/plain"))
-            .body(Body::from("Dashboard server unavailable"))
-            .unwrap(),
     }
+    Err("Backend lokal tidak merespons dalam 60 detik.".to_string())
 }
 
-async fn start_proxy(token: Credential) {
-    let app = Router::new().fallback(any(proxy)).with_state(token);
-    let listener = TcpListener::bind("127.0.0.1:39421").await.expect("desktop proxy bind failed");
-    axum::serve(listener, app).await.expect("desktop proxy failed");
-}
-
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let credential = Arc::new(Mutex::new(None));
-    let proxy_credential = credential.clone();
-    tauri::async_runtime::spawn(start_proxy(proxy_credential));
     tauri::Builder::default()
-        .manage(DesktopState(credential))
-        .invoke_handler(tauri::generate_handler![pair, unlock, has_pairing])
+        .manage(Desktop { child: Mutex::new(None) })
+        .invoke_handler(tauri::generate_handler![
+            has_setup,
+            load_config,
+            save_config,
+            unlock,
+            launch_backend
+        ])
         .run(tauri::generate_context!())
         .expect("error while running desktop app");
 }
