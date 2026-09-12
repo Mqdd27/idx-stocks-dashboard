@@ -31,8 +31,7 @@ document.querySelector("#setupBtn").addEventListener("click", async () => {
   };
   const password = document.querySelector("#master").value;
   try {
-    await api.invoke("save_config", { config, password });
-    const url = await api.invoke("launch_backend", { config });
+    const url = await api.invoke("setup_and_launch", { config, password });
     showDashboard(url);
   } catch (error) {
     status.textContent = String(error);

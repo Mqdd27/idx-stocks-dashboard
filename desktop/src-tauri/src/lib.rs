@@ -103,16 +103,14 @@ fn env_payload(config: &ProviderConfig, database_path: String, static_dir: Strin
     })
 }
 
-#[tauri::command]
-async fn launch_backend(
+async fn start_backend(
     app: tauri::AppHandle,
     state: TauriState<'_, Desktop>,
-    config: Option<ProviderConfig>,
+    config: ProviderConfig,
 ) -> Result<String, String> {
     if port_ready(BACKEND_PORT) {
         return Ok(format!("http://127.0.0.1:{BACKEND_PORT}"));
     }
-    let config = config.unwrap_or(load_config()?);
     let dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
     let env_path = dir.join("backend-env.json");
@@ -137,6 +135,22 @@ async fn launch_backend(
     Err("Backend lokal tidak merespons dalam 60 detik.".to_string())
 }
 
+#[tauri::command]
+async fn setup_and_launch(
+    app: tauri::AppHandle,
+    state: TauriState<'_, Desktop>,
+    config: ProviderConfig,
+    password: String,
+) -> Result<String, String> {
+    save_config(config.clone(), password)?;
+    start_backend(app, state, config).await
+}
+
+#[tauri::command]
+async fn launch_backend(app: tauri::AppHandle, state: TauriState<'_, Desktop>) -> Result<String, String> {
+    start_backend(app, state, load_config()?).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -146,6 +160,7 @@ pub fn run() {
             load_config,
             save_config,
             unlock,
+            setup_and_launch,
             launch_backend
         ])
         .run(tauri::generate_context!())
