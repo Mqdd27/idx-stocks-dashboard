@@ -150,6 +150,11 @@ async fn launch_backend(app: tauri::AppHandle, state: TauriState<'_, Desktop>) -
     start_backend(app, state, load_config()).await
 }
 
+#[tauri::command]
+fn restart_app(app: tauri::AppHandle) {
+    app.request_restart();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -160,7 +165,8 @@ pub fn run() {
             save_config,
             unlock,
             setup_and_launch,
-            launch_backend
+            launch_backend,
+            restart_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running desktop app");

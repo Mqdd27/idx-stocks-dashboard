@@ -33,6 +33,10 @@ window.addEventListener("message", async (event) => {
     dashboard.contentWindow.postMessage({ type: "stocks-desktop-ai-config", config: await api.invoke("load_config") }, event.origin);
     return;
   }
+  if (event.data?.type === "stocks-desktop-restart") {
+    await api.invoke("restart_app");
+    return;
+  }
   if (event.data?.type !== "stocks-desktop-save-ai") return;
   try {
     await api.invoke("save_config", { config: event.data.config });

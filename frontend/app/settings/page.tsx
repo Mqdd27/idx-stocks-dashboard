@@ -133,6 +133,7 @@ export default function SettingsPage() {
             <button className="btn btn-primary" onClick={() => { setDesktopAiStatus("Menyimpan..."); window.parent.postMessage({ type: "stocks-desktop-save-ai", config: desktopAi || {} }, "*"); }}>SAVE AI CONFIG</button>
           </div>
           {desktopAiStatus && <p className="muted" style={{ marginTop: 10 }}>{desktopAiStatus}</p>}
+          <button className="btn" style={{ marginTop: 10 }} onClick={() => window.parent.postMessage({ type: "stocks-desktop-restart" }, "*")}>RESTART DESKTOP APP</button>
         </div>
       )}
       <DesktopPairing />
