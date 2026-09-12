@@ -5,7 +5,9 @@ from pathlib import Path
 from PyInstaller.__main__ import run
 
 ROOT = Path(__file__).resolve().parent.parent
-DIST = ROOT / "desktop" / "src-tauri" / "resources" / "backend"
+RESOURCES = ROOT / "desktop" / "src-tauri" / "resources"
+DIST = RESOURCES / "backend"
+FRONTEND = RESOURCES / "frontend"
 SEP = os.pathsep
 
 
@@ -13,7 +15,8 @@ def data(source: str, target: str) -> str:
     return f"{ROOT / source}{SEP}{target}"
 
 
-shutil.rmtree(DIST, ignore_errors=True)
+shutil.rmtree(RESOURCES, ignore_errors=True)
+shutil.copytree(ROOT / "frontend" / "out", FRONTEND)
 DIST.mkdir(parents=True)
 run([
     "--noconfirm",
