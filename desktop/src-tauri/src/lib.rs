@@ -120,7 +120,13 @@ async fn start_backend(
     std::fs::write(&env_path, serde_json::to_string_pretty(&env).map_err(|e| e.to_string())?)
         .map_err(|e| e.to_string())?;
 
-    let child = std::process::Command::new("stocks-backend")
+    let backend_name = if cfg!(target_os = "windows") {
+        "backend/stocks-backend.exe"
+    } else {
+        "backend/stocks-backend"
+    };
+    let backend = app.path().resource_dir().map_err(|e| e.to_string())?.join(backend_name);
+    let child = std::process::Command::new(backend)
         .arg(env_path)
         .spawn()
         .map_err(|e| format!("Gagal menjalankan backend lokal: {e}"))?;

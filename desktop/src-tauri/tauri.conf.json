@@ -12,6 +12,7 @@
   "bundle": {
     "active": true,
     "targets": ["appimage", "deb", "dmg", "msi"],
+    "resources": ["resources/frontend", "resources/backend"],
     "icon": ["icons/icon.png", "icons/icon.icns", "icons/icon.ico"]
   }
 }

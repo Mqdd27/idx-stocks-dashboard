@@ -5,6 +5,10 @@ import sys
 from pathlib import Path
 
 import uvicorn
+
+if getattr(sys, "frozen", False):
+    sys.path[:0] = [str(Path(sys._MEIPASS) / "backend"), str(Path(sys._MEIPASS))]
+
 from fastapi import HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
