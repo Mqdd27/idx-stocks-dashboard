@@ -5,7 +5,7 @@ from curl_cffi import requests
 from sqlalchemy import select
 
 from app.db import SessionLocal
-from app.market_calendar import is_trading_day, today_jakarta
+from app.market_calendar import is_trading_day, previous_trading_day, today_jakarta
 from app.models import BrokerActivityDaily
 
 URL = "https://www.idx.co.id/primary/TradingSummary/GetBrokerSummary"
@@ -35,6 +35,20 @@ def ingest(day: date):
                 created += 1
         db.commit()
     return {"status": "OK", "date": day.isoformat(), "created": created, "updated": updated, "source": SOURCE, "scope": "MARKET_WIDE_EOD"}
+
+
+def ingest_latest_available(day: date, attempts: int = 5):
+    candidate = day
+    for _ in range(attempts):
+        try:
+            result = ingest(candidate)
+            if result.get("status") == "OK":
+                return result
+        except RuntimeError as exc:
+            if "returned no rows" not in str(exc):
+                raise
+        candidate = previous_trading_day(candidate)
+    raise RuntimeError("IDX GetBrokerSummary unavailable for recent trading sessions")
 
 
 if __name__ == "__main__":
