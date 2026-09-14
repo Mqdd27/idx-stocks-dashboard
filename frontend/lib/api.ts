@@ -304,6 +304,12 @@ export const api = {
   marketHolidays: () => jfetch<any>("/api/market/holidays"),
   marketEvents: (start: string, end: string) =>
     jfetch<any>(`/api/market/events?start_date=${start}&end_date=${end}`),
+  riskSummary: () => jfetch<any>("/api/risk/summary"),
+  riskSync: () => jfetch<any>("/api/risk/sync", { method: "POST" }),
+  tradePlans: () => jfetch<any>("/api/trade-plans"),
+  tradePlan: (id: number) => jfetch<any>(`/api/trade-plans/${id}`),
+  riskDecision: (id: number) => jfetch<any>(`/api/risk/decisions/${id}`),
+  riskDecisions: () => jfetch<any>("/api/risk/decisions"),
   aiAutoTradeStatus: () => jfetch<any>("/api/ai-auto-trade/status"),
   aiAutoTradeRuns: () => jfetch<any[]>("/api/ai-auto-trade/runs"),
   aiAutoTradeConfig: (config: Record<string, unknown>) =>

@@ -19,6 +19,7 @@ const NAV = [
   { href: "/ai-watchlist", key: "WCH", label: "AI Watchlist" },
   { href: "/performance", key: "PERF", label: "Performance" },
   { href: "/ai-auto-trade", key: "AAT", label: "AI Auto" },
+  { href: "/risk-execution", key: "RSK", label: "Risk & Execution" },
   { href: "/operations", key: "OPS", label: "Operations" },
   { href: "/settings", key: "CFG", label: "Settings" },
 ];

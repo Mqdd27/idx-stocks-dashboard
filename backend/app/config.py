@@ -52,6 +52,9 @@ class Settings:
         self.ai_trading_enabled = os.environ.get(
             "AI_TRADING_ENABLED", "false"
         ).lower() in ("1", "true", "yes")
+        self.risk_shadow_mode = os.environ.get(
+            "RISK_SHADOW_MODE", "true"
+        ).lower() in ("1", "true", "yes")
         self.ai_trading_quick_model = os.environ.get(
             "TRADINGAGENTS_QUICK_THINK_LLM", "cx/gpt-5.4-mini"
         )

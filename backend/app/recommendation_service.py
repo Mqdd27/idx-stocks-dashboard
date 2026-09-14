@@ -296,6 +296,10 @@ def generate_quant(strategy="GENERAL", cycle="daily", now=None, preview=False):
             db.add(rec)
             try:
                 db.commit()
+                from .risk_service import create_shadow_records
+
+                create_shadow_records(db, rec)
+                db.commit()
                 generated += 1
             except IntegrityError:
                 db.rollback()
@@ -394,6 +398,10 @@ def import_tradingagents(strategy="GENERAL", cycle="daily", now=None, limit=None
             )
             db.add(rec)
             try:
+                db.commit()
+                from .risk_service import create_shadow_records
+
+                create_shadow_records(db, rec)
                 db.commit()
                 generated += 1
             except IntegrityError:

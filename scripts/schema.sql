@@ -346,3 +346,32 @@ CREATE TABLE IF NOT EXISTS desktop_devices (
  last_used_at TIMESTAMPTZ,
  revoked_at TIMESTAMPTZ
 );
+
+
+CREATE TABLE IF NOT EXISTS trade_proposals (
+ id BIGSERIAL PRIMARY KEY, recommendation_id BIGINT NOT NULL REFERENCES trade_recommendations(id) ON DELETE CASCADE UNIQUE,
+ analysis_id BIGINT, symbol VARCHAR(16) NOT NULL, strategy VARCHAR(16) NOT NULL, method VARCHAR(32) NOT NULL, signal VARCHAR(16) NOT NULL,
+ reference_price DOUBLE PRECISION NOT NULL, entry_min DOUBLE PRECISION, entry_max DOUBLE PRECISION, suggested_tp1 DOUBLE PRECISION, suggested_tp2 DOUBLE PRECISION, suggested_sl DOUBLE PRECISION, confidence DOUBLE PRECISION,
+ quant_context JSONB NOT NULL DEFAULT '{}'::jsonb, foreign_flow_context JSONB NOT NULL DEFAULT '{}'::jsonb, market_context JSONB NOT NULL DEFAULT '{}'::jsonb,
+ generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS ix_trade_proposals_symbol ON trade_proposals(symbol);
+CREATE TABLE IF NOT EXISTS risk_decisions (
+ id BIGSERIAL PRIMARY KEY, proposal_id BIGINT NOT NULL REFERENCES trade_proposals(id) ON DELETE CASCADE UNIQUE,
+ decision VARCHAR(16) NOT NULL, reason_codes JSONB NOT NULL DEFAULT '[]'::jsonb, max_position_value DOUBLE PRECISION NOT NULL,
+ position_size_lots BIGINT NOT NULL, risk_amount DOUBLE PRECISION NOT NULL, risk_percent DOUBLE PRECISION NOT NULL,
+ stop_price DOUBLE PRECISION, tp1 DOUBLE PRECISION, tp2 DOUBLE PRECISION, risk_reward_ratio DOUBLE PRECISION,
+ portfolio_exposure_after DOUBLE PRECISION NOT NULL, confidence_modifier DOUBLE PRECISION NOT NULL DEFAULT 1, warnings JSONB NOT NULL DEFAULT '[]'::jsonb,
+ generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS ix_risk_decisions_decision ON risk_decisions(decision);
+CREATE TABLE IF NOT EXISTS trade_plans (
+ id BIGSERIAL PRIMARY KEY, proposal_id BIGINT NOT NULL REFERENCES trade_proposals(id) ON DELETE CASCADE UNIQUE,
+ risk_decision_id BIGINT NOT NULL REFERENCES risk_decisions(id) ON DELETE CASCADE, symbol VARCHAR(16) NOT NULL, strategy VARCHAR(16) NOT NULL, method VARCHAR(32) NOT NULL,
+ status VARCHAR(24) NOT NULL, entry_price DOUBLE PRECISION NOT NULL, entry_min DOUBLE PRECISION, entry_max DOUBLE PRECISION, position_size_lots BIGINT NOT NULL,
+ tp1 DOUBLE PRECISION, tp2 DOUBLE PRECISION, stop_loss DOUBLE PRECISION, expected_risk DOUBLE PRECISION NOT NULL, expected_reward DOUBLE PRECISION NOT NULL, risk_reward_ratio DOUBLE PRECISION,
+ valid_from TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ, execution_key VARCHAR(96) NOT NULL UNIQUE, is_shadow BOOLEAN NOT NULL DEFAULT TRUE,
+ executed_trade_id BIGINT REFERENCES paper_trades(id), created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), notes TEXT
+);
+CREATE INDEX IF NOT EXISTS ix_trade_plans_status ON trade_plans(status);
+CREATE INDEX IF NOT EXISTS ix_trade_plans_symbol ON trade_plans(symbol);

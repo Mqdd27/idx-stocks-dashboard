@@ -40,6 +40,7 @@ def init_db() -> None:
     if not _is_sqlite:
         return
     from . import models as _models  # noqa: F401  (register models)
+    from . import risk_model as _risk_model  # noqa: F401  (register models)
 
     Base.metadata.create_all(bind=engine)
 

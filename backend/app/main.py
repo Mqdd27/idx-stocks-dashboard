@@ -48,6 +48,7 @@ from .batch_routes import router as batch_router
 from .foreign_flow_routes import router as foreign_flow_router
 from .broker_activity_routes import router as broker_activity_router
 from .desktop_routes import router as desktop_router
+from .risk_routes import router as risk_router, plans_router
 
 from contextlib import asynccontextmanager
 
@@ -129,6 +130,8 @@ app.include_router(batch_router)
 app.include_router(foreign_flow_router)
 app.include_router(broker_activity_router)
 app.include_router(desktop_router)
+app.include_router(risk_router)
+app.include_router(plans_router)
 
 app.add_middleware(
     CORSMiddleware,
