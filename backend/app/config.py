@@ -11,6 +11,10 @@ except Exception:
     pass
 
 
+def env_bool(name: str, default: str) -> bool:
+    return os.environ.get(name, default).lower() in ("1", "true", "yes")
+
+
 class Settings:
     def __init__(self) -> None:
         self.database_url: str = os.environ.get(
@@ -26,9 +30,7 @@ class Settings:
         self.market_poll_interval: int = int(
             os.environ.get("MARKET_POLL_INTERVAL", "30")
         )
-        self.allow_ai_fallback: bool = os.environ.get(
-            "ALLOW_AI_FALLBACK", "false"
-        ).lower() in ("1", "true", "yes")
+        self.allow_ai_fallback: bool = env_bool("ALLOW_AI_FALLBACK", "false")
         self.ai_rate_limit_per_minute: int = int(
             os.environ.get("AI_RATE_LIMIT_PER_MINUTE", "20")
         )
@@ -49,12 +51,8 @@ class Settings:
             if symbol.strip()
         )
         self.timezone: str = os.environ.get("TZ", "Asia/Jakarta")
-        self.ai_trading_enabled = os.environ.get(
-            "AI_TRADING_ENABLED", "false"
-        ).lower() in ("1", "true", "yes")
-        self.risk_shadow_mode = os.environ.get(
-            "RISK_SHADOW_MODE", "true"
-        ).lower() in ("1", "true", "yes")
+        self.ai_trading_enabled = env_bool("AI_TRADING_ENABLED", "false")
+        self.risk_shadow_mode = env_bool("RISK_SHADOW_MODE", "true")
         self.ai_trading_quick_model = os.environ.get(
             "TRADINGAGENTS_QUICK_THINK_LLM", "cx/gpt-5.4-mini"
         )
@@ -67,9 +65,7 @@ class Settings:
         self.desktop_static_dir: str = os.environ.get(
             "DESKTOP_STATIC_DIR", "/opt/stocks-dashboard/frontend/out"
         )
-        self.desktop_local_auth = os.environ.get(
-            "DESKTOP_LOCAL_AUTH", "false"
-        ).lower() in ("1", "true", "yes")
+        self.desktop_local_auth = env_bool("DESKTOP_LOCAL_AUTH", "false")
         self.admin_api_token = os.environ.get("ADMIN_API_TOKEN", "")
         self.cors_allowed_origins = [
             item.strip()
@@ -79,15 +75,9 @@ class Settings:
             ).split(",")
             if item.strip()
         ]
-        self.admin_cookie_secure = os.environ.get(
-            "ADMIN_COOKIE_SECURE", "true"
-        ).lower() in ("1", "true", "yes")
-        self.enable_fred_enrichment = os.environ.get(
-            "ENABLE_FRED_ENRICHMENT", "false"
-        ).lower() in ("1", "true", "yes")
-        self.enable_polymarket_enrichment = os.environ.get(
-            "ENABLE_POLYMARKET_ENRICHMENT", "false"
-        ).lower() in ("1", "true", "yes")
+        self.admin_cookie_secure = env_bool("ADMIN_COOKIE_SECURE", "true")
+        self.enable_fred_enrichment = env_bool("ENABLE_FRED_ENRICHMENT", "false")
+        self.enable_polymarket_enrichment = env_bool("ENABLE_POLYMARKET_ENRICHMENT", "false")
 
 
 @lru_cache

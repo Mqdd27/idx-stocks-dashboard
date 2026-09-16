@@ -8,10 +8,6 @@ import numpy as np
 import pandas as pd
 
 
-def _series(values: list, index: list) -> pd.Series:
-    return pd.Series(values, index=index, dtype="float64")
-
-
 def technical_indicators(rows: list) -> Optional[dict]:
     """rows: list of dicts with date, open, high, low, close, volume (oldest first)."""
     if not rows or len(rows) < 2:

@@ -12,8 +12,6 @@ if _is_sqlite:
         settings.database_url,
         connect_args={"check_same_thread": False},
     )
-    from sqlalchemy import inspect as _inspect
-
     @event.listens_for(engine, "connect")
     def _set_sqlite_pragma(dbapi_connection, connection_record):
         cursor = dbapi_connection.cursor()

@@ -11,6 +11,7 @@ from .recommendation_model import TradeRecommendation
 REJECT = "REJECT"
 REDUCE = "REDUCE"
 APPROVE = "APPROVE"
+HARD_REJECT = {"SIGNAL_NOT_BUY", "INVALID_STOP", "RISK_REWARD_TOO_LOW", "EXPIRED_PLAN", "STALE_DATA", "DUPLICATE_EXPOSURE", "MAX_OPEN_POSITIONS", "POSITION_SIZE_ZERO", "MAX_TOTAL_EXPOSURE"}
 
 
 def _paper_config(db):
@@ -136,15 +137,6 @@ def evaluate(db, proposal, recommendation):
     if len(open_trades) >= int(config.max_positions):
         codes.append("MAX_OPEN_POSITIONS")
 
-    risk_lots = size_position(
-        available_cash,
-        entry,
-        stop,
-        float(config.risk_per_trade),
-        float(config.fee_rate),
-        float(config.slippage_rate),
-        1.0,
-    ) if not codes else 0
     lots = size_position(
         available_cash,
         entry,
@@ -154,7 +146,9 @@ def evaluate(db, proposal, recommendation):
         float(config.slippage_rate),
         float(config.max_exposure),
     ) if not codes else 0
-    if lots and risk_lots > lots:
+    per_share = entry * (float(config.fee_rate) + float(config.slippage_rate)) + (entry - stop)
+    risk_only_lots = int(available_cash * float(config.risk_per_trade) / per_share) // 100
+    if risk_only_lots > lots:
         codes.append("POSITION_LIMIT_REDUCED")
     value = entry * lots * 100
     risk_amount = max(0.0, (entry - stop) * lots * 100) if lots else 0.0
@@ -165,8 +159,7 @@ def evaluate(db, proposal, recommendation):
     if exposure_after > max_total:
         codes.append("MAX_TOTAL_EXPOSURE")
 
-    hard_reject = {"SIGNAL_NOT_BUY", "INVALID_STOP", "RISK_REWARD_TOO_LOW", "EXPIRED_PLAN", "STALE_DATA", "DUPLICATE_EXPOSURE", "MAX_OPEN_POSITIONS", "POSITION_SIZE_ZERO", "MAX_TOTAL_EXPOSURE"}
-    decision = REJECT if any(code in hard_reject for code in codes) else (REDUCE if "POSITION_LIMIT_REDUCED" in codes else APPROVE)
+    decision = REJECT if any(code in HARD_REJECT for code in codes) else (REDUCE if "POSITION_LIMIT_REDUCED" in codes else APPROVE)
     if proposal.foreign_flow_context.get("status") == "STRONG DISTRIBUTION":
         warnings.append("FOREIGN_FLOW_DISTRIBUTION")
     if recommendation.strategy == "BPJS":

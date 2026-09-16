@@ -154,11 +154,3 @@ def plan(plan_id: int, db: Session = Depends(get_db)):
     if not row:
         raise HTTPException(404, "Trade plan not found")
     return plan_row(row, db)
-
-
-@plans_router.post("/{plan_id}/paper-execute")
-def execute_shadow_blocked(plan_id: int, db: Session = Depends(get_db)):
-    row = db.get(TradePlan, plan_id)
-    if not row:
-        raise HTTPException(404, "Trade plan not found")
-    raise HTTPException(409, "SHADOW_MODE: paper execution gate is not active")
